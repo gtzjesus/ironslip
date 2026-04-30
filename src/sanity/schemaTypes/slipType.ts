@@ -59,41 +59,8 @@ export const slipType = defineType({
       name: 'legs',
       title: 'Parlay Legs (Requirements)',
       type: 'array',
-      of: [
-        {
-          type: 'object',
-          name: 'leg',
-          fields: [
-            {
-              name: 'task',
-              title: 'Task',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            },
-            { name: 'reps', title: 'Reps/Set or Duration', type: 'string' },
-            {
-              name: 'avatarAction',
-              title: 'Avatar Animation',
-              type: 'string',
-              options: {
-                list: [
-                  { title: '🏃 Running', value: 'running' },
-                  { title: '🏊 Swimming', value: 'swimming' },
-                  { title: '🏋️ Lifting', value: 'lifting' },
-                  { title: '🧘 Mobility', value: 'mobility' },
-                  { title: '👹 Demon Mode', value: 'demon' },
-                ],
-              },
-            },
-            {
-              name: 'isDemon',
-              title: 'Demon Leg? 😈',
-              type: 'boolean',
-              initialValue: false,
-            },
-          ],
-        },
-      ],
+      // We are now referencing the 'leg' document type
+      of: [{ type: 'reference', to: [{ type: 'leg' }] }],
       validation: (Rule) =>
         Rule.min(1).error('A parlay must have at least one leg.'),
     }),
