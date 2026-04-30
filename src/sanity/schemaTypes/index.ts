@@ -1,5 +1,6 @@
-import { type SchemaTypeDefinition } from 'sanity'
+import { type SchemaTypeDefinition } from 'sanity';
+import { slipType } from './slipType';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [],
-}
+  types: [slipType],
+};
