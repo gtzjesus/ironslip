@@ -3,51 +3,50 @@
 import { useRive, Layout, Fit, Alignment } from '@rive-app/react-canvas';
 
 export default function Home() {
-  // Setup the Rive hook
   const { RiveComponent } = useRive({
-    src: '/avatar-walking.riv', // Path to your file in /public
-    stateMachines: 'State Machine 1', // Check the name in Rive (usually State Machine 1)
+    src: '/avatar-walking.riv',
+    stateMachines: 'State Machine 1',
     autoplay: true,
     layout: new Layout({
-      fit: Fit.Contain,
+      fit: Fit.Cover, // Changed to Cover to fill more space effectively
       alignment: Alignment.Center,
     }),
   });
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white selection:bg-zinc-700">
-      <main className="relative flex w-full flex-1 flex-col items-center justify-center px-6">
-        {/* The Hook: Bold, Gritty Header */}
-        <div className="z-20 flex flex-col items-center gap-2 text-center">
-          <h1 className="text-6xl font-black uppercase italic tracking-tighter sm:text-8xl md:text-9xl">
-            IRON <span className="text-zinc-700">SLIP</span>
-          </h1>
-          <p className="max-w-md text-sm font-light uppercase tracking-[0.3em] text-zinc-500 sm:text-base">
-            El Paso • Established 2026
-          </p>
-        </div>
+    <div className="flex h-screen w-screen flex-col items-center justify-center bg-black overflow-hidden">
+      <main className="relative h-full w-full flex items-center justify-center">
+        {/* BACKGROUND EFFECT: The "Vibe" Glow */}
+        <div className="absolute h-[600px] w-[600px] rounded-full bg-zinc-900/20 blur-[120px] z-0" />
 
-        {/* The Avatar Container */}
-        <div className="relative h-[400px] w-full max-w-lg sm:h-[600px]">
-          {/* Subtle Glow behind the character */}
-          <div className="absolute inset-0 z-0 bg-gradient-to-t from-zinc-900/50 to-transparent blur-3xl" />
-
-          {/* The Actual Rive Avatar */}
-          <div className="relative z-10 h-full w-full">
+        {/* THE AVATAR: 100vh setup */}
+        <div className="relative z-10 h-full w-full flex items-center justify-center">
+          {/* CSS FILTER TRICKERY */}
+          {/* grayscale(1) -> Makes it B&W
+              contrast(1.5) -> Makes the blacks deeper
+              brightness(0.8) -> Gritty look
+          */}
+          <div className="h-full w-full transition-all grayscale contrast-[1.4] brightness-[0.7]">
             <RiveComponent />
           </div>
+
+          {/* THE FLOOR: Adds "Weight" so he's not floating */}
+          <div className="absolute bottom-[20%] h-[20px] w-64 bg-white/5 blur-xl rounded-[100%] z-0" />
         </div>
 
-        {/* The CTA: Clean & Aggressive */}
-        <div className="z-20 mt-8 flex flex-col gap-4 sm:flex-row">
-          <button className="flex h-14 w-64 items-center justify-center bg-white text-sm font-bold uppercase tracking-widest text-black transition-transform active:scale-95 hover:bg-zinc-200">
-            Accept Challenge
-          </button>
-        </div>
+        {/* OVERLAY: Gritty Text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-between py-10 pointer-events-none z-20">
+          <h1 className="text-[10vw] font-black italic tracking-tighter leading-none opacity-w0">
+            IRONSLIP
+          </h1>
 
-        {/* Footer info */}
-        <div className="absolute bottom-8 text-[10px] uppercase tracking-widest text-zinc-800">
-          Built for the 915 • No shortcuts
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-zinc-500 tracking-[0.25em] text-xs uppercase animate-pulse">
+              Build slip. Lock in. Win gear.
+            </p>
+            {/* Example of a Volt Yellow highlight in UI */}
+            <div className="h-1 w-12 bg-[#ff0000]" />
+          </div>
         </div>
       </main>
     </div>
