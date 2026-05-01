@@ -39,7 +39,7 @@ export default function IronHero() {
         <div className="flex justify-between items-start">
           <div className="flex flex-col gap-1">
             <p className="text-[8px] font-mono text-iron-gray uppercase tracking-widest">
-              System_Status
+              Forge your legacy
             </p>
             {/* Status Dot */}
             <p className="text-[8px] font-mono text-iron-volt uppercase tracking-widest animate-pulse">
@@ -47,9 +47,9 @@ export default function IronHero() {
             </p>
           </div>
           <p className="text-[8px] font-mono text-iron-gray uppercase tracking-widest">
-            Forge your legacy
+            evolve with
             <br />
-            evolve with your avatar
+            your avatar
           </p>
         </div>
 
@@ -71,10 +71,11 @@ export default function IronHero() {
             <div className="mt-4 h-[2px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent" />
           </div>
 
-          <button className="group pointer-events-auto h-12 w-56 bg-white text-iron-black font-black text-[14px] font-mono uppercase tracking-widest transition-all hover:bg-iron-volt active:scale-95">
-            <span className="group-hover:tracking-[0.3em] transition-all duration-300">
-              Evolve Operator
-            </span>
+          <button className="group relative p-4 bg-white text-iron-black  text-[13px] font-mono uppercase tracking-widest transition-all ">
+            {/* The Glow Layer (Pulses behind the button) */}
+            <div className="absolute inset-0 -z-10 bg-iron-volt blur-xl opacity-60 animate-pulse group-hover:opacity-70" />
+
+            <span className="relative z-10">Start the grind</span>
           </button>
         </div>
       </div>
