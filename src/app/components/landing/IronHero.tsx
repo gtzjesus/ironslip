@@ -68,8 +68,8 @@ export default function IronHero() {
         className={`h-full w-full transition-opacity duration-1000 ${isReady ? 'opacity-100' : 'opacity-0'}`}
       >
         {/* BACKGROUND LOGO */}
-        <div className="top-[20%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
-          <h1 className="text-[12.5vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[2px] md:text-[8vw]">
+        <div className="top-[25%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
+          <h1 className="text-[12.5vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[1px] md:text-[8vw]">
             ironslip
           </h1>
         </div>
@@ -84,7 +84,7 @@ export default function IronHero() {
           </div>
 
           {/* HUD ELEMENTS */}
-          <div className="absolute inset-0 p-8 flex flex-col justify-between z-30 pointer-events-none pt-24 md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
+          <div className="absolute inset-0 p-6 flex flex-col justify-between z-30 pointer-events-none pt-32 md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
             {/* Top HUD Row */}
             <div className="flex justify-between items-start w-full md:flex-col md:items-end md:gap-6">
               <div className="flex flex-col gap-1 md:items-end">
