@@ -68,7 +68,7 @@ export default function IronHero() {
         className={`h-full w-full transition-opacity duration-1000 ${isReady ? 'opacity-100' : 'opacity-0'}`}
       >
         {/* BACKGROUND LOGO */}
-        <div className="top-[25%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
+        <div className="top-[30%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
           <h1 className="text-[12.5vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[1px] md:text-[8vw]">
             ironslip
           </h1>
@@ -84,7 +84,7 @@ export default function IronHero() {
           </div>
 
           {/* HUD ELEMENTS */}
-          <div className="absolute inset-0 p-6 flex flex-col justify-between z-30 pointer-events-none pt-32 md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
+          <div className="absolute inset-0 p-6 flex flex-col justify-between z-30 pointer-events-none pt-40 md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
             {/* Top HUD Row */}
             <div className="flex justify-between items-start w-full md:flex-col md:items-end md:gap-6">
               <div className="flex flex-col gap-1 md:items-end">
@@ -105,7 +105,7 @@ export default function IronHero() {
             {/* Bottom HUD Section */}
             <div className="flex flex-col items-center gap-8 pb-10 md:items-end md:pb-24">
               <div className="flex flex-col items-center text-center md:items-end md:text-right">
-                <p className="text-[14px] text-lg font-black uppercase italic tracking-tighter transition-colors">
+                <p className="text-[16px] text-lg font-black uppercase italic tracking-tighter transition-colors">
                   <span className="bg-iron-volt text-iron-red px-1.5 py-0.5 m-1 inline-block">
                     Build slip.
                   </span>

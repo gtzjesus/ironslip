@@ -14,12 +14,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'IRON SLIP',
-    template: '%s | IRON SLIP',
+    default: 'Iron Slip | Forge Your Legacy ',
+    template: '%s | Iron Slip | Forge Your Legacy',
   },
   description:
     'Forge the slip. Lock in your output. Evolve your avatar and extract premium physical and digital gear.',
-  authors: [{ name: 'IRON SLIP', url: 'https://ironslip.com' }], // Update once you have your domain
+  authors: [
+    { name: 'Iron Slip | Forge Your Legacy', url: 'https://ironslip.com' },
+  ], // Update once you have your domain
   metadataBase: new URL('https://ironslip.com'),
   keywords: [
     'Iron Slip',
@@ -35,17 +37,17 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: 'IRON SLIP | Evolve You. Evolve Avatar.',
+    title: 'Iron Slip | Forge Your Legacy | Evolve You. Evolve Avatar.',
     description:
       'The ultimate performance forge. Build your slip, back your output, and win exclusive gear.',
     url: 'https://ironslip.com',
-    siteName: 'IRON SLIP',
+    siteName: 'Iron Slip | Forge Your Legacy',
     images: [
       {
         url: '/og-preview.png', // Create this image later for social shares
         width: 1200,
         height: 630,
-        alt: 'IRON SLIP Interface',
+        alt: 'Iron Slip | Forge Your Legacy Interface',
       },
     ],
     type: 'website',
