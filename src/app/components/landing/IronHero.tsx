@@ -95,7 +95,7 @@ export default function IronHero() {
                   ● Optimal_Output
                 </p>
               </div>
-              <p className="pt-40 text-[8px] font-mono  uppercase tracking-widest md:text-[10px] md:text-right">
+              <p className="pt-34 text-[8px] font-mono  uppercase tracking-widest md:text-[10px] md:text-right">
                 evolve with
                 <br />
                 your avatar
