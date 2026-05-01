@@ -38,32 +38,39 @@ export default function IronHero() {
       <div className="absolute inset-0 p-8 flex flex-col justify-between z-30 pointer-events-none pt-24">
         <div className="flex justify-between items-start">
           <div className="flex flex-col gap-1">
-            <p className="text-[9px] font-mono text-iron-gray uppercase tracking-widest">
+            <p className="text-[8px] font-mono text-iron-gray uppercase tracking-widest">
               System_Status
             </p>
             {/* Status Dot */}
-            <p className="text-[9px] font-mono text-iron-volt uppercase tracking-widest animate-pulse">
+            <p className="text-[8px] font-mono text-iron-volt uppercase tracking-widest animate-pulse">
               ● Optimal_Output
             </p>
           </div>
-          <p className="text-[9px] font-mono text-iron-gray uppercase tracking-widest">
+          <p className="text-[8px] font-mono text-iron-gray uppercase tracking-widest">
             conquer
             <br />
-            EST_2026
           </p>
         </div>
 
         {/* Bottom HUD */}
         <div className="flex flex-col items-center gap-8 pb-10">
           <div className="flex flex-col items-center text-center">
-            <p className="text-[10px] font-mono text-iron-gray uppercase tracking-widest">
-              Build slip. <span className="text-white">Lock in.</span> Win gear.
+            <p className="text-[10px]  font-mono text-iron-gray uppercase tracking-widest">
+              <span className="bg-iron-volt text-iron-red p-1 m-1">
+                Build slip.
+              </span>
+              <span className="bg-iron-volt text-iron-red p-1">Lock in.</span>
+
+              <span className="bg-iron-volt text-iron-red p-1 m-1">
+                Win gear.
+              </span>
             </p>
+
             {/* Gradient Line using variable */}
             <div className="mt-4 h-[2px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent" />
           </div>
 
-          <button className="pointer-events-auto h-14 w-64 bg-white text-black font-black uppercase tracking-[0.2em] text-xs shadow-[0_0_20px_var(--iron-volt-glow)] transition-all active:scale-95">
+          <button className="pointer-events-auto h-12 w-56 bg-white text-black font-black  text-[13spx]  font-mono text-iron-gray uppercase tracking-widest shadow-[0_0_20px_var(--iron-volt-glow)] transition-all active:scale-95">
             Start the grind
           </button>
         </div>
