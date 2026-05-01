@@ -47,7 +47,7 @@ export default function IronHero() {
             </p>
           </div>
           <p className="text-[8px] font-mono text-iron-gray uppercase tracking-widest">
-            conquer
+            Your own avatar
             <br />
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function IronHero() {
         {/* Bottom HUD */}
         <div className="flex flex-col items-center gap-8 pb-10">
           <div className="flex flex-col items-center text-center">
-            <p className="text-[10px]  font-mono text-iron-gray uppercase tracking-widest">
+            <p className="text-[12px]  font-mono text-iron-gray uppercase tracking-widest">
               <span className="bg-iron-volt text-iron-red p-1 m-1">
                 Build slip.
               </span>
@@ -70,8 +70,11 @@ export default function IronHero() {
             <div className="mt-4 h-[2px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent" />
           </div>
 
-          <button className="pointer-events-auto h-12 w-56 bg-white text-black font-black  text-[13spx]  font-mono text-iron-gray uppercase tracking-widest shadow-[0_0_20px_var(--iron-volt-glow)] transition-all active:scale-95">
-            Start the grind
+          <button className="group relative p-4 bg-white text-iron-black font-black text-[14px] font-mono uppercase tracking-widest transition-all ">
+            {/* The Glow Layer (Pulses behind the button) */}
+            <div className="absolute inset-0 -z-10 bg-iron-volt blur-xl opacity-40 animate-pulse group-hover:opacity-70" />
+
+            <span className="relative z-10">Start the grind</span>
           </button>
         </div>
       </div>
