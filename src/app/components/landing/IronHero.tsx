@@ -84,18 +84,18 @@ export default function IronHero() {
           </div>
 
           {/* HUD ELEMENTS */}
-          <div className="absolute inset-0 p-6 flex flex-col justify-between z-30 pointer-events-none pt-40 md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
+          <div className="absolute inset-0 p-6 flex flex-col justify-between z-30 pointer-events-none  md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
             {/* Top HUD Row */}
             <div className="flex justify-between items-start w-full md:flex-col md:items-end md:gap-6">
               <div className="flex flex-col gap-1 md:items-end">
-                <p className="text-[8px] font-mono  uppercase tracking-widest md:text-[10px]">
+                <p className="pt-24 text-[8px] font-mono  uppercase tracking-widest md:text-[10px]">
                   Forge your legacy
                 </p>
                 <p className="text-[8px] font-mono text-iron-volt uppercase tracking-widest animate-pulse md:text-[10px]">
                   ● Optimal_Output
                 </p>
               </div>
-              <p className="text-[8px] font-mono  uppercase tracking-widest md:text-[10px] md:text-right">
+              <p className="pt-40 text-[8px] font-mono  uppercase tracking-widest md:text-[10px] md:text-right">
                 evolve with
                 <br />
                 your avatar
