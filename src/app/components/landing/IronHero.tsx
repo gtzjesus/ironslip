@@ -47,8 +47,9 @@ export default function IronHero() {
             </p>
           </div>
           <p className="text-[8px] font-mono text-iron-gray uppercase tracking-widest">
-            Your own avatar
+            Forge your legacy
             <br />
+            evolve with your avatar
           </p>
         </div>
 
@@ -70,11 +71,10 @@ export default function IronHero() {
             <div className="mt-4 h-[2px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent" />
           </div>
 
-          <button className="group relative p-4 bg-white text-iron-black font-black text-[14px] font-mono uppercase tracking-widest transition-all ">
-            {/* The Glow Layer (Pulses behind the button) */}
-            <div className="absolute inset-0 -z-10 bg-iron-volt blur-xl opacity-40 animate-pulse group-hover:opacity-70" />
-
-            <span className="relative z-10">Start the grind</span>
+          <button className="group pointer-events-auto h-12 w-56 bg-white text-iron-black font-black text-[14px] font-mono uppercase tracking-widest transition-all hover:bg-iron-volt active:scale-95">
+            <span className="group-hover:tracking-[0.3em] transition-all duration-300">
+              Evolve Operator
+            </span>
           </button>
         </div>
       </div>
