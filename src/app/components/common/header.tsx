@@ -113,7 +113,7 @@ const Header = () => {
             <svg
               className={clsx(
                 'h-6 w-6',
-                scrolled ? 'text-black' : 'text-iron-volt',
+                scrolled ? 'text-iron-volt' : 'text-iron-volt',
               )}
               fill="none"
               stroke="currentColor"
