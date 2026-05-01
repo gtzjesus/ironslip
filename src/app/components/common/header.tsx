@@ -144,7 +144,7 @@ const Header = () => {
               menuOpen ? 'invisible' : 'justify-between',
             )}
           >
-            La Dueña
+            ironslip
           </h1>
         </div>
 
