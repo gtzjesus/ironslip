@@ -3,7 +3,7 @@ import IronHero from './components/landing/IronHero';
 
 export default function Home() {
   return (
-    <main className="h-screen w-screen overflow-hidden bg-black">
+    <main className="min-h-screen w-screen bg-black">
       <Header />
       <IronHero />
     </main>
