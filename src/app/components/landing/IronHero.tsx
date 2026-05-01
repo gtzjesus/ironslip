@@ -22,7 +22,7 @@ export default function IronHero() {
 
       {/* 2. BACKGROUND LOGO */}
       <div className="top-[20%] absolute inset-0 flex  justify-center z-20 select-none">
-        <h1 className="text-[15vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[2px]">
+        <h1 className="text-[12.5vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[2px]">
           ironslip
         </h1>
       </div>
@@ -38,15 +38,15 @@ export default function IronHero() {
       <div className="absolute inset-0 p-8 flex flex-col justify-between z-30 pointer-events-none pt-24">
         <div className="flex justify-between items-start">
           <div className="flex flex-col gap-1">
-            <p className="text-[11px] font-mono text-iron-gray uppercase tracking-widest">
+            <p className="text-[9px] font-mono text-iron-gray uppercase tracking-widest">
               System_Status
             </p>
             {/* Status Dot */}
-            <p className="text-[11px] font-mono text-iron-volt uppercase tracking-widest animate-pulse">
+            <p className="text-[9px] font-mono text-iron-volt uppercase tracking-widest animate-pulse">
               ● Optimal_Output
             </p>
           </div>
-          <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest text-right">
+          <p className="text-[9px] font-mono text-iron-gray uppercase tracking-widest">
             conquer
             <br />
             EST_2026
@@ -56,7 +56,7 @@ export default function IronHero() {
         {/* Bottom HUD */}
         <div className="flex flex-col items-center gap-8 pb-10">
           <div className="flex flex-col items-center text-center">
-            <p className="text-zinc-400 tracking-[0.2em] text-[13px] font-black uppercase">
+            <p className="text-[10px] font-mono text-iron-gray uppercase tracking-widest">
               Build slip. <span className="text-white">Lock in.</span> Win gear.
             </p>
             {/* Gradient Line using variable */}
@@ -64,7 +64,7 @@ export default function IronHero() {
           </div>
 
           <button className="pointer-events-auto h-14 w-64 bg-white text-black font-black uppercase tracking-[0.2em] text-xs shadow-[0_0_20px_var(--iron-volt-glow)] transition-all active:scale-95">
-            Enter The Forge
+            Start the grind
           </button>
         </div>
       </div>
