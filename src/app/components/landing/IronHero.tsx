@@ -105,7 +105,7 @@ export default function IronHero() {
             {/* Bottom HUD Section */}
             <div className="flex flex-col items-center gap-8 pb-10 md:items-end md:pb-24">
               <div className="flex flex-col items-center text-center md:items-end md:text-right">
-                <p className="text-[12px] font-mono text-zinc-400 uppercase tracking-widest md:text-[14px] leading-relaxed">
+                <p className="text-[14px] text-lg font-black uppercase italic tracking-tighter transition-colors">
                   <span className="bg-iron-volt text-iron-red px-1.5 py-0.5 m-1 inline-block">
                     Build slip.
                   </span>
@@ -125,7 +125,7 @@ export default function IronHero() {
               <button className="group relative p-4 bg-white text-iron-black text-[13px] font-mono uppercase tracking-[0.2em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-xl">
                 {/* Custom Glow Layer */}
                 <div className="absolute inset-0 -z-10 bg-iron-volt blur-xl opacity-40 animate-pulse group-hover:opacity-80 transition-opacity" />
-                <span className="relative z-10 font-black">
+                <span className="text-lg font-black uppercase italic tracking-tighter transition-colors">
                   Start the grind
                 </span>
               </button>

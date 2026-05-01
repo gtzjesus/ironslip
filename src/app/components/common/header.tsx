@@ -182,7 +182,7 @@ const Header = () => {
                   href={href}
                   onClick={() => setMenuOpen(false)}
                   className={clsx(
-                    'text-2xl font-black uppercase italic tracking-tighter transition-colors', // Gritty font style
+                    'text-lg font-black uppercase italic tracking-tighter transition-colors', // Gritty font style
                     pathname === href
                       ? 'text-iron-volt'
                       : 'text-iron-red bg-iron-volt p-1 ',
