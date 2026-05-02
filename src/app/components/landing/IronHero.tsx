@@ -71,8 +71,8 @@ export default function IronHero() {
         <div className="top-[27%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
           <h1 className="text-[12.5vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[0px] md:text-[8vw]">
             ironslip
-            {/* Aesthetic Line */}
-            <div className="mt-4 h-[1px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent md:via-transparent md:from-iron-volt" />
+            {/* Aesthetic Line
+            <div className="mt-4 h-[1px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent md:via-transparent md:from-iron-volt" /> */}
           </h1>
         </div>
 
@@ -86,11 +86,11 @@ export default function IronHero() {
           </div>
 
           {/* HUD ELEMENTS */}
-          <div className="absolute inset-0 p-6 flex flex-col justify-between z-30 pointer-events-none  md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
+          <div className="absolute inset-0 px-10 flex flex-col justify-between z-30 pointer-events-none  md:relative md:w-1/2 md:inset-auto md:pt-32 md:pr-20 md:items-end">
             {/* Top HUD Row */}
             <div className="flex justify-between items-start w-full md:flex-col md:items-end md:gap-6">
               <div className="flex flex-col gap-1 md:items-end">
-                <p className="pt-14 text-[9px] font-mono  uppercase tracking-widest md:text-[10px]">
+                <p className="pt-18 text-[9px] font-mono  uppercase tracking-widest md:text-[10px]">
                   Forge your legacy
                 </p>
                 <p className="text-[9px] font-mono text-iron-volt uppercase tracking-widest animate-pulse md:text-[10px]">
@@ -107,14 +107,14 @@ export default function IronHero() {
             {/* Bottom HUD Section */}
             <div className="flex flex-col items-center gap-8 pb-10 md:items-end md:pb-24">
               <div className="flex flex-col items-center text-center md:items-end md:text-right">
-                <p className="text-[16px] text-lg font-black uppercase italic tracking-tighter transition-colors">
-                  <span className="bg-iron-volt text-iron-red px-1.5 py-0.5 m-1 inline-block">
+                <p className="text-[18px] text-lg font-black uppercase italic tracking-tighter transition-colors">
+                  <span className="bg-iron-volt text-iron-red px-1.75 py-0.75 m-1 inline-block">
                     Build slip.
                   </span>
-                  <span className="bg-iron-volt text-iron-red px-1.5 py-0.5 inline-block">
+                  <span className="bg-iron-volt text-iron-red px-1.75 py-0.75 inline-block">
                     Lock in.
                   </span>
-                  <span className="bg-iron-volt text-iron-red px-1.5 py-0.5 m-1 inline-block">
+                  <span className="bg-iron-volt text-iron-red px-1.75 py-0.75 m-1 inline-block">
                     Win gear.
                   </span>
                 </p>
@@ -123,7 +123,7 @@ export default function IronHero() {
               {/* ACTION BUTTON */}
               <button className="group relative p-4 bg-white text-iron-black text-[13px] font-mono uppercase tracking-[0.2em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-xl">
                 {/* Custom Glow Layer */}
-                <div className="absolute inset-0 -z-10 bg-iron-volt blur-xl opacity-40 animate-pulse group-hover:opacity-80 transition-opacity" />
+                <div className="absolute inset-0 -z-10 bg-iron-volt blur-md opacity-95 animate-pulse group-hover:opacity-80 transition-opacity " />
                 <span className="text-lg font-black uppercase italic tracking-tighter transition-colors">
                   Start the grind
                 </span>
