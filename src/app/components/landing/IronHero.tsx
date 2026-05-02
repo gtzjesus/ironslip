@@ -93,7 +93,7 @@ export default function IronHero() {
                 <p className="pt-18 text-[9px] font-mono  uppercase tracking-widest md:text-[10px]">
                   Forge your legacy
                 </p>
-                <p className="text-[9px] font-mono text-iron-volt uppercase tracking-widest animate-pulse md:text-[10px]">
+                <p className="text-[7px] font-mono text-iron-volt uppercase tracking-widest animate-pulse md:text-[10px]">
                   ● Optimal_Output
                 </p>
               </div>
@@ -107,7 +107,7 @@ export default function IronHero() {
             {/* Bottom HUD Section - Adjusted to be more central */}
             <div className="flex flex-col pt-[50%]  justify-center gap-6 flex-grow md:items-end md:pb-0 md:justify-center">
               <div className="flex flex-col items-center text-center md:items-end md:text-right">
-                <p className="text-[18px] text-lg font-black uppercase italic tracking-tighter transition-colors">
+                <p className="text-[17px] text-lg font-black uppercase italic tracking-tighter transition-colors">
                   <span className="bg-iron-volt text-iron-red px-1.75 py-0.75 m-1 inline-block">
                     Build slip.
                   </span>
