@@ -105,7 +105,7 @@ export default function IronHero() {
             </div>
 
             {/* Bottom HUD Section */}
-            <div className="flex flex-col items-center gap-8 pb-10 md:items-end md:pb-24">
+            <div className="flex flex-col items-center gap-5 pb-10 md:items-end md:pb-24">
               <div className="flex flex-col items-center text-center md:items-end md:text-right">
                 <p className="text-[18px] text-lg font-black uppercase italic tracking-tighter transition-colors">
                   <span className="bg-iron-volt text-iron-red px-1.75 py-0.75 m-1 inline-block">
@@ -121,7 +121,7 @@ export default function IronHero() {
               </div>
 
               {/* ACTION BUTTON */}
-              <button className="group relative p-4 bg-white text-iron-black text-[13px] font-mono uppercase tracking-[0.2em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-xl">
+              <button className="group relative p-3 bg-white text-iron-black text-[12px] font-mono uppercase tracking-[0.1em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-md">
                 {/* Custom Glow Layer */}
                 <div className="absolute inset-0 -z-10 bg-iron-volt blur-md opacity-95 animate-pulse group-hover:opacity-80 transition-opacity " />
                 <span className="text-lg font-black uppercase italic tracking-tighter transition-colors">
