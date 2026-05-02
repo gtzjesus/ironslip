@@ -52,7 +52,7 @@ export default function IronHero() {
                 />
               </div>
               <p className="text-[10px] font-mono text-iron-volt uppercase tracking-[0.3em] animate-pulse">
-                Initializing
+                Loading
               </p>
             </div>
           </motion.div>
@@ -68,9 +68,11 @@ export default function IronHero() {
         className={`h-full w-full transition-opacity duration-1000 ${isReady ? 'opacity-100' : 'opacity-0'}`}
       >
         {/* BACKGROUND LOGO */}
-        <div className="top-[30%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
+        <div className="top-[27%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
           <h1 className="text-[12.5vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[0px] md:text-[8vw]">
             ironslip
+            {/* Aesthetic Line */}
+            <div className="mt-4 h-[1px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent md:via-transparent md:from-iron-volt" />
           </h1>
         </div>
 
@@ -88,14 +90,14 @@ export default function IronHero() {
             {/* Top HUD Row */}
             <div className="flex justify-between items-start w-full md:flex-col md:items-end md:gap-6">
               <div className="flex flex-col gap-1 md:items-end">
-                <p className="pt-20 text-[9px] font-mono  uppercase tracking-widest md:text-[10px]">
+                <p className="pt-14 text-[9px] font-mono  uppercase tracking-widest md:text-[10px]">
                   Forge your legacy
                 </p>
                 <p className="text-[9px] font-mono text-iron-volt uppercase tracking-widest animate-pulse md:text-[10px]">
                   ● Optimal_Output
                 </p>
               </div>
-              <p className="pt-36 text-[9px] font-mono  uppercase tracking-widest md:text-[10px] md:text-right">
+              <p className="pt-32 text-[9px] font-mono  uppercase tracking-widest md:text-[10px] md:text-right">
                 evolve with
                 <br />
                 your avatar
@@ -116,9 +118,6 @@ export default function IronHero() {
                     Win gear.
                   </span>
                 </p>
-
-                {/* Aesthetic Line */}
-                <div className="mt-4 h-[2px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent md:via-transparent md:from-iron-volt" />
               </div>
 
               {/* ACTION BUTTON */}
