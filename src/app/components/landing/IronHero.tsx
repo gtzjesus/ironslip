@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRive, Layout, Fit, Alignment } from '@rive-app/react-canvas';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 export default function IronHero() {
   const [isReady, setIsReady] = useState(false);
@@ -121,12 +122,16 @@ export default function IronHero() {
               </div>
 
               {/* ACTION BUTTON */}
-              <button className="group relative p-3 bg-white text-iron-black text-[12px] font-mono uppercase tracking-[0.1em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-md">
+              <Link
+                href="/home"
+                className="group relative p-3 bg-white text-iron-black text-[12px] font-mono uppercase tracking-[0.1em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-md flex items-center justify-center"
+              >
+                {/* Custom Glow Layer */}
                 <div className="absolute inset-0 -z-10 bg-iron-volt blur-md opacity-95 animate-pulse group-hover:opacity-80 transition-opacity " />
                 <span className="text-lg font-black uppercase italic tracking-tighter transition-colors">
                   Start the grind
                 </span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

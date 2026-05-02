@@ -1,5 +1,5 @@
-import Header from './components/common/header';
-import IronHero from './components/landing/IronHero';
+import Header from '../components/common/header';
+import IronHero from '../components/landing/IronHero';
 
 export default function Home() {
   return (
