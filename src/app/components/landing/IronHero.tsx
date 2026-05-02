@@ -8,6 +8,14 @@ import Link from 'next/link';
 export default function IronHero() {
   const [isReady, setIsReady] = useState(false);
 
+  const glitchVariants = {
+    hover: {
+      x: [0, -2, 2, -1, 1, 0],
+      y: [0, 1, -1, 2, -2, 0],
+      transition: { duration: 0.2, repeat: Infinity },
+    },
+  };
+
   // FAIL-SAFE: If Rive takes too long, open the curtain anyway after 3.5s
   useEffect(() => {
     const timer = setTimeout(() => {
