@@ -105,7 +105,7 @@ export default function IronHero() {
             </div>
 
             {/* Bottom HUD Section - Adjusted to be more central */}
-            <div className="flex flex-col items-center justify-center gap-6 flex-grow md:items-end md:pb-0 md:justify-center">
+            <div className="flex flex-col items-center justify-center gap-20 flex-grow md:items-end md:pb-0 md:justify-center">
               <div className="flex flex-col items-center text-center md:items-end md:text-right">
                 <p className="text-[18px] text-lg font-black uppercase italic tracking-tighter transition-colors">
                   <span className="bg-iron-volt text-iron-red px-1.75 py-0.75 m-1 inline-block">
