@@ -100,7 +100,7 @@ export default function AccountPage() {
 
         <div className="pt-10 opacity-20 pointer-events-none">
           <p className="text-[8px] font-mono uppercase text-center tracking-[0.5em]">
-            IronSlip_System_v.1.0.4
+            IronSlip_System_v.1.0.3
           </p>
         </div>
       </div>
