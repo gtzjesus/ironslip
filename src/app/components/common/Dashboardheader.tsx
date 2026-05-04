@@ -21,19 +21,19 @@ export default function Dashboardheader() {
   const userHandle = isSignedIn && fullEmail ? fullEmail.split('@')[0] : null;
 
   return (
-    <header className="mb-8 flex justify-between items-end border-b border-white/5 pb-6">
+    <header className="mb-4 flex justify-between items-end border-b border-white/5 pb-2">
       <div>
         <motion.p
           key={statusLabel}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`${statusColor} font-mono text-[10px] tracking-[0.3em] uppercase ${!isSignedIn ? 'animate-pulse' : ''}`}
+          className={`${statusColor} font-mono text-[8px] tracking-[0.2em] font-black italic uppercase ${!isSignedIn ? 'animate-pulse' : ''}`}
         >
           {statusLabel}
         </motion.p>
 
-        <div className="mt-1">
-          <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none">
+        <div>
+          <h2 className="text-xl font-black italic uppercase tracking-tighter leading-none">
             {userName}
           </h2>
 
@@ -44,7 +44,7 @@ export default function Dashboardheader() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 /* Using a prefix like ID_ makes it feel more like a terminal */
-                className="text-3xl font-black italic uppercase tracking-tighter leading-none"
+                className="text-xl font-black italic uppercase tracking-tighter leading-none"
               >
                 {userHandle}
               </motion.p>
@@ -58,7 +58,7 @@ export default function Dashboardheader() {
           Level
         </p>
         <p
-          className={`text-3xl font-black italic transition-colors duration-500 ${
+          className={`text-xl font-black italic transition-colors duration-500 ${
             isSignedIn ? 'text-iron-volt' : 'text-zinc-800'
           }`}
         >
