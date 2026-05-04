@@ -28,7 +28,7 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
           {isSignedIn ? (
             <span className="text-2xl">→</span>
           ) : (
-            <Lock className="w-5 h-5 animate-pulse" />
+            <Lock className="w-4 h-4 animate-pulse" />
           )}
         </div>
       </motion.div>

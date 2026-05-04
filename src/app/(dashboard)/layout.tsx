@@ -1,4 +1,4 @@
-import BottomNav from '../components/dashboard/BottomNav';
+import BottomNav from '../components/common/BottomNav';
 
 export default function DashboardLayout({
   children,
@@ -9,7 +9,6 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-black text-white">
       {/* Scrollable Area for Content */}
       <main className="pb-24">{children}</main>
-
       {/* Persistent Navigation */}
       <BottomNav />
     </div>
