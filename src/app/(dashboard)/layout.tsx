@@ -6,10 +6,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Scrollable Area for Content */}
-      <main className="pb-24">{children}</main>
-      {/* Persistent Navigation */}
+    <div className="h-screen w-full overflow-hidden bg-black flex flex-col">
+      {/* If you have a global Nav, it goes here */}
+      <main className="flex-grow overflow-hidden">{children}</main>
       <BottomNav />
     </div>
   );

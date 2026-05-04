@@ -40,7 +40,14 @@
     scrollbar-width: none;
   }
 }
+
+html,
 body {
+  height: 100%;
+  overflow: hidden;
+  /* Prevents that annoying rubber-band pull on iOS */
+  position: fixed;
+  width: 100%;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;

@@ -13,19 +13,31 @@ export default function DashboardHome() {
   if (!isLoaded) return null;
 
   return (
-    <main className="px-6 pt-2 max-w-2xl mx-auto">
-      {/* 1. IDENTITY & STATUS SECTION */}
-      <Dashboardheader />
-
-      {/* 2. CORE ACTIONS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-        {/* Pass isSignedIn as a boolean prop to child components */}
-        <IronFeed isSignedIn={!!isSignedIn} />
-        <QuickSlip isSignedIn={!!isSignedIn} />
+    /** * h-screen: Locks the page to the device height
+     * overflow-hidden: Disables the "document" scroll
+     * flex-col: Allows us to stack the header and content
+     */
+    <main className="h-screen w-full overflow-hidden flex flex-col bg-black px-6 pt-2 max-w-2xl mx-auto">
+      {/* 1. IDENTITY & STATUS SECTION (STAYS FIXED) */}
+      <div className="flex-shrink-0">
+        <Dashboardheader />
       </div>
 
-      {/* 3. LIST DATA SECTION */}
-      {/* <DailySlips isSignedIn={!!isSignedIn} /> */}
+      {/* 2. SCROLLABLE CONTENT AREA 
+          flex-grow: Fills remaining space
+          overflow-y-auto: Only this section scrolls if content overflows
+      */}
+      <div className="flex-grow overflow-y-auto overflow-x-hidden pr-1 pb-20 scrollbar-hide">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          <IronFeed isSignedIn={!!isSignedIn} />
+          <QuickSlip isSignedIn={!!isSignedIn} />
+        </div>
+
+        {/* 3. LIST DATA SECTION */}
+        <div className="mt-4">
+          {/* <DailySlips isSignedIn={!!isSignedIn} /> */}
+        </div>
+      </div>
     </main>
   );
 }
