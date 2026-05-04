@@ -30,7 +30,7 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="relative p-3 group"
+              className="relative p-1 group"
             >
               {isActive && (
                 <motion.div
@@ -50,7 +50,7 @@ export default function BottomNav() {
                   }`}
                 />
                 <span
-                  className={`text-[8px] mt-1 font-mono uppercase tracking-tighter transition-colors duration-300 ${
+                  className={`text-[7px] mt-1 font-mono uppercase tracking-tighter transition-colors duration-300 ${
                     isActive ? themeColor : 'text-zinc-500'
                   }`}
                 >
@@ -61,7 +61,7 @@ export default function BottomNav() {
                 {isActive && (
                   <motion.div
                     layoutId="active-dot"
-                    className={`h-[2px] w-1 mt-1 rounded-full ${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'}`}
+                    className={`h-[2px] w-1  rounded-full ${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'}`}
                   />
                 )}
               </div>
