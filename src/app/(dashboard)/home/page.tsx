@@ -13,7 +13,7 @@ export default function DashboardHome() {
   if (!isLoaded) return null;
 
   return (
-    <main className="p-6 pt-12 max-w-2xl mx-auto mb-20">
+    <main className="px-6 pt-2 max-w-2xl mx-auto">
       {/* 1. IDENTITY & STATUS SECTION */}
       <Dashboardheader />
 
