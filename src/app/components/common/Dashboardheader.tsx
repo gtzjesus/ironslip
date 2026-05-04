@@ -9,6 +9,7 @@ export default function Dashboardheader() {
   if (!isLoaded) return <div className="h-24" />;
 
   const statusColor = isSignedIn ? 'text-iron-volt' : 'text-iron-red';
+  const borderColor = isSignedIn ? 'border-iron-volt/30' : 'border-iron-red/30';
   const statusLabel = isSignedIn ? 'ACCESS_GRANTED' : 'ACCESS_RESTRICTED';
 
   const userName = isSignedIn
@@ -21,13 +22,15 @@ export default function Dashboardheader() {
   const userHandle = isSignedIn && fullEmail ? fullEmail.split('@')[0] : null;
 
   return (
-    <header className="mb-4 flex justify-between items-end border-b border-white/5 pb-2">
+    <header
+      className={`mb-4 flex justify-between items-end border-b ${borderColor} pb-2 transition-colors duration-700`}
+    >
       <div>
         <motion.p
           key={statusLabel}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`${statusColor} mb-1 font-mono text-[8px] tracking-[0.2em] font-black italic uppercase ${!isSignedIn ? 'animate-pulse' : ''}`}
+          className={`${statusColor} mb-2 font-mono text-[8px] tracking-[0.2em] font-black italic uppercase ${!isSignedIn ? 'animate-pulse' : ''}`}
         >
           {statusLabel}
         </motion.p>

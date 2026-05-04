@@ -11,7 +11,7 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         whileTap={{ scale: 0.95 }}
-        className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-colors duration-200 min-h-[120px]`}
+        className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-colors duration-200 min-h-[100px]`}
       >
         <h3 className="text-black font-black italic text-xl uppercase leading-none">
           {isSignedIn ? (
