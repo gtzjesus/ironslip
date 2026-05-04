@@ -27,7 +27,7 @@ export default function Dashboardheader() {
           key={statusLabel}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`${statusColor} font-mono text-[8px] tracking-[0.2em] font-black italic uppercase ${!isSignedIn ? 'animate-pulse' : ''}`}
+          className={`${statusColor} mb-1 font-mono text-[8px] tracking-[0.2em] font-black italic uppercase ${!isSignedIn ? 'animate-pulse' : ''}`}
         >
           {statusLabel}
         </motion.p>
