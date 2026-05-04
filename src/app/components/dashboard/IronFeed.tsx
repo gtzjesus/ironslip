@@ -75,7 +75,7 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
   const borderColor = isSignedIn ? 'border-iron-volt/20' : 'border-iron-red/20';
 
   return (
-    <section className="flex flex-col h-[400px] w-full relative">
+    <section className="flex flex-col h-[380px] w-full relative">
       {/* HEADER */}
       <div className="flex justify-between items-end mb-5 px-1">
         <div>

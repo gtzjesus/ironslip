@@ -54,7 +54,7 @@ export default function Dashboardheader() {
       </div>
 
       <div className="text-right ">
-        <p className="text-zinc-500 font-mono text-[7px]  uppercase tracking-widest">
+        <p className="text-zinc-500 font-mono text-[6px] font-black italic  uppercase tracking-widest">
           Level
         </p>
         <p
