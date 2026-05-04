@@ -1,10 +1,11 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useClerk } from '@clerk/nextjs';
 
 export default function Dashboardheader() {
   const { isSignedIn, user, isLoaded } = useUser();
+  const { openUserProfile } = useClerk(); // This is the hook to trigger the Clerk UI
 
   if (!isLoaded) return <div className="h-24" />;
 
@@ -16,8 +17,6 @@ export default function Dashboardheader() {
     ? user?.username || user?.firstName
     : 'Unidentified user';
 
-  // --- EMAIL LOGIC UPDATE ---
-  // We grab the full email, then split it at the '@' and take the first part [0]
   const fullEmail = user?.primaryEmailAddress?.emailAddress;
   const userHandle = isSignedIn && fullEmail ? fullEmail.split('@')[0] : null;
 
@@ -46,7 +45,6 @@ export default function Dashboardheader() {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                /* Using a prefix like ID_ makes it feel more like a terminal */
                 className="text-xl font-black italic uppercase tracking-tighter leading-none"
               >
                 {userHandle}
@@ -56,8 +54,8 @@ export default function Dashboardheader() {
         </div>
       </div>
 
-      <div className="text-right ">
-        <p className="text-zinc-500 font-mono text-[6px] font-black italic  uppercase tracking-widest">
+      <div className="text-right flex flex-col items-end gap-1">
+        <p className="text-zinc-500 font-mono text-[6px] font-black italic uppercase tracking-widest">
           Level
         </p>
         <p
@@ -67,6 +65,20 @@ export default function Dashboardheader() {
         >
           {isSignedIn ? '01' : 'NULL'}
         </p>
+
+        {/* THE CUSTOM HOOK TRIGGER */}
+        <AnimatePresence>
+          {isSignedIn && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onClick={() => openUserProfile()}
+              className="text-[7px] font-mono text-zinc-500 hover:text-iron-volt transition-colors border border-zinc-800 hover:border-iron-volt/30 px-1 py-0.5 mt-1 uppercase"
+            >
+              [ ID_SETTINGS ]
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );

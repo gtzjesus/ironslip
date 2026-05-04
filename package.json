@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.3.0",
+    "@clerk/themes": "^2.4.57",
     "@rive-app/react-canvas": "^4.28.3",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.23.0",

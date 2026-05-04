@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
+import { dark } from '@clerk/themes';
 
 export const metadata: Metadata = {
   title: {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
     'Forge the slip. Lock in your output. Evolve your avatar and extract premium physical and digital gear.',
   authors: [
     { name: 'Iron Slip | Forge Your Legacy', url: 'https://ironslip.com' },
-  ], // Update once you have your domain
+  ],
   metadataBase: new URL('https://ironslip.com'),
   keywords: [
     'Iron Slip',
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     siteName: 'Iron Slip | Forge Your Legacy',
     images: [
       {
-        url: '/og-preview.png', // Create this image later for social shares
+        url: '/og-preview.png',
         width: 1200,
         height: 630,
         alt: 'Iron Slip | Forge Your Legacy Interface',
@@ -44,14 +45,13 @@ export const metadata: Metadata = {
   },
 };
 
-// This handles your Chrome/Safari mobile height bugs properly
 export const viewport: Viewport = {
   themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false, // Prevents accidental zooming on mobile
-  viewportFit: 'cover', // Ensures content fills the screen around notches
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -60,9 +60,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>{children}</body>
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+        variables: {
+          colorPrimary: '#FFD300', // Iron Volt
+          colorBackground: '#000000',
+          colorInputBackground: '#09090b', // Zinc 950
+          colorInputText: '#ffffff',
+          colorTextOnPrimaryBackground: '#000000',
+          borderRadius: '0px', // Forces that sharp tactical look
+        },
+        elements: {
+          card: 'border border-white/10 shadow-none bg-black',
+          navbar: 'hidden', // Simplifies the profile settings modal
+          footer: 'hidden', // Removes "Powered by Clerk"
+          scrollBox: 'scrollbar-hide',
+          userButtonPopoverCard: 'border border-white/10 bg-black shadow-none',
+          actionConfirmerPrimaryAction__confirm:
+            'bg-iron-volt text-black font-bold uppercase italic',
+        },
+      }}
+    >
+      <html lang="en" className="bg-black scrollbar-hide">
+        <body className="antialiased selection:bg-iron-volt selection:text-black overflow-hidden">
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );
