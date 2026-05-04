@@ -65,20 +65,6 @@ export default function Dashboardheader() {
         >
           {isSignedIn ? '01' : 'NULL'}
         </p>
-
-        {/* THE CUSTOM HOOK TRIGGER */}
-        <AnimatePresence>
-          {isSignedIn && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              onClick={() => openUserProfile()}
-              className="text-[7px] font-mono text-zinc-500 hover:text-iron-volt transition-colors border border-zinc-800 hover:border-iron-volt/30 px-1 py-0.5 mt-1 uppercase"
-            >
-              [ ID_SETTINGS ]
-            </motion.button>
-          )}
-        </AnimatePresence>
       </div>
     </header>
   );
