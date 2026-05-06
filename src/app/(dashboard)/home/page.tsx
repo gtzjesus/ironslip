@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import QuickSlip from '@/app/components/dashboard/QuickSlip';
 import IronFeed from '@/app/components/dashboard/IronFeed';
-import Dashboardheader from '@/app/components/common/Dashboardheader';
+import Dashboardheader from '@/app/components/common/Feedheader';
 
 export default function DashboardHome() {
   const { isSignedIn, isLoaded } = useUser();
