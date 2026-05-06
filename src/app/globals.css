@@ -67,7 +67,7 @@ body {
   }
   100% {
     transform: translateX(0) skewX(0);
-    filter: brightness(0.8);
+    filter: brightness(0.75);
   }
 }
 
