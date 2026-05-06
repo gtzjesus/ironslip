@@ -1,7 +1,8 @@
 'use client';
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
-import { SignUpButton } from '@clerk/nextjs'; // Swapped to SignUpButton
+import { SignUpButton } from '@clerk/nextjs';
+import Link from 'next/link';
 
 export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
   // 1. We define the inner content so we don't repeat code
@@ -34,12 +35,12 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
     </motion.div>
   );
 
-  // 2. If signed in, return the button as a normal div (or link to builder)
+  // 2. If signed in, wrap in Link to navigate to /slips
   if (isSignedIn) {
     return (
-      <div onClick={() => console.log('Navigate to builder')}>
+      <Link href="/slips" className="block no-underline">
         {ButtonContent}
-      </div>
+      </Link>
     );
   }
 
