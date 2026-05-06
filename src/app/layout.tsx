@@ -11,7 +11,6 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
-      // 1. ADD THIS SECTION TO OVERWRITE TEXT
       localization={{
         signUp: {
           start: {
@@ -30,47 +29,50 @@ export default function RootLayout({
           },
         },
       }}
-      // 2. KEEP YOUR EXISTING APPEARANCE SETTINGS
       appearance={{
         baseTheme: dark,
         variables: {
-          colorPrimary: '#ffd300', // Iron Volt (Button Color)
-          colorBackground: '#ff003c', // Your Red Background
-          colorText: '#ffffff', // Main Titles/Text
-          colorTextOnPrimaryBackground: '#000000', // THIS MAKES BUTTON TEXT BLACK
-          colorInputBackground: '#000000', // Black inputs look better on Red
-          colorInputText: '#ffffff',
+          colorPrimary: '#ffd300', // Iron Volt (Yellow Button)
+          colorBackground: '#000000', // Black Background
+          colorText: '#ff003c', // Global Red Text
+          colorInputBackground: '#000000',
+          colorInputText: '#ff003c',
           borderRadius: '0px',
         },
         elements: {
-          card: 'border-none shadow-2xl rounded-none',
+          card: 'border-none shadow-none bg-black',
           footer: 'hidden',
-          // 1. THE TRIPLE-THREAT BRANDING KILLER
           'clerk-branding': 'hidden',
-          clerkBranding: 'hidden',
-          clerkBrandingAnchor: 'hidden',
-          /**
-           * FORCE OVERRIDE FOR THE BUTTON
-           * !text-black: The '!' makes it !important in Tailwind
-           * to crush any default Clerk styles.
-           */
+
+          // FORCING THE HEADER TEXT TO RED
+          headerTitle:
+            'text-[#ff003c] font-black italic uppercase tracking-tighter',
+          headerSubtitle: 'text-[#ff003c]/70 font-mono',
+
+          // INPUT FIELDS: Red text, black bg, red border
+          formFieldInput:
+            'bg-black border border-[#ff003c]/30 text-[#ff003c] focus:border-[#ff003c] transition-all',
+          formFieldLabel: 'text-[#ff003c] uppercase font-mono text-[10px]',
+
+          // THE BUTTON: Keeping it yellow with black text for that high-contrast look
           formButtonPrimary:
             'bg-[#ffd300] !text-black font-black uppercase italic hover:bg-white transition-all',
 
-          // Styling the "switch" links at the bottom
+          // FOOTER LINKS (Authenticate / Become Iron)
           footerActionLink:
-            'text-black hover:text-white font-mono text-[10px] uppercase font-bold',
-          footerActionText: 'text-black/60 font-mono text-[10px] uppercase',
+            'text-[#ff003c] hover:text-white font-mono text-[10px] uppercase font-bold',
+          footerActionText: 'text-[#ff003c]/50 font-mono text-[10px] uppercase',
 
-          // Ensuring header text doesn't get lost
-          headerTitle:
-            'text-black font-black italic uppercase tracking-tighter',
-          headerSubtitle: 'text-black/70 font-mono',
+          // Identity Preview (The "You are signed in as..." text)
+          identityPreviewText: 'text-[#ff003c]',
+          identityPreviewEditButtonIcon: 'text-[#ff003c]',
         },
       }}
     >
-      <html lang="en">
-        <body>{children}</body>
+      <html lang="en" className="bg-black">
+        <body className="bg-black text-white selection:bg-[#ff003c] selection:text-white">
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );
