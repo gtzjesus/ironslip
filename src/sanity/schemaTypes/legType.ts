@@ -133,13 +133,6 @@ export const legType = defineType({
         ],
       },
     }),
-    defineField({
-      name: 'referenceImage',
-      title: 'Instructional Image',
-      type: 'image',
-      description: 'Help the user see how to perform the leg.',
-      options: { hotspot: true },
-    }),
   ],
 
   // 7. STUDIO PREVIEW (Keep it clean)

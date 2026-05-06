@@ -1,9 +1,9 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import QuickSlip from '@/app/components/dashboard/QuickSlip';
-import IronFeed from '@/app/components/dashboard/IronFeed';
-import Dashboardheader from '@/app/components/common/Feedheader';
+import QuickSlip from '@/app/components/dashboard/common/QuickSlip';
+import IronFeed from '@/app/components/dashboard/feed/IronFeed';
+import Dashboardheader from '@/app/components/dashboard/feed/Feedheader';
 
 export default function DashboardHome() {
   const { isSignedIn, isLoaded } = useUser();

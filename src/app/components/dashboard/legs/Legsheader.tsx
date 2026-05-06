@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useUser } from '@clerk/nextjs';
 import { Zap } from 'lucide-react'; // For that 'Credit' vibe
 
-export default function SlipHeader() {
+export default function LegsHeader() {
   const { isSignedIn, user, isLoaded } = useUser();
 
   if (!isLoaded) return <div className="h-24" />;

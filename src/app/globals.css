@@ -84,6 +84,26 @@ body {
   }
 }
 
+@layer utilities {
+  @keyframes scan {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(600%);
+    }
+  }
+
+  /* Si quieres ocultar el scrollbar de forma limpia con Tailwind */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 /* 3. APPLYING BOTH TO THE CLERK MODAL */
 .cl-modalContent {
   /* forgeSlam runs once for 0.6s */
