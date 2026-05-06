@@ -56,47 +56,40 @@ body {
 /* 1. THE ENTRANCE SLAM */
 @keyframes forgeSlam {
   0% {
-    transform: translateX(-100vw) skewX(20deg);
-    filter: brightness(3);
+    transform: translateX(-100vw) skewX(10deg);
     opacity: 0;
-  }
-  70% {
-    transform: translateX(4vw) skewX(-5deg);
-    filter: brightness(1.2);
   }
   100% {
     transform: translateX(0) skewX(0);
-    filter: brightness(1);
-    opacity: 1;
+    opacity: 0.75;
   }
 }
 
-/* 2. THE CONTINUOUS POWER PULSE */
+/* 2. THE TACTICAL PULSE (Subtle and Deep) */
 @keyframes forgePulse {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(255, 211, 0, 0.2);
-    border-color: #ffd300;
+    box-shadow: 0 0 15px rgba(196, 160, 0, 0.2); /* Using the darker gold */
+    border-color: #c4a000;
   }
   50% {
-    box-shadow: 0 0 50px rgba(255, 211, 0, 0.6);
-    border-color: #fff; /* Border flashes white slightly on the peak of the pulse */
+    box-shadow: 0 0 30px rgba(196, 160, 0, 0.4);
+    border-color: #8a7100; /* Pulses even darker */
   }
 }
 
-/* 3. APPLYING TO CLERK */
+/* 3. THE CLERK MODAL */
 .cl-modalContent {
-  /* We run forgeSlam once (0.6s) and forgePulse infinitely (3s) */
   animation:
     forgeSlam 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards,
-    forgePulse 3s ease-in-out infinite 0.6s; /* 0.6s delay so it starts after the slam */
+    forgePulse 5s ease-in-out infinite 0.6s; /* Slower 5s pulse is way more chill */
 
-  border: 4px solid #ffd300 !important;
-  background-color: white !important;
-  position: relative;
+  border: 3px solid #c4a000 !important;
+  background-color: #ffffff !important;
+  border-radius: 0px !important;
 }
 
-/* Add some scanline texture directly to the modal for that CRT look */
+/* 4. TINTED SCANLINES */
 .cl-modalContent::before {
   content: ' ';
   position: absolute;
@@ -104,7 +97,11 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+  /* Subtle amber tint on the scanlines to match the gold */
+  background: linear-gradient(
+    rgba(196, 160, 0, 0) 50%,
+    rgba(196, 160, 0, 0.03) 50%
+  );
   background-size: 100% 4px;
   z-index: 10;
   pointer-events: none;
