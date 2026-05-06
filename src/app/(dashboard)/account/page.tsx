@@ -12,39 +12,27 @@ export default function AccountPage() {
   // --- LOGGED OUT STATE (Identity Required) ---
   if (!isSignedIn) {
     return (
-      <div className="p-6 pt-12 flex flex-col items-center justify-center min-h-[70vh]">
+      <div className="pt-6 flex flex-col items-center justify-center min-h-[70vh]">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-sm text-center"
         >
-          <header className="mb-8">
-            <p className="text-iron-red font-mono text-[10px] tracking-[0.3em] uppercase flex items-center justify-center gap-2">
-              <ShieldAlert className="w-3 h-3 animate-pulse" />{' '}
-              Identity_Required
-            </p>
-            <h2 className="text-4xl font-black italic uppercase tracking-tighter">
-              Login to <span className="text-iron-red">Access</span>
-            </h2>
-          </header>
-
-          <div className="bg-zinc-900/50 border border-white/5 p-2 rounded-sm shadow-2xl">
-            <SignIn
-              routing="hash"
-              appearance={{
-                elements: {
-                  card: 'bg-transparent shadow-none border-none',
-                  headerTitle: 'hidden',
-                  headerSubtitle: 'hidden',
-                  socialButtonsBlockButton:
-                    'bg-zinc-800 border-white/5 text-white hover:bg-zinc-700 transition-all',
-                  formButtonPrimary:
-                    'bg-iron-red hover:bg-white text-black font-black uppercase italic transition-all',
-                  footer: 'hidden',
-                },
-              }}
-            />
-          </div>
+          <SignIn
+            routing="hash"
+            appearance={{
+              elements: {
+                card: 'bg-transparent shadow-none border-none',
+                headerTitle: 'hidden',
+                headerSubtitle: 'hidden',
+                socialButtonsBlockButton:
+                  'bg-zinc-800 border-white/5 text-white hover:bg-zinc-700 transition-all',
+                formButtonPrimary:
+                  'bg-iron-red hover:bg-white text-black font-black uppercase italic transition-all',
+                footer: 'hidden',
+              },
+            }}
+          />
         </motion.div>
       </div>
     );
