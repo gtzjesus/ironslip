@@ -28,10 +28,10 @@ export default function SlipHeader() {
 
         <div className="flex items-baseline gap-2">
           <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none">
-            SLIPS
+            Iron Legs
           </h2>
           <span className="text-zinc-600 font-mono text-[10px] italic uppercase">
-            / Build_Module
+            / Build_your_slip
           </span>
         </div>
       </div>

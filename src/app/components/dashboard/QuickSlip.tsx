@@ -35,10 +35,10 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
     </motion.div>
   );
 
-  // 2. If signed in, wrap in Link to navigate to /slips
+  // 2. If signed in, wrap in Link to navigate to /legs
   if (isSignedIn) {
     return (
-      <Link href="/slips" className="block no-underline">
+      <Link href="/legs" className="block no-underline">
         {ButtonContent}
       </Link>
     );

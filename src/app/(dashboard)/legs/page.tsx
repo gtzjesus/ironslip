@@ -2,7 +2,7 @@
 import SlipHeader from '@/app/components/common/Slipheader';
 import { useLegs } from '@/hooks/useLegs';
 
-export default function SlipsPage() {
+export default function LegsPage() {
   const { legs, loading } = useLegs();
 
   return (

@@ -7,7 +7,7 @@ import { useUser } from '@clerk/nextjs'; // Import Clerk hook
 
 const navItems = [
   { name: 'Feed', href: '/home', icon: Home },
-  { name: 'Slips', href: '/slips', icon: Ticket },
+  { name: 'Legs', href: '/legs', icon: Ticket },
   { name: 'Shop', href: '/shop', icon: ShoppingBag },
   { name: 'Avatar', href: '/avatar', icon: User },
 ];

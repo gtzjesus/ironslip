@@ -23,11 +23,33 @@ export const legType = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+    // Replace 'weightRequirement' with these two
     defineField({
-      name: 'weightRequirement',
-      title: 'Weight/Intensity',
+      name: 'requirementValue',
+      title: 'Requirement Value',
       type: 'string',
-      description: 'e.g., 145lb, Bodyweight, or Max Effort',
+      description: 'The number or goal (e.g., 145, 5, 30, 10k)',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'requirementUnit',
+      title: 'Unit/Label',
+      type: 'string',
+      description: 'e.g., Lbs, Miles, Minutes, Steps, Reps',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Iron (Gym)', value: 'iron' },
+          { title: 'Cardio (Move)', value: 'cardio' },
+          { title: 'Lifestyle (Life)', value: 'lifestyle' },
+          { title: 'Wildcard (Sport)', value: 'wildcard' },
+        ],
+      },
     }),
     defineField({
       name: 'verificationMethod',
