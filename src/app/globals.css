@@ -57,12 +57,12 @@ body {
 @keyframes forgeSlam {
   0% {
     transform: translateX(-100vw) skewX(20deg);
-    filter: brightness(1);
+    filter: brightness(0);
     opacity: 0;
   }
   70% {
     transform: translateX(5vw) skewX(-5deg);
-    filter: brightness(1.5);
+    filter: brightness(1);
     opacity: 1;
   }
   100% {
