@@ -16,7 +16,7 @@ export default function RootLayout({
         signUp: {
           start: {
             title: 'Hello User',
-            subtitle: 'Join the iron community and being your grind.',
+            subtitle: 'Join the IRON COMMUNITY and begin your grind.',
             actionText: 'Already an Iron?',
             actionLink: 'Authenticate',
           },
@@ -45,7 +45,10 @@ export default function RootLayout({
         elements: {
           card: 'border-none shadow-2xl rounded-none',
           footer: 'hidden',
+          // 1. THE TRIPLE-THREAT BRANDING KILLER
           'clerk-branding': 'hidden',
+          clerkBranding: 'hidden',
+          clerkBrandingAnchor: 'hidden',
           /**
            * FORCE OVERRIDE FOR THE BUTTON
            * !text-black: The '!' makes it !important in Tailwind
