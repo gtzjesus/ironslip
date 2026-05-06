@@ -34,13 +34,35 @@ export default function RootLayout({
       appearance={{
         baseTheme: dark,
         variables: {
-          colorPrimary: '#ffd300',
-          colorBackground: '#ff003c',
+          colorPrimary: '#ffd300', // Iron Volt (Button Color)
+          colorBackground: '#ff003c', // Your Red Background
+          colorText: '#ffffff', // Main Titles/Text
+          colorTextOnPrimaryBackground: '#000000', // THIS MAKES BUTTON TEXT BLACK
+          colorInputBackground: '#000000', // Black inputs look better on Red
+          colorInputText: '#ffffff',
           borderRadius: '0px',
         },
         elements: {
+          card: 'border-none shadow-2xl rounded-none',
           footer: 'hidden',
           'clerk-branding': 'hidden',
+          /**
+           * FORCE OVERRIDE FOR THE BUTTON
+           * !text-black: The '!' makes it !important in Tailwind
+           * to crush any default Clerk styles.
+           */
+          formButtonPrimary:
+            'bg-[#ffd300] !text-black font-black uppercase italic hover:bg-white transition-all',
+
+          // Styling the "switch" links at the bottom
+          footerActionLink:
+            'text-black hover:text-white font-mono text-[10px] uppercase font-bold',
+          footerActionText: 'text-black/60 font-mono text-[10px] uppercase',
+
+          // Ensuring header text doesn't get lost
+          headerTitle:
+            'text-black font-black italic uppercase tracking-tighter',
+          headerSubtitle: 'text-black/70 font-mono',
         },
       }}
     >
