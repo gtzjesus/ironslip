@@ -12,32 +12,44 @@ export default function AccountPage() {
   // --- LOGGED OUT STATE (Identity Required) ---
   if (!isSignedIn) {
     return (
-      <div className="pt-6 flex flex-col items-center justify-center min-h-[70vh]">
+      /* h-screen: Occupies full height
+       w-full: Occupies full width
+       items-center & justify-center: The Flexbox "X" marks the spot 
+    */
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-black z-50">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-sm text-center"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          /* w-full max-w-[400px]: Gives it a solid container 
+           flex justify-center: Forces the Clerk internal card to stay put
+        */
+          className="w-full max-w-[400px] p-4 flex justify-center"
         >
           <SignIn
             routing="hash"
             appearance={{
               elements: {
-                card: 'bg-transparent shadow-none border-none',
+                // ROOT PROVIDER FIX: This is the magic key
+                rootBox: 'w-full flex justify-center',
+                card: 'bg-transparent shadow-none border-none w-full',
                 headerTitle: 'hidden',
                 headerSubtitle: 'hidden',
                 socialButtonsBlockButton:
-                  'bg-zinc-800 border-white/5 text-white hover:bg-zinc-700 transition-all',
+                  'bg-zinc-800 border-white/5 text-white hover:bg-zinc-700 transition-all rounded-none',
                 formButtonPrimary:
-                  'bg-iron-red hover:bg-white text-black font-black uppercase italic transition-all',
+                  'bg-iron-red hover:bg-white text-black font-black uppercase italic transition-all rounded-none',
                 footer: 'hidden',
+                'clerk-branding': 'hidden',
               },
             }}
           />
         </motion.div>
+
+        {/* Visual background element to make it feel less "empty" */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-iron-red/5 via-transparent to-transparent pointer-events-none" />
       </div>
     );
   }
-
   // --- LOGGED IN STATE (Operator Profile) ---
   return (
     <div className="p-6 pt-12 max-w-2xl mx-auto">
