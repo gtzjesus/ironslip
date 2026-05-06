@@ -62,12 +62,12 @@ body {
   }
   70% {
     transform: translateX(5vw) skewX(-5deg);
-    filter: brightness(1);
+    filter: brightness(0.8);
     opacity: 1;
   }
   100% {
     transform: translateX(0) skewX(0);
-    filter: brightness(0.75);
+    filter: brightness(0.65);
   }
 }
 
