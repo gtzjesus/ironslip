@@ -22,59 +22,60 @@ export default function RootLayout({
         signIn: {
           start: {
             title: 'AUTHENTICATE, USER',
-            subtitle:
-              'Access your iron dashboard. Enter your iron credentials.',
+            subtitle: 'Access your iron dashboard. Enter your credentials.',
             actionText: 'New to the forge?',
             actionLink: 'Become Iron',
           },
         },
       }}
       appearance={{
-        /* 1. We remove 'baseTheme: dark' to get the clean light version */
         variables: {
-          colorPrimary: '#ff003c', // Iron Volt (Yellow)
-          colorBackground: '#ffd300', // Clean White
+          colorPrimary: '#ff003c', // Iron Red for primary actions
+          colorBackground: '#ffd300', // Your custom Yellow Background
           colorText: '#000000', // Bold Black Text
-          colorInputBackground: '#f4f4f5', // Zinc 100 (Light Grey)
+          colorInputBackground: '#f4f4f5',
           colorInputText: '#000000',
           borderRadius: '0px',
         },
         elements: {
-          card: 'border-none shadow-none bg-white',
+          card: 'bg-white border-none shadow-none',
+          modalContent: 'p-0', // Set to transparent so the background shines through
           footer: 'hidden',
           'clerk-branding': 'hidden',
 
           /* TITLES & SUBTITLES */
           headerTitle:
-            ' text-black font-black italic  tracking-tighter text-2xl',
+            'text-black font-black italic uppercase tracking-tighter text-2xl',
           headerSubtitle:
-            'uppercase text-black italic font-black text-zinc-500 font-mono text-[10px]  tracking-widest',
+            'text-black italic font-mono text-[10px] uppercase tracking-widest opacity-70',
 
-          /* THE BUTTON: Yellow with Black text (This always looks fire) */
+          /* THE BUTTON: Yellow-themed setup with Black text */
           formButtonPrimary:
-            'bg-[#ffd300] !text-black font-black  italic hover:bg-black hover:text-white transition-all py-3 shadow-md',
+            'bg-black !text-[#ffd300] font-black uppercase italic hover:bg-white hover:text-black transition-all py-3 shadow-md',
 
           /* INPUT FIELDS */
           formFieldLabel:
-            'uppercase text-black italic text-black italic text-black font-mono text-[10px]  tracking-widest mb-1 font-bold',
+            'text-black font-mono text-[10px] uppercase tracking-widest mb-1 font-bold italic',
           formFieldInput:
-            'uppercase text-black italic bg-zinc-100 border border-zinc-200 text-black focus:border-[#ffd300] transition-all py-3',
+            'bg-white/80 border border-black/10 text-black focus:border-black transition-all py-3 px-4 italic ',
 
           /* LINKS AT BOTTOM */
           footerActionLink:
-            'text-black hover:text-[#ffd300] font-mono text-[10px]  font-black underline decoration-2',
+            'text-black hover:text-[#ff003c] font-mono text-[10px] font-black underline decoration-2 uppercase',
           footerActionText:
-            'uppercase text-black italic text-zinc-400 font-mono text-[10px] ',
+            'text-black/50 font-mono text-[10px] uppercase italic',
 
           /* IDENTITY PREVIEW */
           identityPreviewText:
-            'uppercase text-black italictext-black font-mono font-bold',
+            'text-black font-mono font-bold uppercase italic',
           identityPreviewEditButtonIcon: 'text-black',
         },
       }}
     >
-      <html lang="en">
-        <body>{children}</body>
+      <html lang="en" className="bg-black">
+        <body className="bg-black text-white antialiased selection:bg-[#ffd300] selection:text-black">
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );

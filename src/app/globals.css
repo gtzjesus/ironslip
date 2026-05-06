@@ -52,3 +52,60 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* 1. THE ENTRANCE SLAM */
+@keyframes forgeSlam {
+  0% {
+    transform: translateX(-100vw) skewX(20deg);
+    filter: brightness(3);
+    opacity: 0;
+  }
+  70% {
+    transform: translateX(4vw) skewX(-5deg);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: translateX(0) skewX(0);
+    filter: brightness(1);
+    opacity: 1;
+  }
+}
+
+/* 2. THE CONTINUOUS POWER PULSE */
+@keyframes forgePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 211, 0, 0.2);
+    border-color: #ffd300;
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(255, 211, 0, 0.6);
+    border-color: #fff; /* Border flashes white slightly on the peak of the pulse */
+  }
+}
+
+/* 3. APPLYING TO CLERK */
+.cl-modalContent {
+  /* We run forgeSlam once (0.6s) and forgePulse infinitely (3s) */
+  animation:
+    forgeSlam 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards,
+    forgePulse 3s ease-in-out infinite 0.6s; /* 0.6s delay so it starts after the slam */
+
+  border: 4px solid #ffd300 !important;
+  background-color: white !important;
+  position: relative;
+}
+
+/* Add some scanline texture directly to the modal for that CRT look */
+.cl-modalContent::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+  background-size: 100% 4px;
+  z-index: 10;
+  pointer-events: none;
+}
