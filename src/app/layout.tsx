@@ -2,7 +2,6 @@
 
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
-import { dark } from '@clerk/themes';
 
 export default function RootLayout({
   children,
@@ -14,65 +13,68 @@ export default function RootLayout({
       localization={{
         signUp: {
           start: {
-            title: 'Hello User',
-            subtitle: 'Join the IRON COMMUNITY and begin your grind.',
+            title: 'HELLO USER',
+            subtitle: 'Your avatar is waiting. Enter the Forge.',
             actionText: 'Already an Iron?',
             actionLink: 'Authenticate',
           },
         },
         signIn: {
           start: {
-            title: 'Authenticate, User',
-            subtitle: 'Access your iron dashboard. Enter credentials.',
+            title: 'AUTHENTICATE, USER',
+            subtitle:
+              'Access your iron dashboard. Enter your iron credentials.',
             actionText: 'New to the forge?',
             actionLink: 'Become Iron',
           },
         },
       }}
       appearance={{
-        baseTheme: dark,
+        /* 1. We remove 'baseTheme: dark' to get the clean light version */
         variables: {
-          colorPrimary: '#ffd300', // Iron Volt (Yellow Button)
-          colorBackground: '#cd3c3c', // Black Background
-          colorText: '#ff003c', // Global Red Text
-          colorInputBackground: '#000000',
-          colorInputText: '#ff003c',
+          colorPrimary: '#ff003c', // Iron Volt (Yellow)
+          colorBackground: '#ffd300', // Clean White
+          colorText: '#000000', // Bold Black Text
+          colorInputBackground: '#f4f4f5', // Zinc 100 (Light Grey)
+          colorInputText: '#000000',
           borderRadius: '0px',
         },
         elements: {
-          card: 'border-none shadow-none bg-black',
+          card: 'border-none shadow-none bg-white',
           footer: 'hidden',
           'clerk-branding': 'hidden',
 
-          // FORCING THE HEADER TEXT TO RED
+          /* TITLES & SUBTITLES */
           headerTitle:
-            'text-[#ff003c] font-black italic uppercase tracking-tighter',
-          headerSubtitle: 'text-[#ff003c]/70 font-mono',
+            ' text-black font-black italic  tracking-tighter text-2xl',
+          headerSubtitle:
+            'uppercase text-black italic font-black text-zinc-500 font-mono text-[10px]  tracking-widest',
 
-          // INPUT FIELDS: Red text, black bg, red border
-          formFieldInput:
-            'bg-black border border-[#ff003c]/30 text-[#ff003c] focus:border-[#ff003c] transition-all',
-          formFieldLabel: 'text-[#ff003c] uppercase font-mono text-[10px]',
-
-          // THE BUTTON: Keeping it yellow with black text for that high-contrast look
+          /* THE BUTTON: Yellow with Black text (This always looks fire) */
           formButtonPrimary:
-            'bg-[#ffd300] !text-black font-black uppercase italic hover:bg-white transition-all',
+            'bg-[#ffd300] !text-black font-black  italic hover:bg-black hover:text-white transition-all py-3 shadow-md',
 
-          // FOOTER LINKS (Authenticate / Become Iron)
+          /* INPUT FIELDS */
+          formFieldLabel:
+            'uppercase text-black italic text-black italic text-black font-mono text-[10px]  tracking-widest mb-1 font-bold',
+          formFieldInput:
+            'uppercase text-black italic bg-zinc-100 border border-zinc-200 text-black focus:border-[#ffd300] transition-all py-3',
+
+          /* LINKS AT BOTTOM */
           footerActionLink:
-            'text-[#ff003c] hover:text-white font-mono text-[10px] uppercase font-bold',
-          footerActionText: 'text-[#ff003c]/50 font-mono text-[10px] uppercase',
+            'text-black hover:text-[#ffd300] font-mono text-[10px]  font-black underline decoration-2',
+          footerActionText:
+            'uppercase text-black italic text-zinc-400 font-mono text-[10px] ',
 
-          // Identity Preview (The "You are signed in as..." text)
-          identityPreviewText: 'text-[#ff003c]',
-          identityPreviewEditButtonIcon: 'text-[#ff003c]',
+          /* IDENTITY PREVIEW */
+          identityPreviewText:
+            'uppercase text-black italictext-black font-mono font-bold',
+          identityPreviewEditButtonIcon: 'text-black',
         },
       }}
     >
-      <html lang="en" className="bg-black">
-        <body className="bg-black text-white selection:bg-[#ff003c] selection:text-white">
-          {children}
-        </body>
+      <html lang="en">
+        <body>{children}</body>
       </html>
     </ClerkProvider>
   );
