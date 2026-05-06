@@ -6,6 +6,7 @@ export const legType = defineType({
   type: 'document',
 
   fields: [
+    // 1. BASIC IDENTITY
     defineField({
       name: 'task',
       title: 'Task Name',
@@ -23,19 +24,20 @@ export const legType = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-    // Replace 'weightRequirement' with these two
+
+    // 2. THE REQUIREMENT (The Law)
     defineField({
       name: 'requirementValue',
       title: 'Requirement Value',
       type: 'string',
-      description: 'The number or goal (e.g., 145, 5, 30, 10k)',
+      description: 'The number (e.g., 145, 5, 10k)',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'requirementUnit',
       title: 'Unit/Label',
       type: 'string',
-      description: 'e.g., Lbs, Miles, Minutes, Steps, Reps',
+      description: 'e.g., Lbs, Miles, Steps, Reps',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -44,13 +46,58 @@ export const legType = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Iron (Gym)', value: 'iron' },
+          { title: 'Iron (Strength)', value: 'iron' },
           { title: 'Cardio (Move)', value: 'cardio' },
-          { title: 'Lifestyle (Life)', value: 'lifestyle' },
+          { title: 'Lifestyle (Discipline)', value: 'lifestyle' },
           { title: 'Wildcard (Sport)', value: 'wildcard' },
         ],
       },
     }),
+
+    // 3. THE STAKES (Gambling Logic)
+    defineField({
+      name: 'creditReward',
+      title: 'Credit Payout',
+      type: 'number',
+      description: 'Payout upon successful verification.',
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
+      name: 'burnPenalty',
+      title: 'Burn Penalty (Optional)',
+      type: 'number',
+      description: 'Credits LOST if the leg is busted. High stakes.',
+    }),
+    defineField({
+      name: 'difficulty',
+      title: 'Tier',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Recruit (Easy)', value: 'recruit' },
+          { title: 'Vanguard (Mid)', value: 'vanguard' },
+          { title: 'Elite (Hard)', value: 'elite' },
+          { title: 'Demon (Impossible)', value: 'demon' },
+        ],
+      },
+    }),
+
+    // 4. THE CLOCK
+    defineField({
+      name: 'isDemon',
+      title: 'Demon Leg? 😈',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'timeLimit',
+      title: 'Time Limit (Hours)',
+      type: 'number',
+      description: 'Standard: 24. Demon: 12 or less.',
+      initialValue: 24,
+    }),
+
+    // 5. VERIFICATION & AI
     defineField({
       name: 'verificationMethod',
       title: 'Verification Method',
@@ -65,12 +112,13 @@ export const legType = defineType({
       initialValue: 'video',
     }),
     defineField({
-      name: 'creditReward',
-      title: 'Credit Payout',
-      type: 'number',
-      description: 'How many Iron Credits is this leg worth?',
-      validation: (Rule) => Rule.min(1),
+      name: 'motionKey',
+      title: 'AI Motion Key',
+      type: 'string',
+      description: 'Backend tag for AI analysis (e.g., "hinge", "gait").',
     }),
+
+    // 6. VISUALS & ANIMATION
     defineField({
       name: 'avatarAction',
       title: 'Avatar Animation',
@@ -86,23 +134,27 @@ export const legType = defineType({
       },
     }),
     defineField({
-      name: 'isDemon',
-      title: 'Demon Leg? 😈',
-      type: 'boolean',
-      initialValue: false,
+      name: 'referenceImage',
+      title: 'Instructional Image',
+      type: 'image',
+      description: 'Help the user see how to perform the leg.',
+      options: { hotspot: true },
     }),
   ],
 
+  // 7. STUDIO PREVIEW (Keep it clean)
   preview: {
     select: {
       title: 'task',
-      reps: 'reps',
+      value: 'requirementValue',
+      unit: 'requirementUnit',
       isDemon: 'isDemon',
+      reward: 'creditReward',
     },
-    prepare({ title, reps, isDemon }) {
+    prepare({ title, value, unit, isDemon, reward }) {
       return {
-        title: `${isDemon ? '👹 ' : ''}${title}`,
-        subtitle: reps || 'No reps specified',
+        title: `${isDemon ? '👹 ' : '⚙️ '}${title}`,
+        subtitle: `${value} ${unit} | +${reward} Credits`,
       };
     },
   },
