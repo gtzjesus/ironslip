@@ -11,6 +11,26 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
+      // 1. ADD THIS SECTION TO OVERWRITE TEXT
+      localization={{
+        signUp: {
+          start: {
+            title: 'Hello User',
+            subtitle: 'Join the iron community and being your grind.',
+            actionText: 'Already an Iron?',
+            actionLink: 'Authenticate',
+          },
+        },
+        signIn: {
+          start: {
+            title: 'Authenticate, User',
+            subtitle: 'Access your iron dashboard. Enter credentials.',
+            actionText: 'New to the forge?',
+            actionLink: 'Become Iron',
+          },
+        },
+      }}
+      // 2. KEEP YOUR EXISTING APPEARANCE SETTINGS
       appearance={{
         baseTheme: dark,
         variables: {
@@ -24,13 +44,8 @@ export default function RootLayout({
         },
       }}
     >
-      <html lang="en" className="bg-black">
-        {/* 'touch-none': Stops the browser from accidental zooming/scrolling
-            'h-full': Necessary for the layout to fill the screen
-        */}
-        <body className="h-full bg-black text-white antialiased touch-none overflow-hidden">
-          {children}
-        </body>
+      <html lang="en">
+        <body>{children}</body>
       </html>
     </ClerkProvider>
   );
