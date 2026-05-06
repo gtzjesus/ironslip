@@ -3,7 +3,7 @@
 import { SignIn, useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 
-export default function AccountPage() {
+export default function AvatarPage() {
   const { isSignedIn, isLoaded } = useUser();
 
   if (!isLoaded) return null;
@@ -38,7 +38,7 @@ export default function AccountPage() {
             transition={{ duration: 2, repeat: Infinity }}
             className="bg-[#ffd300] p-1 shadow-2xl"
           >
-            <div className="bg-white p-4">
+            <div>
               {/* 3. CLERK COMPONENT */}
               <SignIn
                 routing="hash"
@@ -52,13 +52,7 @@ export default function AccountPage() {
               />
             </div>
           </motion.div>
-
-          {/* ACCESS DECORATION */}
-          <div className="absolute -top-10 -left-10 text-[#ffd300] font-mono text-[10px] animate-pulse">
-            [ SYSTEM_STATUS: LOADING_AVATAR... ]
-          </div>
         </motion.div>
-
         {/* BACKGROUND DISTORTION */}
         <div className="absolute inset-0 bg-black">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#ffd30010_0%,_transparent_70%)]" />

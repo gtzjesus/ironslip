@@ -9,7 +9,7 @@ const navItems = [
   { name: 'Feed', href: '/home', icon: Home },
   { name: 'Slips', href: '/slips', icon: Ticket },
   { name: 'Shop', href: '/shop', icon: ShoppingBag },
-  { name: 'Account', href: '/account', icon: User },
+  { name: 'Avatar', href: '/avatar', icon: User },
 ];
 
 export default function BottomNav() {
