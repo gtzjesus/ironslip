@@ -1,65 +1,86 @@
 'use client';
-
-import { SignIn, useUser } from '@clerk/nextjs';
+import { useUser, SignOutButton } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
+import { UserCheck, Zap, Construction } from 'lucide-react';
 
 export default function AvatarPage() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, user, isLoaded } = useUser();
 
   if (!isLoaded) return null;
 
+  // If they somehow land here without being signed in,
+  // we just show a "Access Restricted" message instead of a login box.
   if (!isSignedIn) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black overflow-hidden">
-        {/* 1. ANIMATED SCANLINES (The Videogame Feel) */}
-        <div className="absolute inset-0 pointer-events-none opacity-10 z-50 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
-
-        {/* 2. THE SLAM-IN CONTAINER */}
-        <motion.div
-          initial={{ x: '-100vw', skewX: 20, filter: 'brightness(3)' }}
-          animate={{ x: 0, skewX: 0, filter: 'brightness(1)' }}
-          transition={{
-            type: 'spring',
-            damping: 20,
-            stiffness: 100,
-            duration: 0.8,
-          }}
-          className="relative z-10 w-full max-w-[420px] p-1"
-        >
-          {/* THE BREATHING GLOW (The Pulse) */}
-          <motion.div
-            animate={{
-              boxShadow: [
-                '0px 0px 20px rgba(255, 211, 0, 0.2)',
-                '0px 0px 60px rgba(255, 211, 0, 0.5)',
-                '0px 0px 20px rgba(255, 211, 0, 0.2)',
-              ],
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="bg-[#ffd300] p-1 shadow-2xl"
-          >
-            <div>
-              {/* 3. CLERK COMPONENT */}
-              <SignIn
-                routing="hash"
-                appearance={{
-                  elements: {
-                    rootBox: 'w-full',
-                    card: 'bg-transparent shadow-none border-none w-full',
-                    // (Rest of your layout.tsx styles apply automatically)
-                  },
-                }}
-              />
-            </div>
-          </motion.div>
-        </motion.div>
-        {/* BACKGROUND DISTORTION */}
-        <div className="absolute inset-0 bg-black">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#ffd30010_0%,_transparent_70%)]" />
-        </div>
+      <div className="h-screen flex flex-col items-center justify-center bg-black text-[#c4a000]">
+        <h2 className="font-black italic uppercase text-2xl">
+          Access_Restricted
+        </h2>
+        <p className="font-mono text-[10px] mt-2">
+          Initialize via Feed Terminal
+        </p>
       </div>
     );
   }
 
-  return <div>Logged in content...</div>;
+  return (
+    <div className="p-6 pt-12 max-w-2xl mx-auto min-h-screen">
+      <motion.header
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        className="mb-8"
+      >
+        <p className="text-[#c4a000] font-mono text-[10px] tracking-[0.3em] uppercase flex items-center gap-2">
+          <UserCheck className="w-3 h-3" /> Identity_Found
+        </p>
+        <h2 className="text-5xl font-black italic uppercase tracking-tighter text-white">
+          Avatar
+        </h2>
+      </motion.header>
+
+      <div className="space-y-6">
+        {/* AVATAR PREVIEW CARD */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="relative p-8 bg-zinc-900 border-l-4 border-[#c4a000] overflow-hidden"
+        >
+          <div className="relative z-10 flex items-center gap-6">
+            <img
+              src={user.imageUrl}
+              alt="avatar"
+              className="w-20 h-20 rounded-none border-2 border-[#c4a000] p-1 grayscale hover:grayscale-0 transition-all duration-500"
+            />
+            <div>
+              <p className="text-2xl font-black uppercase italic text-white leading-none">
+                {user.username || 'Unknown_Operator'}
+              </p>
+              <p className="text-[10px] font-mono text-[#c4a000] mt-2 tracking-[0.2em]">
+                STATUS: ACTIVE_RECRUIT
+              </p>
+            </div>
+          </div>
+          {/* Background decorative text */}
+          <span className="absolute -bottom-4 -right-2 text-white/5 font-black text-7xl italic select-none">
+            IRON
+          </span>
+        </motion.div>
+
+        {/* WORK IN PROGRESS SECTION */}
+        <div className="p-10 border border-white/5 bg-white/5 flex flex-col items-center justify-center text-zinc-600 italic">
+          <Construction className="w-6 h-6 mb-2 opacity-20" />
+          <p className="font-mono text-[9px] uppercase tracking-widest text-center">
+            Avatar_Customization_Module <br /> [ Under_Construction ]
+          </p>
+        </div>
+
+        {/* TERMINATE SESSION */}
+        <SignOutButton>
+          <button className="w-full py-4 border border-[#c4a000]/20 text-[#c4a000] font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-[#c4a000] hover:text-black transition-all">
+            Terminate_Session
+          </button>
+        </SignOutButton>
+      </div>
+    </div>
+  );
 }

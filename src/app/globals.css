@@ -53,43 +53,52 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* 1. THE ENTRANCE SLAM */
+/* 1. THE ENTRANCE SLAM (Runs once) */
 @keyframes forgeSlam {
   0% {
-    transform: translateX(-100vw) skewX(10deg);
+    transform: translateX(-100vw) skewX(20deg);
+    filter: brightness(1);
     opacity: 0;
+  }
+  70% {
+    transform: translateX(5vw) skewX(-5deg);
+    filter: brightness(1.5);
+    opacity: 1;
   }
   100% {
     transform: translateX(0) skewX(0);
-    opacity: 0.75;
+    filter: brightness(0.8);
   }
 }
 
-/* 2. THE TACTICAL PULSE (Subtle and Deep) */
+/* 2. THE POWER PULSE (Loops forever) */
 @keyframes forgePulse {
   0%,
   100% {
-    box-shadow: 0 0 15px rgba(196, 160, 0, 0.2); /* Using the darker gold */
-    border-color: #c4a000;
+    box-shadow: 0 0 15px rgba(255, 211, 0, 0.2);
+    border-color: #ffd300;
   }
   50% {
-    box-shadow: 0 0 30px rgba(196, 160, 0, 0.4);
-    border-color: #8a7100; /* Pulses even darker */
+    box-shadow: 0 0 40px rgba(255, 211, 0, 0.5);
+    border-color: #ffffff; /* Subtle "surge" of white in the yellow border */
   }
 }
 
-/* 3. THE CLERK MODAL */
+/* 3. APPLYING BOTH TO THE CLERK MODAL */
 .cl-modalContent {
+  /* forgeSlam runs once for 0.6s */
+  /* forgePulse runs infinitely, but waits 0.6s to start so the slam finishes first */
   animation:
     forgeSlam 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards,
-    forgePulse 5s ease-in-out infinite 0.6s; /* Slower 5s pulse is way more chill */
+    forgePulse 3s ease-in-out infinite 0.6s !important;
 
-  border: 3px solid #c4a000 !important;
+  border: 4px solid #ffd300 !important;
   background-color: #ffffff !important;
   border-radius: 0px !important;
+  position: relative;
 }
 
-/* 4. TINTED SCANLINES */
+/* 4. OPTIONAL: SCANLINE OVERLAY (Adds that videogame CRT texture) */
 .cl-modalContent::before {
   content: ' ';
   position: absolute;
@@ -97,11 +106,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* Subtle amber tint on the scanlines to match the gold */
-  background: linear-gradient(
-    rgba(196, 160, 0, 0) 50%,
-    rgba(196, 160, 0, 0.03) 50%
-  );
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
   background-size: 100% 4px;
   z-index: 10;
   pointer-events: none;
