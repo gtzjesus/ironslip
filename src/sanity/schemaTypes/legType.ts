@@ -24,10 +24,30 @@ export const legType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'reps',
-      title: 'Default Reps/Duration',
+      name: 'weightRequirement',
+      title: 'Weight/Intensity',
       type: 'string',
-      description: 'The standard requirement (e.g., 5x5 or 30 mins)',
+      description: 'e.g., 145lb, Bodyweight, or Max Effort',
+    }),
+    defineField({
+      name: 'verificationMethod',
+      title: 'Verification Method',
+      type: 'string',
+      options: {
+        list: [
+          { title: '🎥 Video Clip (Strict)', value: 'video' },
+          { title: '📸 Photo Proof', value: 'photo' },
+          { title: '⏱️ GPS/Timer Sync', value: 'gps' },
+        ],
+      },
+      initialValue: 'video',
+    }),
+    defineField({
+      name: 'creditReward',
+      title: 'Credit Payout',
+      type: 'number',
+      description: 'How many Iron Credits is this leg worth?',
+      validation: (Rule) => Rule.min(1),
     }),
     defineField({
       name: 'avatarAction',
