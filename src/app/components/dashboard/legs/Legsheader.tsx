@@ -31,7 +31,7 @@ export default function LegsHeader() {
             Iron Legs
           </h2>
           <span className="text-zinc-600 font-mono text-[10px] italic uppercase">
-            / Build_your_slip
+            _
           </span>
         </div>
       </div>

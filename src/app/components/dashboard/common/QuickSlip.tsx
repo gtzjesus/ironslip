@@ -12,7 +12,8 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
       whileTap={{ scale: 0.95 }}
-      className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-colors duration-200 min-h-[100px]`}
+      /* ADDED OPACITY MODIFIERS: bg-iron-volt/90 and bg-iron-red/90 */
+      className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-all duration-200 min-h-[100px] brightness-[0.7] shadow-lg`}
     >
       <h3 className="text-black font-black italic text-xl uppercase leading-none">
         {isSignedIn ? (
@@ -29,7 +30,7 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
         {isSignedIn ? (
           <span className="text-xl font-black italic">→</span>
         ) : (
-          <Lock className="w-4 h-4 animate-pulse" />
+          <Lock className="w-4 h-4 opacity-70 animate-pulse" />
         )}
       </div>
     </motion.div>

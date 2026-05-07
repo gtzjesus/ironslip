@@ -35,7 +35,7 @@ export default function Dashboardheader() {
         </motion.p>
 
         <div>
-          <h2 className="text-xl font-black italic uppercase tracking-tighter leading-none">
+          <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none">
             {userName}
           </h2>
 

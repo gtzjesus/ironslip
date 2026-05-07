@@ -25,7 +25,7 @@ export default function LegExpansion({
   if (!leg) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50  flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
       {/* FORCED YELLOW BACKGROUND 
           Using !bg-iron-volt to override the global white background 
       */}

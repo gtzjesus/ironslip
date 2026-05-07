@@ -11,18 +11,29 @@ export default function LegsPage() {
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
 
   return (
-    <main className="h-screen w-full overflow-hidden flex flex-col p-4 bg-black max-w-2xl mx-auto">
-      <div className="flex-shrink-0">
+    /* h-screen + flex-col ensures the app fits the window exactly */
+    <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900">
+      {/* Header is fixed at the top */}
+      <div className="flex-shrink-0 p-4 pb-0">
         <LegsHeader />
       </div>
 
-      <div className="flex-1 mt-4 overflow-y-auto scrollbar-hide">
+      {/* LIST CONTAINER: 
+        1. overflow-y-auto enables scrolling.
+        2. scrollbar-hide (from your globals) keeps it clean.
+        3. overscroll-contain prevents the "bounce" from moving the whole browser.
+      */}
+      <div className="flex-1 mt-4 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
         {loading ? (
-          <p className="text-iron-volt font-mono text-[10px] animate-pulse">
-            CONNECTING_
-          </p>
+          <div className=" flex items-center">
+            <p className="text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
+              CONNECTING_
+            </p>
+          </div>
         ) : (
-          <div className="grid gap-1">
+          <div className="grid gap-1 ">
+            {' '}
+            {/* Added heavy bottom padding for the scroll "finish" */}
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {legs.map((leg: any) => (
               <LegCard
@@ -31,6 +42,13 @@ export default function LegsPage() {
                 onClick={(l) => setSelectedLeg(l)}
               />
             ))}
+            {/* End of list indicator - makes it feel like a terminal */}
+            <div className="mt-2 flex flex-col items-center opacity-20">
+              <div className="w-full h-[1px] bg-iron-volt mb-2" />
+              <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest">
+                --- END_OF_TRANSMISSION ---
+              </p>
+            </div>
           </div>
         )}
       </div>

@@ -48,7 +48,7 @@ export default function RootLayout({
           headerTitle:
             'text-black font-black italic uppercase tracking-tighter text-2xl',
           headerSubtitle:
-            'text-black italic font-mono text-[10px] uppercase tracking-widest opacity-70',
+            'text-black italic font-mono text-[10px] uppercase tracking-widest',
 
           /* THE BUTTON: Yellow-themed setup with Black text */
           formButtonPrimary:

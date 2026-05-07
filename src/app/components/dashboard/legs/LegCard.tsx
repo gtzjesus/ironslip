@@ -13,9 +13,9 @@ export default function LegCard({ leg, onClick }: LegProps) {
   return (
     <button
       onClick={() => onClick(leg)}
-      className={`relative w-full text-left border-2 p-4 mb-2 overflow-hidden transition-all active:scale-95 ${
+      className={` relative w-full text-left border-2 p-4 mb-2 overflow-hidden transition-all  ${
         isDemon
-          ? 'bg-iron-volt border-iron-red'
+          ? 'brightness-[0.7] bg-iron-volt border-iron-red'
           : 'bg-zinc-950 border-zinc-800 '
       }`}
     >
