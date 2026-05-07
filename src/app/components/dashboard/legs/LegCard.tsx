@@ -16,7 +16,7 @@ export default function LegCard({ leg, onClick }: LegProps) {
       className={`relative w-full text-left border-2 p-4 mb-2 overflow-hidden transition-all active:scale-95 ${
         isDemon
           ? 'bg-iron-volt border-iron-red'
-          : 'bg-zinc-950 border-zinc-800 hover:border-iron-volt'
+          : 'bg-zinc-950 border-zinc-800 '
       }`}
     >
       <div className="relative z-10 flex justify-between items-center">
