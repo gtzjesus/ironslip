@@ -14,20 +14,18 @@ export default function LegExpansion({
       '⚠️ HIGH_STAKES_DETECTED ⚠️',
       '⚡ HIGH_RISK_IMMINENT ⚡',
       '☣️ DISCIPLINE_OR_DEATH ☣️',
+      '💀 OPERATION_FATAL_ERROR 💀',
     ];
     return warnings[Math.floor(Math.random() * warnings.length)];
   });
 
   if (!leg) return null;
 
-  // SANITY CHECK: Using your actual schema fields
-  // We check the boolean 'isDemon' OR if 'difficulty' is set to 'demon'
   const isDemonMode = leg.isDemon === true || leg.difficulty === 'demon';
 
-  // THEME MAPPING
   const theme = isDemonMode
     ? {
-        modalBg: '!bg-iron-volt', // Demon = Hazardous Yellow
+        modalBg: '!bg-iron-volt',
         titleText: 'text-black',
         watermark: 'text-black/10',
         dataCoreBg: 'bg-black',
@@ -37,71 +35,76 @@ export default function LegExpansion({
         buttonText: 'text-iron-volt',
         warningText: 'text-black',
         border: 'border-black/20',
+        subLabel: 'text-black/60',
       }
     : {
-        modalBg: '!bg-black', // Regular = Stealth Black
-        titleText: 'text-iron-volt', // Yellow text
+        modalBg: '!bg-black',
+        titleText: 'text-iron-volt',
         watermark: 'text-white/5',
         dataCoreBg: 'bg-zinc-900/40',
         dataLabel: 'text-zinc-500',
         dataValue: 'text-white',
-        buttonBg: 'bg-iron-volt', // Yellow Button
+        buttonBg: 'bg-iron-volt',
         buttonText: 'text-black',
         warningText: 'text-iron-volt',
         border: 'border-iron-volt/30',
+        subLabel: 'text-white/40',
       };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      {/* Dynamic Modal Border & Background */}
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
+      {/* THE MODAL CONTAINER */}
       <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-6 border ${theme.border} shadow-2xl`}
+        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-4 border ${theme.border} shadow-2xl overflow-y-auto max-h-[85vh]`}
       >
-        {/* Abort Button - Always Red for Danger */}
+        {/* THE ABORT BUTTON (MANDATORY) */}
         <button
           onClick={onClose}
-          className="absolute -top-10 right-0 text-white font-mono text-[10px] uppercase tracking-[0.3em] bg-iron-red px-3 py-2 shadow-lg active:scale-95 transition-all"
+          className="absolute top-2 right-2 text-white font-mono text-[10px] uppercase tracking-[0.3em] bg-iron-red px-3 py-2 z-[100] shadow-lg active:scale-90 transition-all border border-white/10"
         >
-          [ X ] abort
+          [ X ] ABORT_MODULE
         </button>
 
-        {/* HEADER */}
-        <div className="space-y-1 relative z-10">
+        {/* 1. IDENTITY & HEADER */}
+        <div className="space-y-1 relative z-10 pr-16">
+          {' '}
+          {/* pr-16 keeps text clear of the close button */}
           <p
-            className={`font-mono text-[8px] uppercase tracking-[0.3em] ${isDemonMode ? 'text-black/60' : 'text-iron-volt/60'}`}
+            className={`font-mono text-[8px] uppercase tracking-[0.4em] ${theme.subLabel}`}
           >
-            {isDemonMode
-              ? '⚠️ PRIORITY_DEMON_TASK'
-              : 'SYSTEM_STABLE // LEG_DEPLOIMENT'}
+            {leg.category} {leg.difficulty || 'standard'}
           </p>
           <h2
             className={`${theme.titleText} font-black italic text-4xl uppercase tracking-tighter leading-none`}
           >
             {leg.task}
           </h2>
+          <p
+            className={`text-[9px] font-mono leading-tight mt-2 ${theme.subLabel}`}
+          >
+            UID: {leg.slug?.current || 'ANONYMOUS_SIG'}
+          </p>
         </div>
 
         {/* WATERMARK */}
         <span
-          className={`absolute -top-6 -left-6 text-9xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0`}
+          className={`absolute top-20 -left-6 text-9xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0`}
         >
           {leg.category || 'IRON'}
         </span>
 
-        {/* DATA CORE */}
+        {/* 2. CORE STATS */}
         <div
-          className={`${theme.dataCoreBg} p-4 space-y-4 shadow-xl relative z-10 border-t border-white/5`}
+          className={`${theme.dataCoreBg} p-4 space-y-3 relative z-10 border border-white/5 shadow-inner`}
         >
-          <div
-            className={`flex justify-between items-end border-b border-zinc-800/50 pb-2`}
-          >
+          <div className="flex justify-between items-end border-b border-zinc-800/50 pb-1">
             <span
-              className={`${theme.dataLabel} font-mono text-[10px] uppercase font-bold`}
+              className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
             >
-              Requirement
+              Target
             </span>
             <span
-              className={`${theme.dataValue} font-black italic text-2xl uppercase`}
+              className={`${theme.dataValue} font-black italic text-xl uppercase`}
             >
               {leg.requirementValue} {leg.requirementUnit}
             </span>
@@ -109,33 +112,80 @@ export default function LegExpansion({
 
           <div className="flex justify-between items-center">
             <span
-              className={`${theme.dataLabel} font-mono text-[10px] uppercase font-bold`}
+              className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
             >
-              Reward
+              Window
             </span>
-            <span className="text-iron-volt font-mono text-sm uppercase font-black italic">
-              +{leg.creditReward} CR
+            <span className="text-iron-red font-mono text-xs uppercase font-black italic">
+              {leg.timeLimit || 24} HOURS
             </span>
           </div>
 
+          <div className="grid grid-cols-2 gap-4 pt-2 border-t border-zinc-800/50">
+            <div className="flex flex-col">
+              <span
+                className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
+              >
+                Yield
+              </span>
+              <span className="text-iron-volt font-black italic text-lg">
+                +{leg.creditReward} CR
+              </span>
+            </div>
+            <div className="flex flex-col text-right">
+              <span
+                className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
+              >
+                Penalty
+              </span>
+              <span className="text-iron-red font-black italic text-lg">
+                -{leg.burnPenalty || 0} CR
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. SYSTEM & AI CONFIG */}
+        <div className="bg-black/40 p-4 space-y-2 relative z-10 border border-white/5 font-mono">
           <div className="flex justify-between items-center">
-            <span
-              className={`${theme.dataLabel} font-mono text-[10px] uppercase font-bold`}
-            >
-              Penalty
+            <span className={`${theme.dataLabel} text-[8px] uppercase`}>
+              Verification
             </span>
-            <span className="text-iron-red font-mono text-sm uppercase font-black italic">
-              -{leg.burnPenalty || 0} CR
+            <span className={`${theme.dataValue} text-[9px] uppercase`}>
+              {leg.verificationMethod || 'manual_review'}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className={`${theme.dataLabel} text-[8px] uppercase`}>
+              Motion_Key
+            </span>
+            <span className="text-zinc-600 text-[9px] uppercase">
+              {leg.motionKey || 'not_encrypted'}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className={`${theme.dataLabel} text-[8px] uppercase`}>
+              Avatar_Anim
+            </span>
+            <span className="text-zinc-600 text-[9px] uppercase">
+              {leg.avatarAction || 'idle'}
             </span>
           </div>
         </div>
 
-        {/* ACTION BUTTON */}
+        {/* 4. DEMON ALERT */}
+        {isDemonMode && (
+          <div className="bg-black text-iron-red p-2 text-center font-mono text-[9px] font-black border-2 border-iron-red animate-pulse z-10">
+            👹 WARNING: DEMON_PROTOCOL_ENGAGED
+          </div>
+        )}
+
+        {/* 5. ACTION BUTTON */}
         <button
-          className={`w-full ${theme.buttonBg} py-4 ${theme.buttonText} font-black italic text-2xl uppercase active:scale-[0.98] transition-all relative z-10 shadow-[0_10px_20px_rgba(0,0,0,0.3)]`}
+          className={`w-full ${theme.buttonBg} py-5 ${theme.buttonText} font-black italic text-2xl uppercase active:scale-95 transition-all relative z-10 shadow-xl`}
           onClick={() => alert('CONTRACT_LOCKED')}
         >
-          {isDemonMode ? 'ENTER_HELL' : 'ACCEPT_LEG'}
+          {isDemonMode ? 'ACCEPT_DEATH' : 'INITIALIZE_LEG'}
         </button>
 
         {/* FOOTER */}
