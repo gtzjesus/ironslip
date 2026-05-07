@@ -35,7 +35,7 @@ export default function LegCard({ leg, onClick }: LegProps) {
 
         <div className="text-right">
           <p
-            className={`font-black italic text-xl ${isDemon ? 'text-iron-red animate-pulse' : 'text-iron-volt'}`}
+            className={`font-black italic text-lg ${isDemon ? 'text-iron-red ' : 'text-iron-volt'}`}
           >
             +{leg.creditReward}
           </p>

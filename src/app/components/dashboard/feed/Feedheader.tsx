@@ -11,7 +11,7 @@ export default function Dashboardheader() {
 
   const statusColor = isSignedIn ? 'text-iron-volt' : 'text-iron-red';
   const borderColor = isSignedIn ? 'border-iron-volt/30' : 'border-iron-red/30';
-  const statusLabel = isSignedIn ? 'ACCESS_GRANTED' : 'ACCESS_RESTRICTED';
+  const statusLabel = isSignedIn ? 'ONLINE' : 'ACCESS_RESTRICTED';
 
   const userName = isSignedIn
     ? user?.username || user?.firstName
