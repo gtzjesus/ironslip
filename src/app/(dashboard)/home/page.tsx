@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import QuickSlip from '@/app/components/dashboard/common/QuickSlip';
 import IronFeed from '@/app/components/dashboard/feed/IronFeed';
-import Dashboardheader from '@/app/components/dashboard/feed/Feedheader';
+import FeedHeader from '@/app/components/dashboard/feed/Feedheader';
 
 export default function DashboardHome() {
   const { isSignedIn, isLoaded } = useUser();
@@ -16,7 +16,7 @@ export default function DashboardHome() {
      */
     <main className="h-screen w-full overflow-hidden flex flex-col p-2 bg-black max-w-2xl mx-auto">
       <div className="flex-shrink-0 p-2">
-        <Dashboardheader />
+        <FeedHeader />
       </div>
 
       <div className="flex-grow overflow-y-auto overflow-x-hidden  pb-24 scrollbar-hide">
