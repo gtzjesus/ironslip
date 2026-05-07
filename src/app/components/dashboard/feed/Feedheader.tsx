@@ -45,7 +45,7 @@ export default function Dashboardheader() {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                className="text-xl font-black italic uppercase tracking-tighter leading-none"
+                className="text-3xl font-black italic uppercase tracking-tighter leading-none"
               >
                 {userHandle}
               </motion.p>
@@ -59,7 +59,7 @@ export default function Dashboardheader() {
           Level
         </p>
         <p
-          className={`text-xl font-black italic transition-colors duration-500 ${
+          className={`text-2xl font-black italic transition-colors duration-500 ${
             isSignedIn ? 'text-iron-volt' : 'text-zinc-800'
           }`}
         >

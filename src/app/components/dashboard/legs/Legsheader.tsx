@@ -23,7 +23,7 @@ export default function LegsHeader() {
           animate={{ opacity: 1 }}
           className={`${accentColor} mb-2 font-mono text-[8px] tracking-[0.3em] font-black italic uppercase`}
         >
-          {isSignedIn ? 'Online' : 'OFFLINE'}
+          {isSignedIn ? 'build your slip with' : 'OFFLINE'}
         </motion.p>
 
         <div className="flex items-baseline gap-2">

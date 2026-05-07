@@ -2,12 +2,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Home, Ticket, ShoppingBag, User } from 'lucide-react';
+import { Home, Ticket, ShoppingBag, User, Scroll } from 'lucide-react';
 import { useUser } from '@clerk/nextjs'; // Import Clerk hook
 
 const navItems = [
-  { name: 'Feed', href: '/home', icon: Home },
+  { name: 'Slips', href: '/slips', icon: Scroll },
   { name: 'Legs', href: '/legs', icon: Ticket },
+  { name: 'Feed', href: '/home', icon: Home },
   { name: 'Shop', href: '/shop', icon: ShoppingBag },
   { name: 'Avatar', href: '/avatar', icon: User },
 ];
