@@ -15,14 +15,16 @@ export default function LegCard({ leg, onClick }: LegProps) {
       onClick={() => onClick(leg)}
       className={` relative w-full text-left border-2 p-4 mb-2 overflow-hidden transition-all  ${
         isDemon
-          ? 'brightness-[0.6] bg-iron-volt border-iron-red'
+          ? 'animate-pulse brightness-[0.6] bg-iron-volt border-iron-red'
           : 'bg-zinc-950 border-zinc-800 '
       }`}
     >
-      <div className="relative z-10 flex justify-between items-center">
+      <div
+        className={`relative z-10 flex justify-between items-center ${isDemon ? '' : ''}`}
+      >
         <div>
           <p
-            className={`font-mono text-[8px] uppercase tracking-widest ${isDemon ? 'text-black/60' : 'text-zinc-500'}`}
+            className={`font-mono text-[8px] uppercase tracking-widest ${isDemon ? ' text-black/60' : 'text-zinc-500'}`}
           >
             {isDemon ? '👹 DEMON_LEG' : leg.category}
           </p>
