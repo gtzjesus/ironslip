@@ -1,7 +1,5 @@
 'use client';
 
-import { useState, useEffect, useLayoutEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Terminal, Lock as LockIcon } from 'lucide-react';
 
 const FEED_DATA = [
@@ -12,7 +10,6 @@ const FEED_DATA = [
     target: '@Midnight_Session',
     time: '02:45 PM',
     highlight: true,
-    meta: 'REQ_ID: 9928',
   },
   {
     id: 2,
@@ -21,7 +18,6 @@ const FEED_DATA = [
     target: 'Level 50',
     time: '02:10 PM',
     highlight: false,
-    meta: 'XP_SYNC_COMPLETE',
   },
   {
     id: 3,
@@ -30,7 +26,6 @@ const FEED_DATA = [
     target: 'New Gear',
     time: '01:55 PM',
     highlight: false,
-    meta: 'GLOBAL_DROP',
   },
   {
     id: 4,
@@ -39,7 +34,6 @@ const FEED_DATA = [
     target: 'Daily_Slip_03',
     time: '01:30 PM',
     highlight: true,
-    meta: 'REWARD_CLAIMED',
   },
   {
     id: 5,
@@ -48,7 +42,6 @@ const FEED_DATA = [
     target: 'Training_Grounds',
     time: '01:15 PM',
     highlight: false,
-    meta: 'LOC: SECTOR_G',
   },
   {
     id: 6,
@@ -57,50 +50,43 @@ const FEED_DATA = [
     target: '500_XP',
     time: '12:45 PM',
     highlight: true,
-    meta: 'SIG_STRENGTH: 98%',
   },
 ];
 
 export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
-  }, []);
-
   const statusColor = isSignedIn ? 'text-iron-volt' : 'text-iron-red';
 
   return (
-    /**
-     * h-[380px]: Default phone height
-     * sm:h-[700px]: Double the size for tablets/laptops
-     */
-    <section className="flex flex-col h-[380px] sm:h-[700px] w-full relative transition-all duration-500">
+    <section className="flex flex-col h-[380px] sm:h-[700px] w-full relative bg-black">
+      {/* HEADER */}
       <div className="flex justify-between items-end mb-5 px-1">
         <div>
           <h3
             className={`text-[10px] font-mono ${statusColor} uppercase tracking-[0.2em] flex items-center gap-2`}
           >
-            <Activity className="w-3 h-3 animate-pulse" />
+            <Activity className="w-3 h-3" />
             Iron_Feed
           </h3>
         </div>
         <Terminal className="w-3 h-3 text-zinc-700" />
       </div>
 
-      <div className="relative flex-grow overflow-hidden group">
+      <div className="relative flex-grow overflow-hidden">
+        {/* FEED LIST - NO ANIMATIONS */}
         <div
-          className={`flex-grow h-full overflow-y-auto overflow-x-hidden space-y-2 pr-2 transition-all duration-1000 ease-in-out
-                   ${!mounted ? 'opacity-0' : 'opacity-100'} 
-                   ${!isSignedIn ? 'blur-[8px] grayscale opacity-30 select-none pointer-events-none scale-[0.98]' : 'blur-0 opacity-100'}`}
-          style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
+          className={`flex-grow h-full overflow-y-auto overflow-x-hidden space-y-2 pr-2 
+                   ${!isSignedIn ? 'blur-md grayscale opacity-30 select-none pointer-events-none' : 'opacity-100'}`}
         >
           {FEED_DATA.map((item) => (
-            <motion.div
+            <div
               key={item.id}
-              initial={false}
-              className={`relative p-3 bg-zinc-900/40 border-l-2 ${item.highlight ? (isSignedIn ? 'border-iron-volt' : 'border-iron-red') : 'border-zinc-800'}`}
+              className={`relative p-3 bg-zinc-900/40 border-l-2 ${
+                item.highlight
+                  ? isSignedIn
+                    ? 'border-iron-volt'
+                    : 'border-iron-red'
+                  : 'border-zinc-800'
+              }`}
             >
               <div className="flex justify-between items-start mb-1">
                 <span className="text-white font-black italic text-xs uppercase tracking-tight">
@@ -118,36 +104,22 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
                   {item.target}
                 </span>
               </p>
-            </motion.div>
+            </div>
           ))}
           <div className="h-8" />
         </div>
 
-        <AnimatePresence>
-          {mounted && !isSignedIn && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none"
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 10 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 1.1, opacity: 0 }}
-                className="animate-pulse bg-black/60 border border-iron-red/30 p-3 backdrop-blur-md flex flex-col items-center gap-3 shadow-[0_0_50px_rgba(255,0,0,0.15)]"
-              >
-                <div className="relative">
-                  <LockIcon className="w-4 h-4 text-iron-red animate-pulse" />
-                  <div className="absolute inset-0 w-4 h-4 bg-iron-red/20 blur-lg" />
-                </div>
-                <p className="text-[7px] font-mono text-iron-red/50 uppercase tracking-[0.2em]">
-                  authenticate
-                </p>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* STATIC LOCK OVERLAY */}
+        {!isSignedIn && (
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/20">
+            <div className="bg-black border border-iron-red/30 p-4 backdrop-blur-md flex flex-col items-center gap-3">
+              <LockIcon className="w-4 h-4 text-iron-red" />
+              <p className="text-[7px] font-mono text-iron-red/50 uppercase tracking-[0.2em]">
+                authenticate_required
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

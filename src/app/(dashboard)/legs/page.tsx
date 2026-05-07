@@ -35,10 +35,10 @@ export default function LegsPage() {
               />
             ))}
             {/* End of list indicator */}
-            <div className="mt-6 flex flex-col items-center opacity-20">
+            <div className="mt-4 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
-                SYSTEM_STABLE // END_OF_TRANSMISSION
+                END_OF_TRANSMISSION
               </p>
             </div>
           </div>

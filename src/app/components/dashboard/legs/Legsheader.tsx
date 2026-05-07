@@ -48,7 +48,7 @@ export default function LegsHeader() {
           <p
             className={`text-2xl font-black italic tracking-tighter ${isSignedIn ? 'text-white' : 'text-zinc-800'}`}
           >
-            {isSignedIn ? '1,250' : '0.00'}
+            {isSignedIn ? '1,250' : '--.----'}
           </p>
         </div>
       </div>
