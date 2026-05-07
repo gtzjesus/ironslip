@@ -22,7 +22,8 @@ export default function RootLayout({
         signIn: {
           start: {
             title: 'AUTHENTICATE, USER',
-            subtitle: 'Access your iron dashboard. Enter your credentials.',
+            subtitle:
+              'Fully Access your iron dashboard. Enter your credentials.',
             actionText: 'New to the forge?',
             actionLink: 'Become Iron',
           },
