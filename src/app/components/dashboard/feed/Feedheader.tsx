@@ -26,9 +26,6 @@ export default function Dashboardheader() {
     >
       <div>
         <motion.p
-          key={statusLabel}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
           className={`${statusColor} mb-2 font-mono text-[8px] tracking-[0.2em] font-black italic uppercase ${!isSignedIn ? 'animate-pulse' : ''}`}
         >
           {statusLabel}
@@ -41,12 +38,7 @@ export default function Dashboardheader() {
 
           <AnimatePresence mode="wait">
             {isSignedIn && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-3xl font-black italic uppercase tracking-tighter leading-none"
-              >
+              <motion.p className="text-3xl font-black italic uppercase tracking-tighter leading-none">
                 {userHandle}
               </motion.p>
             )}

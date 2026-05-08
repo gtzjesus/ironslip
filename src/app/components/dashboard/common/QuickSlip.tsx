@@ -8,10 +8,6 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
   // 1. We define the inner content so we don't repeat code
   const ButtonContent = (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
-      whileTap={{ scale: 0.95 }}
       /* ADDED OPACITY MODIFIERS: bg-iron-volt/90 and bg-iron-red/90 */
       className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-all duration-200 min-h-[100px] brightness-[0.6] shadow-lg`}
     >

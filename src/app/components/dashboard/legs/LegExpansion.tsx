@@ -11,10 +11,10 @@ export default function LegExpansion({
 }) {
   const [hazardWarning] = useState(() => {
     const warnings = [
-      '⚠️ HIGH_STAKES_DETECTED ⚠️',
-      '⚡ HIGH_RISK_IMMINENT ⚡',
-      '☣️ DISCIPLINE_OR_DEATH ☣️',
-      '💀 OPERATION_FATAL_ERROR 💀',
+      ' HIGH_STAKES_DETECTED ',
+      ' HIGH_RISK_IMMINENT ',
+      ' DISCIPLINE_OR_DEATH ',
+      ' OPERATION_FATAL_ERROR ',
     ];
     return warnings[Math.floor(Math.random() * warnings.length)];
   });
@@ -28,9 +28,9 @@ export default function LegExpansion({
         modalBg: '!bg-iron-volt',
         titleText: 'text-black',
         watermark: 'text-black/10',
-        dataCoreBg: 'bg-black',
+        dataCoreBg: 'bg-iron-volt', //here
         dataLabel: 'text-zinc-500',
-        dataValue: 'text-white',
+        dataValue: 'text-black',
         buttonBg: 'bg-black',
         buttonText: 'text-iron-volt',
         warningText: 'text-black',
@@ -52,43 +52,33 @@ export default function LegExpansion({
       };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/65 backdrop-blur-md">
       {/* THE MODAL CONTAINER */}
       <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-4 border ${theme.border} shadow-2xl overflow-y-auto max-h-[85vh]`}
+        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-1 border ${theme.border} shadow-2xl overflow-y-auto max-h-[85vh]`}
       >
         {/* THE ABORT BUTTON (MANDATORY) */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-white font-mono text-[10px] uppercase tracking-[0.3em] bg-iron-red px-3 py-2 z-[100] shadow-lg active:scale-90 transition-all border border-white/10"
         >
-          [ X ] ABORT_MODULE
+          [ X ] abort
         </button>
 
         {/* 1. IDENTITY & HEADER */}
         <div className="space-y-1 relative z-10 pr-16">
           {' '}
           {/* pr-16 keeps text clear of the close button */}
-          <p
-            className={`font-mono text-[8px] uppercase tracking-[0.4em] ${theme.subLabel}`}
-          >
-            {leg.category} {leg.difficulty || 'standard'}
-          </p>
           <h2
             className={`${theme.titleText} font-black italic text-4xl uppercase tracking-tighter leading-none`}
           >
             {leg.task}
           </h2>
-          <p
-            className={`text-[9px] font-mono leading-tight mt-2 ${theme.subLabel}`}
-          >
-            UID: {leg.slug?.current || 'ANONYMOUS_SIG'}
-          </p>
         </div>
 
         {/* WATERMARK */}
         <span
-          className={`absolute top-20 -left-6 text-9xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0`}
+          className={`absolute top-0 -left-6 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0`}
         >
           {leg.category || 'IRON'}
         </span>
@@ -97,11 +87,11 @@ export default function LegExpansion({
         <div
           className={`${theme.dataCoreBg} p-4 space-y-3 relative z-10 border border-white/5 shadow-inner`}
         >
-          <div className="flex justify-between items-end border-b border-zinc-800/50 pb-1">
+          <div className="flex justify-between items-end border-b border-zinc-800/50 ">
             <span
-              className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
+              className={`${theme.dataLabel} font-mono text-[11px] uppercase`}
             >
-              Target
+              Iron Target
             </span>
             <span
               className={`${theme.dataValue} font-black italic text-xl uppercase`}
@@ -112,7 +102,7 @@ export default function LegExpansion({
 
           <div className="flex justify-between items-center">
             <span
-              className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
+              className={`${theme.dataLabel} font-mono text-[11px] uppercase`}
             >
               Window
             </span>
@@ -124,7 +114,7 @@ export default function LegExpansion({
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-zinc-800/50">
             <div className="flex flex-col">
               <span
-                className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
+                className={`${theme.dataLabel} font-mono text-[11px] uppercase`}
               >
                 Yield
               </span>
@@ -134,7 +124,7 @@ export default function LegExpansion({
             </div>
             <div className="flex flex-col text-right">
               <span
-                className={`${theme.dataLabel} font-mono text-[9px] uppercase`}
+                className={`${theme.dataLabel} font-mono text-[11px] uppercase`}
               >
                 Penalty
               </span>
@@ -146,12 +136,12 @@ export default function LegExpansion({
         </div>
 
         {/* 3. SYSTEM & AI CONFIG */}
-        <div className="bg-black/40 p-4 space-y-2 relative z-10 border border-white/5 font-mono">
+        <div className="bg-iron-red/40 p-4 space-y-2 relative z-10 border border-white/5 font-mono">
           <div className="flex justify-between items-center">
             <span className={`${theme.dataLabel} text-[8px] uppercase`}>
               Verification
             </span>
-            <span className={`${theme.dataValue} text-[9px] uppercase`}>
+            <span className={`${theme.dataValue} text-[11px] uppercase`}>
               {leg.verificationMethod || 'manual_review'}
             </span>
           </div>
@@ -159,7 +149,7 @@ export default function LegExpansion({
             <span className={`${theme.dataLabel} text-[8px] uppercase`}>
               Motion_Key
             </span>
-            <span className="text-zinc-600 text-[9px] uppercase">
+            <span className="text-zinc-600 text-[11px] uppercase">
               {leg.motionKey || 'not_encrypted'}
             </span>
           </div>
@@ -167,7 +157,7 @@ export default function LegExpansion({
             <span className={`${theme.dataLabel} text-[8px] uppercase`}>
               Avatar_Anim
             </span>
-            <span className="text-zinc-600 text-[9px] uppercase">
+            <span className="text-zinc-600 text-[11px] uppercase">
               {leg.avatarAction || 'idle'}
             </span>
           </div>
@@ -175,7 +165,7 @@ export default function LegExpansion({
 
         {/* 4. DEMON ALERT */}
         {isDemonMode && (
-          <div className="bg-black text-iron-red p-2 text-center font-mono text-[9px] font-black border-2 border-iron-red animate-pulse z-10">
+          <div className="bg-black text-iron-red p-2 text-center font-mono text-[9px] font-black border-2 border-iron-red  z-10">
             👹 WARNING: DEMON_PROTOCOL_ENGAGED
           </div>
         )}
@@ -185,13 +175,13 @@ export default function LegExpansion({
           className={`w-full ${theme.buttonBg} py-5 ${theme.buttonText} font-black italic text-2xl uppercase active:scale-95 transition-all relative z-10 shadow-xl`}
           onClick={() => alert('CONTRACT_LOCKED')}
         >
-          {isDemonMode ? 'ACCEPT_DEATH' : 'INITIALIZE_LEG'}
+          {isDemonMode ? 'Start slip' : 'INITIALIZE_LEG'}
         </button>
 
         {/* FOOTER */}
         <div className="flex flex-col items-center gap-1 opacity-60 relative z-10">
           <p
-            className={`${theme.warningText} font-black font-mono text-[8px] text-center uppercase tracking-widest animate-pulse`}
+            className={`${theme.warningText} font-black font-mono text-[8px] text-center uppercase tracking-widest `}
           >
             {hazardWarning}
           </p>

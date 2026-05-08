@@ -15,7 +15,7 @@ export default function LegCard({ leg, onClick }: LegProps) {
       onClick={() => onClick(leg)}
       className={` relative w-full text-left border-2 p-4 mb-2 overflow-hidden transition-all  ${
         isDemon
-          ? 'animate-pulse brightness-[0.6] bg-iron-volt border-iron-red'
+          ? ' brightness-[0.6] bg-iron-volt border-iron-red'
           : 'bg-zinc-950 border-zinc-800 '
       }`}
     >
@@ -24,9 +24,9 @@ export default function LegCard({ leg, onClick }: LegProps) {
       >
         <div>
           <p
-            className={`font-mono text-[8px] uppercase tracking-widest ${isDemon ? ' text-black/60' : 'text-zinc-500'}`}
+            className={`font-mono text-[8px] uppercase tracking-widest ${isDemon ? 'animate-pulse text-black/60' : 'text-zinc-500'}`}
           >
-            {isDemon ? '👹 DEMON_LEG' : leg.category}
+            {isDemon ? '👹 DEMON_' : leg.category}
           </p>
           <h3
             className={`font-black italic text-xl uppercase tracking-tighter ${isDemon ? 'text-black' : 'text-white'}`}
@@ -37,7 +37,7 @@ export default function LegCard({ leg, onClick }: LegProps) {
 
         <div className="text-right">
           <p
-            className={`font-black italic text-lg ${isDemon ? 'text-iron-red ' : 'text-iron-volt'}`}
+            className={`animate-pulse font-black italic text-sm ${isDemon ? 'text-iron-red ' : 'text-iron-volt'}`}
           >
             +{leg.creditReward}
           </p>
