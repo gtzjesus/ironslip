@@ -13,8 +13,8 @@ export default function LegExpansion({
     const warnings = [
       ' HIGH_STAKES_DETECTED ',
       ' HIGH_RISK_IMMINENT ',
-      ' DISCIPLINE_OR_DEATH ',
-      ' OPERATION_FATAL_ERROR ',
+      ' DISCIPLINE_OR_BUST ',
+      ' OPERATION_PENDING',
     ];
     return warnings[Math.floor(Math.random() * warnings.length)];
   });
@@ -77,7 +77,7 @@ export default function LegExpansion({
 
         {/* WATERMARK - Positioned absolute but clipped by the container's overflow-hidden */}
         <span
-          className={`mt-50 absolute top-0 -left-6 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
+          className={` absolute top-0 -left-8 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
         >
           {leg.category || 'IRON'}
         </span>
@@ -139,25 +139,7 @@ export default function LegExpansion({
           </div>
         </div>
 
-        {/* 3. SYSTEM & AI CONFIG */}
-        <div className="bg-iron-volt/40 p-4 space-y-2 relative z-10 border border-white/5 font-mono">
-          <div className="flex justify-between items-center">
-            <span className={`${theme.dataLabel} text-[8px] uppercase`}>
-              Motion_Key
-            </span>
-            <span className="text-zinc-600 text-[11px] uppercase">
-              {leg.motionKey || 'not_encrypted'}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className={`${theme.dataLabel} text-[8px] uppercase`}>
-              Avatar_Anim
-            </span>
-            <span className="text-zinc-600 text-[11px] uppercase">
-              {leg.avatarAction || 'idle'}
-            </span>
-          </div>
-        </div>
+        {/* 3. AVATAR SOON HERE*/}
 
         {/* 4. DEMON ALERT */}
         {isDemonMode && (
