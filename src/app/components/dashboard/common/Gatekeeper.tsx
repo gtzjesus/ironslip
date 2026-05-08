@@ -21,7 +21,7 @@ export default function Gatekeeper({
       {/* The "Hook" Overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 z-20">
         <SignInButton mode="modal">
-          <button className="flex items-center gap-2 px-4 py-2 bg-iron-red/10 border border-iron-red text-iron-red font-mono text-[10px] uppercase tracking-widest hover:bg-iron-red hover:text-black transition-all">
+          <button className="flex items-center gap-2 px-4 py-2 bg-iron-red/10 border border-iron-red text-iron-red font-mono text-[10px] uppercase tracking-widest transition-all">
             <Lock className="w-3 h-3" /> Verify_to_Unlock
           </button>
         </SignInButton>

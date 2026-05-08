@@ -5,7 +5,7 @@ import { useUser } from '@clerk/nextjs';
 import LegsHeader from '@/app/components/dashboard/legs/Legsheader';
 import LegCard from '@/app/components/dashboard/legs/LegCard';
 import LegExpansion from '@/app/components/dashboard/legs/LegExpansion';
-import LegFilterNav from '@/app/components/dashboard/legs/LegFilterNav'; // Import here
+import LegFilterNav from '@/app/components/dashboard/legs/LegFilterNav';
 
 export default function LegsPage() {
   const { legs, loading } = useLegs();
@@ -14,7 +14,6 @@ export default function LegsPage() {
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
 
-  // useMemo keeps the filtering performant
   const filteredLegs = useMemo(() => {
     if (activeCategory === 'all') return legs;
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -26,11 +25,13 @@ export default function LegsPage() {
       <div className="flex-shrink-0 p-4 pb-0">
         <LegsHeader />
 
-        {/* CLEAN COMPONENT CALL */}
-        <LegFilterNav
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
+        {/* ONLY SHOW FILTER TO SIGNED IN USERS */}
+        {isLoaded && isSignedIn && (
+          <LegFilterNav
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+          />
+        )}
       </div>
 
       <div className="flex-1 mt-4 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
@@ -63,7 +64,7 @@ export default function LegsPage() {
             <div className="mt-4 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
-                END_OF_DATA
+                End_of_transmission
               </p>
             </div>
           </div>

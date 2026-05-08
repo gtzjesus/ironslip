@@ -52,7 +52,7 @@ export default function RootLayout({
 
           /* THE BUTTON: Yellow-themed setup with Black text */
           formButtonPrimary:
-            'bg-black !text-[#ffd300] font-black uppercase italic hover:bg-white hover:text-black transition-all py-3 shadow-md',
+            'bg-black !text-[#ffd300] font-black uppercase italic  transition-all py-3 shadow-md',
 
           /* INPUT FIELDS */
           formFieldLabel:
@@ -62,7 +62,7 @@ export default function RootLayout({
 
           /* LINKS AT BOTTOM */
           footerActionLink:
-            'text-black hover:text-[#ff003c] font-mono text-[10px] font-black underline decoration-2 uppercase',
+            'text-black  font-mono text-[10px] font-black underline decoration-2 uppercase',
           footerActionText:
             'text-black/50 font-mono text-[10px] uppercase italic',
 

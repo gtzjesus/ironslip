@@ -45,9 +45,7 @@ export default function BottomNav() {
               <div className="relative flex flex-col items-center">
                 <item.icon
                   className={`w-4 h-4 transition-colors duration-300 ${
-                    isActive
-                      ? themeColor
-                      : 'text-zinc-500 group-hover:text-white'
+                    isActive ? themeColor : 'text-zinc-500 '
                   }`}
                 />
                 <span

@@ -18,7 +18,7 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
         isDemon
           ? 'brightness-[0.6] bg-iron-volt border-iron-red'
           : 'bg-zinc-950 border-zinc-800'
-      } ${!isSignedIn ? 'cursor-default' : 'cursor-pointer hover:brightness-100'}`}
+      } ${!isSignedIn ? 'cursor-default' : 'cursor-pointer '}`}
     >
       <div className="relative z-10 flex justify-between items-center">
         <div>

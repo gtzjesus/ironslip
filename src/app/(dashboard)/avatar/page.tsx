@@ -49,7 +49,7 @@ export default function AvatarPage() {
             <img
               src={user.imageUrl}
               alt="avatar"
-              className="w-20 h-20 rounded-none border-2 border-[#c4a000] p-1 grayscale hover:grayscale-0 transition-all duration-500"
+              className="w-20 h-20 rounded-none border-2 border-[#c4a000] p-1 grayscale  transition-all duration-500"
             />
             <div>
               <p className="text-2xl font-black uppercase italic text-white leading-none">
@@ -76,7 +76,7 @@ export default function AvatarPage() {
 
         {/* TERMINATE SESSION */}
         <SignOutButton>
-          <button className="w-full py-4 border border-[#c4a000]/20 text-[#c4a000] font-mono text-[10px] uppercase tracking-[0.3em] hover:bg-[#c4a000] hover:text-black transition-all">
+          <button className="w-full py-4 border border-[#c4a000]/20 text-[#c4a000] font-mono text-[10px] uppercase tracking-[0.3em]  transition-all">
             Terminate_Session
           </button>
         </SignOutButton>

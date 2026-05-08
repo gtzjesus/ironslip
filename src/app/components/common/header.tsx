@@ -153,7 +153,7 @@ const Header = () => {
               key={href}
               href={href}
               className={clsx(
-                'hover:text-gray-200 transition-colors',
+                ' transition-colors',
                 pathname === href ? 'text-black underline' : '',
                 scrolled ? ' text-black' : ' text-white',
               )}
