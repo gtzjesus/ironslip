@@ -44,8 +44,8 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
           {/* BLURRED REWARD */}
           <p
             className={`font-black italic text-sm transition-all duration-500 ${
-              isDemon ? 'text-iron-red' : 'text-iron-volt'
-            } ${!isSignedIn ? 'blur-[4px] select-none' : 'animate-pulse'}`}
+              isDemon ? 'animate-pulse text-iron-red' : 'text-iron-volt'
+            } ${!isSignedIn ? 'blur-[4px] select-none' : ''}`}
           >
             +{leg.creditReward}
           </p>

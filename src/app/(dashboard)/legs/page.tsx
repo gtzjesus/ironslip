@@ -56,7 +56,7 @@ export default function LegsPage() {
             ) : (
               <div className="py-20 flex flex-col items-center opacity-30">
                 <p className="text-zinc-500 font-mono text-[9px] uppercase tracking-[0.4em]">
-                  SECTOR_EMPTY // NO_DATA
+                  NO_DATA
                 </p>
               </div>
             )}

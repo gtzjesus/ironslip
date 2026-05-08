@@ -15,13 +15,13 @@ export default function LegsHeader() {
 
   return (
     <header
-      className={`mb-4 flex justify-between items-end border-b ${borderColor} pb-2 transition-colors duration-700`}
+      className={`mb-4 flex justify-between items-end border-b ${borderColor} pb-2  transition-colors duration-700`}
     >
       <div>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`${accentColor} mb-2 font-mono text-[8px] tracking-[0.3em] font-black italic uppercase`}
+          className={`${accentColor} mb-2 font-mono text-[8px] tracking-[0.3em] font-black italic uppercase `}
         >
           {isSignedIn ? 'build your slip with' : 'OFFLINE'}
         </motion.p>
