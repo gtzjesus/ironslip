@@ -1,12 +1,15 @@
 'use client';
 import { useState } from 'react';
 import { useLegs } from '@/hooks/useLegs';
+import { useUser } from '@clerk/nextjs'; // Import Clerk hook
 import LegsHeader from '@/app/components/dashboard/legs/Legsheader';
 import LegCard from '@/app/components/dashboard/legs/LegCard';
 import LegExpansion from '@/app/components/dashboard/legs/LegExpansion';
 
 export default function LegsPage() {
   const { legs, loading } = useLegs();
+  const { isLoaded, isSignedIn } = useUser(); // Get auth state
+
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
 
@@ -17,20 +20,21 @@ export default function LegsPage() {
       </div>
 
       <div className="flex-1 mt-4 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
-        {loading ? (
+        {loading || !isLoaded ? (
           <div className="flex items-center">
             <p className="px-6 text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
-              CONNECTING_
+              CONNECTING_SECURE_LINE_
             </p>
           </div>
         ) : (
-          /* Added pb-28 here to clear the BottomNav completely */
           <div className="grid gap-1 pb-28">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any  */}
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {legs.map((leg: any) => (
               <LegCard
                 key={leg._id}
                 leg={leg}
+                // Pass isSignedIn as a boolean (default to false if loading)
+                isSignedIn={!!isSignedIn}
                 onClick={(l) => setSelectedLeg(l)}
               />
             ))}
@@ -38,7 +42,7 @@ export default function LegsPage() {
             <div className="mt-4 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
-                NO_FURTHER_DATA
+                STATUS: STABLE // EOF
               </p>
             </div>
           </div>
