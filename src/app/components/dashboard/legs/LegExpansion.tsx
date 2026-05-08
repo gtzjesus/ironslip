@@ -34,20 +34,18 @@ export default function LegExpansion({
         buttonBg: 'bg-black',
         buttonText: 'text-iron-volt',
         warningText: 'text-black',
-        border: 'border-black/20',
         subLabel: 'text-black/60',
       }
     : {
         modalBg: '!bg-black',
         titleText: 'text-iron-volt',
-        watermark: 'text-white/5',
+        watermark: 'text-iron-volt/20',
         dataCoreBg: 'bg-zinc-900/40',
-        dataLabel: 'text-zinc-500',
+        dataLabel: 'text-zinc-200',
         dataValue: 'text-white',
         buttonBg: 'bg-iron-volt',
         buttonText: 'text-black',
         warningText: 'text-iron-volt',
-        border: 'border-iron-volt/30',
         subLabel: 'text-white/40',
       };
 
@@ -56,14 +54,14 @@ export default function LegExpansion({
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/65 backdrop-blur-md overflow-hidden">
       {/* THE MODAL CONTAINER - Added overflow-hidden to clip the watermark */}
       <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-1 border ${theme.border} shadow-2xl overflow-x-hidden overflow-y-auto max-h-[85vh]`}
+        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-1 border  shadow-2xl overflow-x-hidden overflow-y-auto max-h-[85vh]`}
       >
         {/* THE ABORT BUTTON */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-white font-mono text-[10px] uppercase tracking-[0.3em] bg-iron-red px-3 py-2 z-[100] shadow-lg active:scale-90 transition-all border border-white/10"
         >
-          [ X ] abort
+          [ X ]
         </button>
 
         {/* 1. IDENTITY & HEADER */}
@@ -77,7 +75,7 @@ export default function LegExpansion({
 
         {/* WATERMARK - Positioned absolute but clipped by the container's overflow-hidden */}
         <span
-          className={` absolute top-0 -left-8 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
+          className={` absolute top-0 -left-4 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
         >
           {leg.category || 'IRON'}
         </span>
@@ -153,7 +151,7 @@ export default function LegExpansion({
           className={`w-full ${theme.buttonBg} py-5 ${theme.buttonText} font-black italic text-2xl uppercase active:scale-95 transition-all relative z-10 shadow-xl`}
           onClick={() => alert('CONTRACT_LOCKED')}
         >
-          {isDemonMode ? 'Start slip' : 'INITIALIZE_LEG'}
+          {isDemonMode ? 'Start slip' : 'Start slip'}
         </button>
 
         {/* FOOTER */}
