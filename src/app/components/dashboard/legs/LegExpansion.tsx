@@ -77,7 +77,7 @@ export default function LegExpansion({
 
         {/* WATERMARK - Positioned absolute but clipped by the container's overflow-hidden */}
         <span
-          className={`absolute top-0 -left-6 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
+          className={`mt-50 absolute top-0 -left-6 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
         >
           {leg.category || 'IRON'}
         </span>
@@ -125,9 +125,16 @@ export default function LegExpansion({
               >
                 Win
               </span>
-              <span className="text-iron-green font-black italic text-md">
-                +{leg.creditReward || 0}
-              </span>
+              <div className="relative group">
+                {/* The Background Layer */}
+                <div className="absolute inset-0 bg-black -skew-x-12 transform border-r-2 border-iron-green/30" />
+
+                {/* The Text Layer */}
+                <span className="relative z-10 px-3 text-iron-green font-black italic text-lg animate-pulse block">
+                  +{leg.creditReward || 0}{' '}
+                  <span className="text-[10px] ml-0.5"></span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
