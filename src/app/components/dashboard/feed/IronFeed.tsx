@@ -115,7 +115,7 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
             <div className="bg-black border border-iron-red/30 p-4 backdrop-blur-md flex flex-col items-center gap-3">
               <LockIcon className="w-4 h-4 text-iron-red" />
               <p className="text-[7px] font-mono text-iron-red/50 uppercase tracking-[0.2em]">
-                authenticate_required
+                authentication_needed
               </p>
             </div>
           </div>
