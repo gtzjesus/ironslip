@@ -38,7 +38,7 @@ export default function LegsPage() {
             <div className="mt-4 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
-                END_OF_TRANSMISSION
+                NO_FURTHER_DATA
               </p>
             </div>
           </div>

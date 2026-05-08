@@ -11,10 +11,11 @@ export default function LegExpansion({
 }) {
   const [hazardWarning] = useState(() => {
     const warnings = [
-      ' HIGH_STAKES_DETECTED ',
-      ' HIGH_RISK_IMMINENT ',
+      ' PROTOCOL_READY ',
+      ' HIGH_RISK_DETECTED ',
       ' DISCIPLINE_OR_BUST ',
       ' OPERATION_PENDING',
+      ' BUST_OR_GLORY',
     ];
     return warnings[Math.floor(Math.random() * warnings.length)];
   });
@@ -82,7 +83,7 @@ export default function LegExpansion({
 
         {/* 2. CORE STATS */}
         <div className={`${theme.dataCoreBg} p-4 space-y-3 relative z-10  `}>
-          <div className="flex justify-between items-end border-b border-iron-red/10 ">
+          <div className="flex justify-between items-end border-b border-iron-red/20 ">
             <span
               className={`${theme.dataLabel} font-mono italic text-[10px] uppercase`}
             >
@@ -95,7 +96,7 @@ export default function LegExpansion({
             </span>
           </div>
 
-          <div className="flex justify-between items-center border-b border-iron-red/10">
+          <div className="flex justify-between items-center border-b border-iron-red/20">
             <span
               className={`${theme.dataLabel} font-mono italic text-[10px] uppercase`}
             >
