@@ -91,10 +91,10 @@ export default function LegExpansion({
             <span
               className={`${theme.dataLabel} font-mono text-[11px] uppercase`}
             >
-              Iron Target
+              Target
             </span>
             <span
-              className={`${theme.dataValue} font-black italic text-xl uppercase`}
+              className={`${theme.dataValue} font-black italic text-lg uppercase`}
             >
               {leg.requirementValue} {leg.requirementUnit}
             </span>
@@ -118,7 +118,7 @@ export default function LegExpansion({
               >
                 Yield
               </span>
-              <span className="text-iron-volt font-black italic text-lg">
+              <span className="text-iron-red font-black italic text-md">
                 +{leg.creditReward} CR
               </span>
             </div>
@@ -128,7 +128,7 @@ export default function LegExpansion({
               >
                 Penalty
               </span>
-              <span className="text-iron-red font-black italic text-lg">
+              <span className="text-iron-red font-black italic text-md">
                 -{leg.burnPenalty || 0} CR
               </span>
             </div>
@@ -136,7 +136,7 @@ export default function LegExpansion({
         </div>
 
         {/* 3. SYSTEM & AI CONFIG */}
-        <div className="bg-iron-red/40 p-4 space-y-2 relative z-10 border border-white/5 font-mono">
+        <div className="bg-iron-volt/40 p-4 space-y-2 relative z-10 border border-white/5 font-mono">
           <div className="flex justify-between items-center">
             <span className={`${theme.dataLabel} text-[8px] uppercase`}>
               Verification
@@ -165,8 +165,8 @@ export default function LegExpansion({
 
         {/* 4. DEMON ALERT */}
         {isDemonMode && (
-          <div className="bg-black text-iron-red p-2 text-center font-mono text-[9px] font-black border-2 border-iron-red  z-10">
-            👹 WARNING: DEMON_PROTOCOL_ENGAGED
+          <div className="bg-iron-volt/40 text-iron-red p-2 text-center font-mono text-[9px] font-black   z-10">
+            👹 DEMON_PROTOCOL 👹
           </div>
         )}
 
@@ -179,7 +179,7 @@ export default function LegExpansion({
         </button>
 
         {/* FOOTER */}
-        <div className="flex flex-col items-center gap-1 opacity-60 relative z-10">
+        <div className="flex flex-col items-center gap-1 opacity-60 relative z-10 mt-2">
           <p
             className={`${theme.warningText} font-black font-mono text-[8px] text-center uppercase tracking-widest `}
           >

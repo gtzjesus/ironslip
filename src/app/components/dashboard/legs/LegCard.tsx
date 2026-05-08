@@ -26,7 +26,7 @@ export default function LegCard({ leg, onClick }: LegProps) {
           <p
             className={`font-mono text-[8px] uppercase tracking-widest ${isDemon ? 'animate-pulse text-black/60' : 'text-zinc-500'}`}
           >
-            {isDemon ? '👹 DEMON_' : leg.category}
+            {isDemon ? 'DEMON 👹' : leg.category}
           </p>
           <h3
             className={`font-black italic text-xl uppercase tracking-tighter ${isDemon ? 'text-black' : 'text-white'}`}
