@@ -89,7 +89,7 @@ export default function IronHero() {
         <div className="relative flex flex-col md:flex-row h-full w-full">
           {/* THE AVATAR CONTAINER */}
           <div className="relative z-10 h-full w-full flex items-center justify-center md:w-1/2 md:translate-x-[-10%]">
-            <div className="h-full w-full grayscale contrast-[1.4] brightness-[0.5] sepia-[0.2]">
+            <div className="h-full w-full grayscale contrast-[1.4] brightness-[0.75] sepia-[0.2]">
               <RiveComponent />
             </div>
           </div>
