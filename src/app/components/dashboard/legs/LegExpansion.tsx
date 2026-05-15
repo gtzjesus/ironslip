@@ -56,24 +56,24 @@ export default function LegExpansion({
       };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 bg-black/65 backdrop-blur-md overflow-hidden">
+    <div className="fixed inset-0 z-[90] flex pt-20 justify-center p-2 bg-black/35 backdrop-blur-xs overflow-hidden">
       {/* THE MODAL CONTAINER */}
       <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-md h-[70vh] relative flex flex-col border shadow-2xl overflow-hidden`}
+        className={`cl-modalContent ${theme.modalBg} w-full max-w-lg h-[75vh] relative flex flex-col border shadow-lg overflow-hidden`}
       >
         {/* THE ABORT BUTTON - Stay Fixed Top */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-white font-mono text-[10px] uppercase tracking-[0.3em] bg-iron-red px-3 py-2 z-[100] shadow-lg active:scale-90 transition-all border border-white/10"
+          className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-iron-red px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
         >
           [ X ]
         </button>
 
-        {/* 1. SCROLLABLE CONTENT AREA */}
-        <div className="flex-1 overflow-y-auto p-6 pt-10 scrollbar-hide relative">
+        {/* 1. SCROLLABLE CONTENT AREA - Agregado overflow-x-hidden */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 pt-25 scrollbar-hide relative">
           {/* WATERMARK (Inside scroll so it moves with content) */}
           <span
-            className={`absolute top-0 -left-4 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
+            className={`absolute top-0 -left-6 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
           >
             {leg.category || 'IRON'}
           </span>
@@ -89,11 +89,11 @@ export default function LegExpansion({
 
           {/* CORE STATS */}
           <div
-            className={`${theme.dataCoreBg} p-4 space-y-3 relative z-10 border border-black/10`}
+            className={`${theme.dataCoreBg} p-1 space-y-5 relative z-10 border border-black/50`}
           >
-            <div className="flex justify-between items-end border-b border-iron-red/20 pb-1">
+            <div className="flex justify-between items-end border-b border-iron-volt/60 pb-1">
               <span
-                className={`${theme.dataLabel} font-mono italic text-[10px] uppercase`}
+                className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
               >
                 Target
               </span>
@@ -104,9 +104,9 @@ export default function LegExpansion({
               </span>
             </div>
 
-            <div className="flex justify-between items-center border-b border-iron-red/20 pb-1">
+            <div className="flex justify-between items-center border-b border-iron-volt/60 pb-1">
               <span
-                className={`${theme.dataLabel} font-mono italic text-[10px] uppercase`}
+                className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
               >
                 Window
               </span>
@@ -118,7 +118,7 @@ export default function LegExpansion({
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col">
                 <span
-                  className={`${theme.dataLabel} font-mono italic text-[10px] uppercase`}
+                  className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
                 >
                   Verification
                 </span>
@@ -128,7 +128,7 @@ export default function LegExpansion({
               </div>
               <div className="flex flex-col text-right">
                 <span
-                  className={`${theme.dataLabel} font-mono italic text-[10px] uppercase`}
+                  className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
                 >
                   Win
                 </span>
@@ -148,15 +148,6 @@ export default function LegExpansion({
               👹 DEMON_PROTOCOL_ACTIVE 👹
             </div>
           )}
-
-          {/* FOOTER WARNING */}
-          <div className="mt-8 flex flex-col items-center opacity-40">
-            <p
-              className={`${theme.warningText} font-black font-mono text-[8px] text-center uppercase tracking-[0.3em]`}
-            >
-              {hazardWarning}
-            </p>
-          </div>
         </div>
 
         {/* 2. FIXED BUTTON CONTAINER - Pinned to bottom */}
@@ -169,7 +160,7 @@ export default function LegExpansion({
               onClose();
             }}
           >
-            {isInSlip ? 'REMOVE_FROM_SLIP' : 'ADD_TO_SLIP'}
+            {isInSlip ? 'REMOVE FROM SLIP' : 'add to slip'}
           </button>
         </div>
       </div>
