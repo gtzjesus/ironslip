@@ -56,10 +56,10 @@ export default function LegExpansion({
       };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/65 backdrop-blur-md overflow-hidden">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 bg-black/65 backdrop-blur-md overflow-hidden">
       {/* THE MODAL CONTAINER */}
       <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-md h-[80vh] relative flex flex-col border shadow-2xl overflow-hidden`}
+        className={`cl-modalContent ${theme.modalBg} w-full max-w-md h-[70vh] relative flex flex-col border shadow-2xl overflow-hidden`}
       >
         {/* THE ABORT BUTTON - Stay Fixed Top */}
         <button
