@@ -14,7 +14,7 @@ export default function RootLayout({
         signUp: {
           start: {
             title: 'HELLO USER',
-            subtitle: 'Your avatar is waiting. Enter the Forge.',
+            subtitle: 'Enter the Forge.',
             actionText: 'Already an Iron?',
             actionLink: 'Authenticate',
           },

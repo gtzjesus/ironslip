@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useMemo } from 'react';
 import { useLegs } from '@/hooks/useLegs';
@@ -6,27 +7,37 @@ import LegsHeader from '@/app/components/dashboard/legs/Legsheader';
 import LegCard from '@/app/components/dashboard/legs/LegCard';
 import LegExpansion from '@/app/components/dashboard/legs/LegExpansion';
 import LegFilterNav from '@/app/components/dashboard/legs/LegFilterNav';
+import SlipNavbar from '@/app/components/dashboard/legs/SlipNavbar'; // New Component
 
 export default function LegsPage() {
   const { legs, loading } = useLegs();
   const { isLoaded, isSignedIn } = useUser();
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
 
+  // SLIP BUILDER STATE
+  const [activeSlip, setActiveSlip] = useState<any[]>([]);
+
   const filteredLegs = useMemo(() => {
     if (activeCategory === 'all') return legs;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     return legs.filter((leg: any) => leg.category === activeCategory);
   }, [legs, activeCategory]);
 
+  // Logic to add/remove legs from the construction
+  const toggleLegInSlip = (leg: any) => {
+    const exists = activeSlip.find((l) => l._id === leg._id);
+    if (exists) {
+      setActiveSlip(activeSlip.filter((l) => l._id !== leg._id));
+    } else {
+      if (activeSlip.length >= 5) return alert('MAX_CAPACITY: 5_LEGS');
+      setActiveSlip([...activeSlip, leg]);
+    }
+  };
+
   return (
-    <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900">
-      {/* HEADER SECTION - FIXED AT TOP */}
+    <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 relative">
       <div className="flex-shrink-0 p-4 pb-0">
         <LegsHeader />
-
-        {/* ONLY SHOW FILTER TO SIGNED IN USERS */}
         {isLoaded && isSignedIn && (
           <LegFilterNav
             activeCategory={activeCategory}
@@ -35,36 +46,24 @@ export default function LegsPage() {
         )}
       </div>
 
-      {/* SCROLLABLE CONTENT AREA */}
       <div className="flex-1 mt-4 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
         {loading || !isLoaded ? (
-          <div className="flex items-center">
-            <p className="px-6 text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
-              CONNECTING_
+          <div className="flex items-center justify-center py-20">
+            <p className="text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
+              CONNECTING_RESOURCES_
             </p>
           </div>
         ) : (
-          /* Increased padding bottom (pb-32) to clear the fixed Nav */
           <div className="grid gap-1 pb-32">
-            {filteredLegs.length > 0 ? (
-              /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-              filteredLegs.map((leg: any) => (
-                <LegCard
-                  key={leg._id}
-                  leg={leg}
-                  isSignedIn={!!isSignedIn}
-                  onClick={(l) => setSelectedLeg(l)}
-                />
-              ))
-            ) : (
-              <div className="py-20 flex flex-col items-center opacity-30">
-                <p className="text-zinc-500 font-mono text-[9px] uppercase tracking-[0.4em]">
-                  NO_DATA_FOUND
-                </p>
-              </div>
-            )}
+            {filteredLegs.map((leg: any) => (
+              <LegCard
+                key={leg._id}
+                leg={leg}
+                isSignedIn={!!isSignedIn}
+                onClick={(l) => setSelectedLeg(l)}
+              />
+            ))}
 
-            {/* END OF TRANSMISSION INDICATOR */}
             <div className="mt-8 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
@@ -72,14 +71,27 @@ export default function LegsPage() {
               </p>
             </div>
 
-            {/* THE CRITICAL SPACER: This invisible div ensures the last card scrolls above the BottomNav */}
-            <div className="h-24 w-full flex-shrink-0" aria-hidden="true" />
+            {/* Spacer to clear BOTH navbars */}
+            <div className="h-40 w-full flex-shrink-0" aria-hidden="true" />
           </div>
         )}
       </div>
 
+      {/* NEW: THE SLIP CONSTRUCTION BAR */}
+      <SlipNavbar
+        activeSlip={activeSlip}
+        onRemoveLeg={(id) =>
+          setActiveSlip((prev) => prev.filter((l) => l._id !== id))
+        }
+      />
+
       {selectedLeg && (
-        <LegExpansion leg={selectedLeg} onClose={() => setSelectedLeg(null)} />
+        <LegExpansion
+          leg={selectedLeg}
+          onClose={() => setSelectedLeg(null)}
+          onToggleSlip={toggleLegInSlip}
+          isInSlip={activeSlip.some((l) => l._id === selectedLeg._id)}
+        />
       )}
     </main>
   );

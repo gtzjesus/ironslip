@@ -1,14 +1,22 @@
 'use client';
 import { useState } from 'react';
 
-export default function LegExpansion({
-  leg,
-  onClose,
-}: {
+// Added onToggleSlip and isInSlip to the interface to stop the errors
+interface LegExpansionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   leg: any;
   onClose: () => void;
-}) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onToggleSlip: (leg: any) => void;
+  isInSlip: boolean;
+}
+
+export default function LegExpansion({
+  leg,
+  onClose,
+  onToggleSlip,
+  isInSlip,
+}: LegExpansionProps) {
   const [hazardWarning] = useState(() => {
     const warnings = [
       ' PROTOCOL_READY ',
@@ -51,11 +59,9 @@ export default function LegExpansion({
       };
 
   return (
-    /* Added overflow-hidden here to ensure the backdrop doesn't scroll either */
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/65 backdrop-blur-md overflow-hidden">
-      {/* THE MODAL CONTAINER - Added overflow-hidden to clip the watermark */}
       <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-1 border  shadow-2xl overflow-x-hidden overflow-y-auto max-h-[85vh]`}
+        className={`cl-modalContent ${theme.modalBg} w-full max-w-md p-6 relative flex flex-col gap-1 border shadow-2xl overflow-x-hidden overflow-y-auto max-h-[85vh]`}
       >
         {/* THE ABORT BUTTON */}
         <button
@@ -74,7 +80,7 @@ export default function LegExpansion({
           </h2>
         </div>
 
-        {/* WATERMARK - Positioned absolute but clipped by the container's overflow-hidden */}
+        {/* WATERMARK */}
         <span
           className={` absolute top-0 -left-4 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
         >
@@ -125,34 +131,36 @@ export default function LegExpansion({
                 Win
               </span>
               <div className="relative group">
-                {/* The Background Layer */}
                 <div className="absolute inset-0 bg-black -skew-x-12 transform border-r-2 border-iron-green/30" />
-
-                {/* The Text Layer */}
                 <span className="relative z-10 px-3 text-iron-green font-black italic text-lg animate-pulse block">
-                  +{leg.creditReward || 0}{' '}
-                  <span className="text-[10px] ml-0.5"></span>
+                  +{leg.creditReward || 0}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 3. AVATAR SOON HERE*/}
-
         {/* 4. DEMON ALERT */}
         {isDemonMode && (
-          <div className="bg-iron-volt/40 text-iron-red p-2 text-center font-mono text-[9px] font-black z-10">
+          <div className="bg-iron-volt/40 text-iron-red p-2 text-center font-mono text-[9px] font-black z-10 mt-2">
             👹 DEMON_PROTOCOL 👹
           </div>
         )}
 
-        {/* 5. ACTION BUTTON */}
+        {/* 5. SLIP ACTION BUTTON */}
         <button
-          className={`w-full ${theme.buttonBg} py-5 ${theme.buttonText} font-black italic text-2xl uppercase active:scale-95 transition-all relative z-10 shadow-xl`}
-          onClick={() => alert('CONTRACT_LOCKED')}
+          className={`w-full py-4 font-black italic text-2xl uppercase relative z-10 mt-4 transition-all active:scale-95 shadow-xl
+            ${
+              isInSlip
+                ? 'bg-iron-red text-white'
+                : `${theme.buttonBg} ${theme.buttonText}`
+            }`}
+          onClick={() => {
+            onToggleSlip(leg);
+            onClose();
+          }}
         >
-          {isDemonMode ? 'Start slip' : 'Start slip'}
+          {isInSlip ? 'REMOVE_FROM_SLIP' : 'ADD_TO_SLIP'}
         </button>
 
         {/* FOOTER */}
