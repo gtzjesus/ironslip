@@ -22,6 +22,7 @@ export default function LegsPage() {
 
   return (
     <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900">
+      {/* HEADER SECTION - FIXED AT TOP */}
       <div className="flex-shrink-0 p-4 pb-0">
         <LegsHeader />
 
@@ -34,6 +35,7 @@ export default function LegsPage() {
         )}
       </div>
 
+      {/* SCROLLABLE CONTENT AREA */}
       <div className="flex-1 mt-4 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
         {loading || !isLoaded ? (
           <div className="flex items-center">
@@ -42,7 +44,8 @@ export default function LegsPage() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-1 pb-28">
+          /* Increased padding bottom (pb-32) to clear the fixed Nav */
+          <div className="grid gap-1 pb-32">
             {filteredLegs.length > 0 ? (
               /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
               filteredLegs.map((leg: any) => (
@@ -56,17 +59,21 @@ export default function LegsPage() {
             ) : (
               <div className="py-20 flex flex-col items-center opacity-30">
                 <p className="text-zinc-500 font-mono text-[9px] uppercase tracking-[0.4em]">
-                  NO_DATA
+                  NO_DATA_FOUND
                 </p>
               </div>
             )}
 
-            <div className="mt-4 flex flex-col items-center opacity-20">
+            {/* END OF TRANSMISSION INDICATOR */}
+            <div className="mt-8 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
                 End_of_transmission
               </p>
             </div>
+
+            {/* THE CRITICAL SPACER: This invisible div ensures the last card scrolls above the BottomNav */}
+            <div className="h-24 w-full flex-shrink-0" aria-hidden="true" />
           </div>
         )}
       </div>
