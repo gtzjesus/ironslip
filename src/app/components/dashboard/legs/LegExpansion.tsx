@@ -56,7 +56,7 @@ export default function LegExpansion({
       };
 
   return (
-    <div className="fixed inset-0 z-[90] flex pt-20 justify-center p-2 bg-black/35 backdrop-blur-xs overflow-hidden">
+    <div className="fixed inset-0 z-[90] flex  justify-center p-2 bg-black/35 backdrop-blur-xs overflow-hidden">
       {/* THE MODAL CONTAINER */}
       <div
         className={`cl-modalContent ${theme.modalBg} w-full max-w-lg h-[75vh] relative flex flex-col border shadow-lg overflow-hidden`}
@@ -73,7 +73,7 @@ export default function LegExpansion({
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 pt-25 scrollbar-hide relative">
           {/* WATERMARK (Inside scroll so it moves with content) */}
           <span
-            className={`absolute top-0 -left-6 text-8xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
+            className={`absolute top-0 -left-4 text-9xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
           >
             {leg.category || 'IRON'}
           </span>
