@@ -16,7 +16,7 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
       onClick={() => isSignedIn && onClick(leg)} // Only click if signed in
       className={`relative w-full text-left border-2 p-4 mb-2 overflow-hidden transition-all active:scale-[0.98] ${
         isDemon
-          ? 'brightness-[0.85] bg-iron-volt border-iron-red'
+          ? 'brightness-[0.85]  border-iron-volt'
           : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default' : 'cursor-pointer '}`}
     >
@@ -24,7 +24,7 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
         <div>
           <p
             className={`font-mono text-[8px] uppercase tracking-widest ${
-              isDemon ? 'animate-pulse text-black/60' : 'text-zinc-500'
+              isDemon ? 'animate-pulse' : 'text-zinc-500'
             }`}
           >
             {isDemon ? 'DEMON 👹' : leg.category}
@@ -33,7 +33,7 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
           {/* BLURRED TASK NAME */}
           <h3
             className={`font-black italic text-xl uppercase tracking-tighter transition-all duration-500 ${
-              isDemon ? 'text-black' : 'text-white'
+              isDemon ? 'text-iron-red' : 'text-white'
             } ${!isSignedIn ? 'blur-[5px] select-none opacity-50' : ''}`}
           >
             {leg.task}
@@ -44,7 +44,7 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
           {/* BLURRED REWARD */}
           <p
             className={`font-black italic text-sm transition-all duration-500 ${
-              isDemon ? 'animate-pulse text-iron-red' : 'text-iron-volt'
+              isDemon ? ' text-iron-red' : 'text-iron-volt'
             } ${!isSignedIn ? 'blur-[4px] select-none' : ''}`}
           >
             +{leg.creditReward}
