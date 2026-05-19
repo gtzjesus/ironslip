@@ -82,7 +82,7 @@ export default function SlipNavbar({
                 } ${
                   hasDemon 
                     ? 'bg-iron-volt border-iron-red shadow-[0_-10px_40px_rgba(239,68,68,0.5)]' 
-                    : 'brightness-[0.85] bg-iron-volt border-black shadow-[0_-10px_40px_rgba(0,0,0,0.6)]'
+                    : 'brightness-[0.85] bg-black border-iron-volt  shadow-[0_-10px_40px_rgba(0,0,0,0.6)]'
                 }`}
               >
                 {/* HAZARD OVERLAY: Red diagonal warning stripes painted over the yellow base */}
@@ -92,7 +92,7 @@ export default function SlipNavbar({
 
                 <div className="relative z-10 flex items-center gap-3 text-left">
                   <div>
-                    <p className={`text-[10px] font-black font-mono leading-none uppercase tracking-wider ${
+                    <p className={`text-[10px]  text-iron-volt font-mono leading-none uppercase tracking-wider ${
                       hasDemon ? 'text-iron-red flex items-center gap-1 animate-pulse' : 'text-black/60'
                     }`}>
                       {hasDemon ? (
@@ -103,7 +103,7 @@ export default function SlipNavbar({
                         'iron slip'
                       )}
                     </p>
-                    <p className="text-sm font-black italic uppercase text-black">
+                    <p className="text-sm font-black italic uppercase  text-iron-volt">
                       {activeSlip.length} / 5 LEGS
                     </p>
                   </div>
@@ -111,10 +111,10 @@ export default function SlipNavbar({
 
                 <div className="relative z-10 flex items-center gap-4">
                   <div className="text-right mr-2">
-                    <p className="text-[8px] font-black font-mono uppercase text-black/50">
+                    <p className="text-[8px] text-iron-volt font-mono uppercase text-black/50">
                       win up to 1.23x
                     </p>
-                    <p className={`text-xs uppercase font-black italic leading-none tracking-tight ${
+                    <p className={`text-xs uppercase  text-iron-volt italic leading-none tracking-tight ${
                       hasDemon ? 'text-iron-red font-black tracking-wide' : 'text-black'
                     }`}>
                       {activePhrase}
@@ -127,7 +127,7 @@ export default function SlipNavbar({
                       isEligibleToExpand 
                         ? hasDemon 
                           ? 'bg-black border-iron-red text-iron-red shadow-[0_0_20px_rgba(239,68,68,0.8)]'
-                          : 'bg-black border-black text-iron-volt' 
+                          : 'bg-black border-iron-volt text-iron-volt' 
                         : hasDemon
                           ? 'bg-zinc-900 border-zinc-800 text-zinc-600'
                           : 'bg-black/10 border-black/10 text-black/30'
