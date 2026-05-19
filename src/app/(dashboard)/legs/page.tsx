@@ -7,15 +7,13 @@ import LegsHeader from '@/app/components/dashboard/legs/Legsheader';
 import LegCard from '@/app/components/dashboard/legs/LegCard';
 import LegExpansion from '@/app/components/dashboard/legs/LegExpansion';
 import LegFilterNav from '@/app/components/dashboard/legs/LegFilterNav';
-import SlipNavbar from '@/app/components/dashboard/legs/SlipNavbar'; // New Component
+import SlipNavbar from '@/app/components/dashboard/legs/SlipNavbar'; 
 
 export default function LegsPage() {
   const { legs, loading } = useLegs();
   const { isLoaded, isSignedIn } = useUser();
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
-
-  // SLIP BUILDER STATE
   const [activeSlip, setActiveSlip] = useState<any[]>([]);
 
   const filteredLegs = useMemo(() => {
@@ -23,7 +21,6 @@ export default function LegsPage() {
     return legs.filter((leg: any) => leg.category === activeCategory);
   }, [legs, activeCategory]);
 
-  // Logic to add/remove legs from the construction
   const toggleLegInSlip = (leg: any) => {
     const exists = activeSlip.find((l) => l._id === leg._id);
     if (exists) {
@@ -71,13 +68,11 @@ export default function LegsPage() {
               </p>
             </div>
 
-            {/* Spacer to clear BOTH navbars */}
             <div className="h-40 w-full flex-shrink-0" aria-hidden="true" />
           </div>
         )}
       </div>
 
-      {/* NEW: THE SLIP CONSTRUCTION BAR */}
       <SlipNavbar
         activeSlip={activeSlip}
         onRemoveLeg={(id) =>

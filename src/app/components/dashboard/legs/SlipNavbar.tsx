@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, AlertTriangle, ChevronsRight, Lock, Skull } from 'lucide-react'; 
 import SlipReviewOverlay from './SlipReviewOverlay'; // Adjust path if needed
@@ -31,7 +31,19 @@ export default function SlipNavbar({
   onRemoveLeg,
 }: SlipNavbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activePhrase, setActivePhrase] = useState('');
+
+  // CRITICAL CHANGE: Calculated raw on every single render pass
+  // This causes the text to pick a fresh random phrase immediately when expanding/toggling
+  const list = activeSlip.some((leg) => leg.isDemon || leg.difficulty === 'demon') 
+    ? DEMON_PHRASES 
+    : STANDARD_PHRASES;
+  const activePhrase = list[Math.floor(Math.random() * list.length)];
+
+  if (activeSlip.length === 0) return null;
+
+  const MIN_REVIEWS_REQUIRED = 1;
+  const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
+  const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
 
   const hasDemon = activeSlip.some(
     (leg) => leg.isDemon || leg.difficulty === 'demon',
@@ -45,19 +57,6 @@ export default function SlipNavbar({
     baseCredits * (hasDemon ? multiplier + 0.5 : multiplier),
   );
 
-  useEffect(() => {
-    if (activeSlip.length === 0) return; 
-    const list = hasDemon ? DEMON_PHRASES : STANDARD_PHRASES;
-    const randomPhrase = list[Math.floor(Math.random() * list.length)];
-    setActivePhrase(randomPhrase);
-  }, [activeSlip, hasDemon]);
-
-  const MIN_REVIEWS_REQUIRED = 1;
-  const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
-  const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
-
-  if (activeSlip.length === 0) return null;
-
   return (
     <>
       {/* 1. COMPACT DOCK (Widescreen Fixed Alignment Center) */}
@@ -68,10 +67,8 @@ export default function SlipNavbar({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '-100vw', opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 120 }}
-            // FIXED STRUCTURAL FIX: Force outer fixed wrapper to align items to the center
             className="fixed bottom-[64px] left-0 w-full z-[90] px-2 flex justify-center pointer-events-none"
           >
-            {/* INNER CONTAINER: Inherits the exact max-width boundary of  page */}
             <div className="w-full max-w-2xl pointer-events-auto">
               <div
                 onClick={() => {
@@ -87,19 +84,11 @@ export default function SlipNavbar({
                     : 'bg-iron-volt border-black shadow-[0_-10px_40px_rgba(0,0,0,0.6)]'
                 }`}
               >
-                {/* Dynamic glowing background lines just for the Demon state */}
                 {hasDemon && (
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(45deg,#ef4444_25%,transparent_25%,transparent_50%,#ef4444_50%,#ef4444_75%,transparent_75%,transparent)] bg-[length:20px_20px] animate-[bleed_2s_linear_infinite]" />
                 )}
 
                 <div className="relative z-10 flex items-center gap-3 text-left">
-                  {/* <div className={`p-2 transition-colors ${hasDemon ? 'bg-iron-red' : 'bg-black'}`}>
-                    {hasDemon ? (
-                      <AlertTriangle className="w-4 h-4 text-black " />
-                    ) : (
-                      <Zap className="w-4 h-4 text-iron-volt" />
-                    )}
-                  </div> */}
                   <div>
                     <p className={`text-[9px] font-black font-mono leading-none uppercase tracking-wider ${
                       hasDemon ? 'text-iron-red/80' : 'text-black/60'

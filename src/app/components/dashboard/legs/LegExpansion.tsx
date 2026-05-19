@@ -56,7 +56,7 @@ export default function LegExpansion({
       };
 
   return (
-    <div className="fixed inset-0 z-[90] flex  justify-center p-6 bg-black/35 backdrop-blur-xs overflow-hidden">
+    <div className="fixed inset-0 z-[9999] flex  justify-center p-6 bg-black/35 backdrop-blur-xs overflow-hidden">
       {/* THE MODAL CONTAINER */}
       <div
         className={`cl-modalContent ${theme.modalBg} w-full max-w-lg h-[75vh] relative flex flex-col border shadow-lg overflow-hidden`}
@@ -153,7 +153,7 @@ export default function LegExpansion({
         {/* 2. FIXED BUTTON CONTAINER - Pinned to bottom */}
         <div className="p-6 bg-inherit border-t border-black/5 relative z-20">
           <button
-            className={`w-full py-5 font-black italic text-2xl uppercase transition-all active:scale-95 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]
+            className={`w-full py-5 font-black italic text-lg uppercase transition-all active:scale-95 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]
               ${isInSlip ? 'bg-iron-red text-white' : `${theme.buttonBg} ${theme.buttonText}`}`}
             onClick={() => {
               onToggleSlip(leg);
