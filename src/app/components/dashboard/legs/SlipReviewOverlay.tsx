@@ -53,10 +53,10 @@ export default function SlipReviewOverlay({
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b-4 border-black/10">
           <div>
             <p className="font-mono text-xs tracking-[0.5em] font-black text-black/40 uppercase mb-1 text-left">
-              PROTOCOL_DECRYPTED
+              Protocol
             </p>
             <h2 className="text-6xl font-black italic uppercase leading-none tracking-tighter">
-              REVIEW_SLIP
+              iron slip
             </h2>
           </div>
           <button

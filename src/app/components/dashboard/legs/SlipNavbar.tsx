@@ -1,9 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, AlertTriangle, ChevronsRight, Lock, Skull } from 'lucide-react'; 
 import SlipReviewOverlay from './SlipReviewOverlay'; // Adjust path if needed
+
+const STANDARD_PHRASES = [
+  'INITIALIZE CONTRACT',
+  'LOCK IN SLIP',
+  'EXECUTE PROTOCOL',
+  'PUNCH IT',
+];
+
+const DEMON_PHRASES = [
+  'INITIALIZE HAZARD',
+  'ACCEPT TERMS',
+  'ENGAGE DRIVE',
+  'LOCK AND LOAD',
+  'ENTER THE GRID',
+  'EXECUTE MAYHEM',
+];
 
 interface SlipNavbarProps {
   activeSlip: any[];
@@ -14,14 +30,9 @@ export default function SlipNavbar({
   activeSlip,
   onRemoveLeg,
 }: SlipNavbarProps) {
+  // 1. ALL HOOKS MUST RUN UNCONDITIONALLY AT THE VERY TOP
   const [isExpanded, setIsExpanded] = useState(false);
-
-  if (activeSlip.length === 0) return null;
-
-  // MINIMUM REQUIREMENTS CONFIGURATION
-  const MIN_REVIEWS_REQUIRED = 2;
-  const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
-  const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
+  const [activePhrase, setActivePhrase] = useState('');
 
   const hasDemon = activeSlip.some(
     (leg) => leg.isDemon || leg.difficulty === 'demon',
@@ -34,6 +45,22 @@ export default function SlipNavbar({
   const totalPayout = Math.floor(
     baseCredits * (hasDemon ? multiplier + 0.5 : multiplier),
   );
+
+  // Safely randomizes phrases on mount and whenever the active slip updates
+  useEffect(() => {
+    if (activeSlip.length === 0) return; // Prevent executing if list empty
+    const list = hasDemon ? DEMON_PHRASES : STANDARD_PHRASES;
+    const randomPhrase = list[Math.floor(Math.random() * list.length)];
+    setActivePhrase(randomPhrase);
+  }, [activeSlip, hasDemon]);
+
+  // MINIMUM REQUIREMENTS CONFIGURATION
+  const MIN_REVIEWS_REQUIRED = 1;
+  const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
+  const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
+
+  // 2. SAFE EARLY RETURN PLACED AFTER ALL HOOKS ARE ACCOUNTED FOR
+  if (activeSlip.length === 0) return null;
 
   return (
     <>
@@ -90,16 +117,19 @@ export default function SlipNavbar({
               <div className="relative z-10 flex items-center gap-4">
                 <div className="text-right mr-2">
                   <p className={`text-[8px] font-black font-mono uppercase ${hasDemon ? 'text-zinc-500' : 'text-black/50'}`}>
-                    win
+                    win up to 1.23x
                   </p>
-                  <p className={`text-xl font-black italic leading-none ${hasDemon ? 'text-iron-red' : 'text-black'}`}>
-                    {totalPayout} <span className="text-xs not-italic font-mono opacity-70"></span>
+                  <p className={`text-xs uppercase font-black italic leading-none tracking-tight transition-colors duration-300 ${
+                    hasDemon ? 'text-iron-red animate-pulse' : 'text-black'
+                  }`}>
+                    {hasDemon ? ` ${activePhrase}` : activePhrase}
+                    <span className="text-xs not-italic font-mono opacity-70"></span>
                   </p>
-                </div>
-
+                </div>  
+                
                 {/* ICON ONLY DYNAMIC UTILITY ACTION BUTTON */}
                 <div 
-                  className={`p-3 transition-all duration-300 flex items-center justify-center border-2 ${
+                  className={`p-3 transition-all duration-300 flex items-center justify-center border-2 overflow-hidden w-11 h-11 ${
                     isEligibleToExpand 
                       ? hasDemon 
                         ? 'bg-iron-red border-black text-black shadow-[0_0_15px_rgba(239,68,68,0.6)] '
@@ -111,9 +141,24 @@ export default function SlipNavbar({
                 >
                   {isEligibleToExpand ? (
                     hasDemon ? (
-                      <Skull className="w-5 h-5 animate-spin [animation-duration:3s]" />
+                    <ChevronsRight className="w-5 h-5" />
                     ) : (
-                      <ChevronsRight className="w-5 h-5 animate-[translateX_1s_infinite]" />
+                      /* Framer Motion Left-to-Right Loop */
+                      <div className="w-5 h-5 relative flex items-center justify-center">
+                        <motion.div
+                          animate={{ 
+                            x: [-6, 6, -6],
+                            opacity: [0.4, 1, 0.4] 
+                          }}
+                          transition={{ 
+                            repeat: Infinity, 
+                            duration: 1.2, 
+                            ease: "easeInOut" 
+                          }}
+                        >
+                          <ChevronsRight className="w-5 h-5" />
+                        </motion.div>
+                      </div>
                     )
                   ) : (
                     <div className="flex flex-col items-center gap-0.5 relative">
