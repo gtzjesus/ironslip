@@ -52,19 +52,20 @@ export default function SlipReviewOverlay({
         {/* HEADER */}
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b-4 border-black/10">
           <div>
-            <p className="font-mono text-xs tracking-[0.5em] font-black text-black/40 uppercase mb-1 text-left">
-              Protocol
+            <p className="mb-2 font-mono text-[8px] tracking-[0.3em] font-black italic uppercase">
+                lock in your
             </p>
-            <h2 className="text-6xl font-black italic uppercase leading-none tracking-tighter">
-              iron slip
+            <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none">
+               {hasDemon ? 'DEMON' : 'IRON'} SLIP
             </h2>
           </div>
-          <button
-            onClick={onClose}
-            className="bg-black text-iron-volt p-4 shadow-2xl active:scale-90 transition-transform mb-1 font-mono text-xs font-bold"
-          >
-            [ CLOSE ]
-          </button>
+        {/* THE ABORT BUTTON - Stay Fixed Top */}
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-iron-red px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
+        >
+          [ X ]
+        </button>
         </div>
 
         {/* CONTENIDO SCROLLABLE */}

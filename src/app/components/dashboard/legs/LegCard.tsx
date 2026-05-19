@@ -16,7 +16,7 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
       onClick={() => isSignedIn && onClick(leg)} // Only click if signed in
       className={`relative w-full text-left border-2 p-4 mb-2 overflow-hidden transition-all active:scale-[0.98] ${
         isDemon
-          ? 'brightness-[0.75] bg-iron-volt border-iron-red'
+          ? 'brightness-[0.85] bg-iron-volt border-iron-red'
           : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default' : 'cursor-pointer '}`}
     >
