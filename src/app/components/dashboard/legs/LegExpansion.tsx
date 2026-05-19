@@ -50,16 +50,16 @@ export default function LegExpansion({
         dataCoreBg: 'bg-zinc-900/40',
         dataLabel: 'text-zinc-200',
         dataValue: 'text-white',
-        buttonBg: 'bg-iron-volt',
-        buttonText: 'text-black',
+        buttonBg: 'bg-black',
+        buttonText: 'text-iron-volt',
         warningText: 'text-iron-volt',
       };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex  justify-center p-6 bg-black/35 backdrop-blur-xs overflow-hidden">
+    <div className="fixed inset-0 z-[9999] flex  justify-center p-10 bg-black/85 backdrop-blur-xs overflow-hidden">
       {/* THE MODAL CONTAINER */}
       <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-lg h-[75vh] relative flex flex-col border shadow-lg overflow-hidden`}
+        className={`cl-modalContent ${theme.modalBg} w-full max-w-lg h-[85vh] relative flex flex-col border shadow-sm overflow-hidden`}
       >
         {/* THE ABORT BUTTON - Stay Fixed Top */}
         <button
@@ -81,7 +81,7 @@ export default function LegExpansion({
           {/* IDENTITY & HEADER */}
           <div className="space-y-1 relative z-10 pr-16 mb-4">
             <h2
-              className={`${theme.titleText} font-black italic text-4xl uppercase tracking-tighter leading-none`}
+              className={`${theme.titleText} font-black italic text-5xl uppercase tracking-tighter leading-none`}
             >
               {leg.task}
             </h2>
@@ -108,7 +108,7 @@ export default function LegExpansion({
               <span
                 className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
               >
-                Complete by
+                Complete in
               </span>
               <span className="text-iron-red font-mono text-sm uppercase font-black italic">
                 {leg.timeLimit || 24} HOURS
@@ -152,16 +152,19 @@ export default function LegExpansion({
 
         {/* 2. FIXED BUTTON CONTAINER - Pinned to bottom */}
         <div className="p-6 bg-inherit border-t border-black/5 relative z-20">
-          <button
-            className={`w-full py-5 font-black italic text-lg uppercase transition-all active:scale-95 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]
-              ${isInSlip ? 'bg-iron-red text-white' : `${theme.buttonBg} ${theme.buttonText}`}`}
-            onClick={() => {
-              onToggleSlip(leg);
-              onClose();
-            }}
-          >
-            {isInSlip ? 'REMOVE FROM SLIP' : 'add to slip'}
-          </button>
+<button
+  className={`w-full py-4 font-black italic text-md uppercase transition-all active:scale-95 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] border-2
+    ${isInSlip 
+      ? 'bg-iron-red border-iron-red text-white' 
+      : `border-iron-volt ${theme.buttonBg} ${theme.buttonText}`
+    }`}
+  onClick={() => {
+    onToggleSlip(leg);
+    onClose();
+  }}
+>
+  {isInSlip ? 'REMOVE FROM SLIP' : 'add to slip'}
+</button>
         </div>
       </div>
     </div>
