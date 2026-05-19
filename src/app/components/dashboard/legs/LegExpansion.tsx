@@ -91,7 +91,7 @@ export default function LegExpansion({
           <div
             className={` ${theme.dataCoreBg} mt-10 space-y-5 relative z-10 border border-black/50`}
           >
-            <div className="flex justify-between items-end border-b border-iron-volt/60 ">
+            <div className="flex justify-between items-end border-b border-iron-red/60 ">
               <span
                 className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
               >
@@ -104,7 +104,7 @@ export default function LegExpansion({
               </span>
             </div>
 
-            <div className="flex justify-between items-center border-b border-iron-volt/60 pb-1">
+            <div className="flex justify-between items-center border-b border-iron-red/60 pb-1">
               <span
                 className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
               >
@@ -122,7 +122,7 @@ export default function LegExpansion({
                 >
                   Verification method
                 </span>
-                <span className="text-iron-volt font-black italic text-md uppercase">
+                <span className="text-iron-red font-black italic text-md uppercase">
                   {leg.verificationMethod}
                 </span>
               </div>
