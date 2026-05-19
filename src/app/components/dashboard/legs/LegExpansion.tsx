@@ -56,7 +56,7 @@ export default function LegExpansion({
       };
 
   return (
-    <div className="fixed inset-0 z-[90] flex  justify-center p-2 bg-black/35 backdrop-blur-xs overflow-hidden">
+    <div className="fixed inset-0 z-[90] flex  justify-center p-6 bg-black/35 backdrop-blur-xs overflow-hidden">
       {/* THE MODAL CONTAINER */}
       <div
         className={`cl-modalContent ${theme.modalBg} w-full max-w-lg h-[75vh] relative flex flex-col border shadow-lg overflow-hidden`}
@@ -89,9 +89,9 @@ export default function LegExpansion({
 
           {/* CORE STATS */}
           <div
-            className={`${theme.dataCoreBg} p-1 space-y-5 relative z-10 border border-black/50`}
+            className={` ${theme.dataCoreBg} mt-10 space-y-5 relative z-10 border border-black/50`}
           >
-            <div className="flex justify-between items-end border-b border-iron-volt/60 pb-1">
+            <div className="flex justify-between items-end border-b border-iron-volt/60 ">
               <span
                 className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
               >
@@ -108,7 +108,7 @@ export default function LegExpansion({
               <span
                 className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
               >
-                Window
+                Complete by
               </span>
               <span className="text-iron-red font-mono text-sm uppercase font-black italic">
                 {leg.timeLimit || 24} HOURS
@@ -120,9 +120,9 @@ export default function LegExpansion({
                 <span
                   className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
                 >
-                  Verification
+                  Verification method
                 </span>
-                <span className="text-iron-red font-black italic text-md uppercase">
+                <span className="text-iron-volt font-black italic text-md uppercase">
                   {leg.verificationMethod}
                 </span>
               </div>
@@ -145,7 +145,7 @@ export default function LegExpansion({
           {/* DEMON ALERT */}
           {isDemonMode && (
             <div className="bg-iron-volt/40 text-iron-red p-2 text-center font-mono text-[9px] font-black z-10 mt-4 border border-iron-red/20">
-              👹 DEMON_PROTOCOL_ACTIVE 👹
+              DEMON ACTIVE
             </div>
           )}
         </div>
