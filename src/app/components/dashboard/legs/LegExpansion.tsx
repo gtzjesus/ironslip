@@ -17,6 +17,9 @@ export default function LegExpansion({
   onToggleSlip,
   isInSlip,
 }: LegExpansionProps) {
+  // ◄ NEW STATE: Tracks local exit execution state to allow animations to run completely before unmounting
+  const [isExiting, setIsExiting] = useState(false);
+
   const [hazardWarning] = useState(() => {
     const warnings = [
       ' PROTOCOL_READY ',
@@ -30,72 +33,97 @@ export default function LegExpansion({
 
   if (!leg) return null;
 
-  const isDemonMode = leg.isDemon === true || leg.difficulty === 'demon';
+  // ⚡ CUSTOM DISMISSAL INTERCEPTOR: Drives the lighting fast swipe before dropping the component
+  const handleControlledClose = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose();
+    }, 180); // Maps 1:1 with your 0.18s horizontal animation sequence
+  };
 
-  // ◄ DYNAMIC THEME ENGINE: Completely separates Neon Volt from Pure Hazard Red
+  const isDemonMode = leg.isDemon === true || leg.difficulty === 'demon';
+  const displayCategory = (leg.category || 'IRON').toUpperCase();
+
   const theme = isDemonMode
     ? {
-        modalBg: '!bg-zinc-950',
-        borderStyle: 'border-[0.5px] border-iron-red shadow-[0_0_40px_rgba(239,68,68,0.15)]',
+        modalBg: 'bg-zinc-950',
+        borderStyle: 'border-x-[0.5px] border-iron-red/40 shadow-[0_0_80px_rgba(239,68,68,0.15)]',
         titleText: 'text-white',
-        watermark: 'text-iron-red/10',
-        dataCoreBg: 'bg-zinc-900/30 border-[0.5px] border-iron-red/30',
+        watermark: 'text-iron-red/[0.03]',
+        dataCoreBg: 'bg-zinc-900/40 backdrop-blur-md border-[0.5px] border-iron-red/30',
         dataLabel: 'text-zinc-500',
         dataValue: 'text-white',
-        accentText: 'text-iron-red font-black', // ◄ Replaces iron-volt with red on Demon
-        buttonBg: 'bg-black',
-        buttonBorder: 'border-iron-red text-iron-red ',
+        accentText: 'text-iron-red font-black',
+        buttonBg: 'bg-iron-red hover:bg-red-500 shadow-[0_0_25px_rgba(239,68,68,0.25)] text-black',
         warningText: 'text-iron-red animate-pulse',
       }
     : {
-        modalBg: '!bg-black',
-        borderStyle: 'border-[0.5px] border-zinc-800/80 shadow-[0_0_30px_rgba(0,0,0,0.8)]',
+        modalBg: 'bg-zinc-950',
+        borderStyle: 'border-x-[0.5px] border-iron-volt/30 shadow-[0_0_80px_rgba(163,230,53,0.08)]',
         titleText: 'text-iron-volt',
-        watermark: 'text-iron-volt/10',
-        dataCoreBg: 'bg-zinc-900/70 border-[0.5px] border-zinc-800/60',
+        watermark: 'text-iron-volt/[0.03]',
+        dataCoreBg: 'bg-zinc-900/60 backdrop-blur-md border-[0.5px] border-zinc-800/60',
         dataLabel: 'text-zinc-400',
         dataValue: 'text-white',
-        accentText: 'text-iron-volt font-bold', // ◄ Uses iron-volt for Standard
-        buttonBg: 'bg-black',
-        buttonBorder: 'border-iron-volt text-iron-volt ',
+        accentText: 'text-iron-volt font-bold',
+        buttonBg: 'bg-iron-volt hover:bg-white shadow-[0_0_25px_rgba(163,230,53,0.15)] text-black',
         warningText: 'text-iron-volt',
       };
 
   return (
-    // Backdrop Fade
+    // 1. BACKDROP OVERLAY MASK
     <motion.div 
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      animate={{ opacity: isExiting ? 0 : 1 }} // Syncs alpha down smoothly on dismissal
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 bg-black/90 backdrop-blur-xs overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden p-0"
     >
-      {/* THE MODAL CONTAINER */}
+      {/* 2. THE FULL SCREEN HUD DRAWER CONTAINER */}
       <motion.div
         initial={{ x: '-100vw' }}
-        animate={{ x: 0 }}
+        animate={{ x: isExiting ? '100vw' : 0 }} // ◄ DRIVES EXECUTION VIEW DISMISSAL LEFT TO RIGHT RIGHT NOW
         exit={{ x: '100vw' }}
-        transition={{ type: 'spring', damping: 28, stiffness: 150 }}
-        className={`cl-modalContent ${theme.modalBg} ${theme.borderStyle} w-full max-w-lg h-[85vh] relative flex flex-col overflow-hidden rounded-2xl`}
+        transition={{ type: 'tween', ease: 'easeOut', duration: 0.18 }}
+        className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white ${theme.modalBg} ${theme.borderStyle}`}
       >
-        {/* THE ABORT BUTTON */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-iron-red px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
-        >
-          [ X ]
-        </button>
+        
+        {/* TILED WATERMARK BACKGROUND LAYER */}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 flex flex-col gap-2 p-4 rotate-[-12deg] scale-125 opacity-75">
+          {[...Array(14)].map((_, rowIndex) => (
+            <div 
+              key={rowIndex} 
+              className="flex whitespace-nowrap gap-6 text-6xl font-black italic tracking-tighter uppercase leading-none"
+              style={{
+                transform: rowIndex % 2 === 0 ? 'translateX(-20px)' : 'translateX(10px)'
+              }}
+            >
+              {[...Array(6)].map((_, colIndex) => (
+                <span key={colIndex} className={theme.watermark}>
+                  {displayCategory}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
 
-        {/* 1. SCROLLABLE CONTENT AREA */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 pt-24 scrollbar-hide relative">
-          {/* WATERMARK */}
-          <span
-            className={`absolute top-4 -left-2 text-9xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
+        {/* Striped Zebra Industrial Overlay Accent */}
+        <div className="absolute inset-0 opacity-[0.01] pointer-events-none flex gap-4 rotate-12 scale-150 z-[1]" />
+
+        {/* HEADER AREA */}
+        <div className="p-8 pb-4 relative z-10 flex justify-end items-end border-b-4 border-black/10">
+          <button
+            onClick={handleControlledClose} // ◄ Routed to custom dynamic shutdown interceptor
+            className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-red-600 px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
           >
-            {leg.category || 'IRON'}
-          </span>
+            [ X ]
+          </button>
+        </div>
 
-          {/* IDENTITY & HEADER */}
-          <div className="space-y-1 relative z-10 pr-16 mb-4">
+        {/* SCROLLABLE CONTENT AREA VIEWFIELD */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 scrollbar-hide relative space-y-5 z-10">
+          
+          {/* IDENTITY PROTOCOL TAGGING */}
+          <div className="space-y-1 relative z-10 pr-16 mt-4">
             <h2
               className={`${theme.titleText} font-black italic text-5xl uppercase tracking-tighter leading-none mt-1`}
             >
@@ -103,20 +131,20 @@ export default function LegExpansion({
             </h2>
           </div>
 
-          {/* CORE STATS CARD */}
-          <div className={` ${theme.dataCoreBg} mt-10 space-y-7 relative z-10 p-3`}>
+          {/* COHESIVE CORE DATA MODULE BOX */}
+          <div className={`${theme.dataCoreBg} mt-6 space-y-6 relative z-10 p-5 rounded-xl`}>
             <div className="flex justify-between items-end border-b border-zinc-800/80 pb-3">
               <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
-                Target 
+                Target Parameters
               </span>
-              <span className={`${theme.dataValue} font-black italic text-lg uppercase tracking-tight`}>
+              <span className={`${theme.dataValue} font-black italic text-xl uppercase tracking-tight`}>
                 {leg.requirementValue} {leg.requirementUnit}
               </span>
             </div>
 
             <div className="flex justify-between items-center border-b border-zinc-800/80 pb-3">
               <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
-                complete in
+                Operational Window
               </span>
               <span className={`${isDemonMode ? 'text-iron-red' : 'text-white'} font-mono text-sm uppercase font-black italic`}>
                 {leg.timeLimit || 24} HOURS
@@ -126,50 +154,52 @@ export default function LegExpansion({
             <div className="grid grid-cols-2 gap-4 pt-1">
               <div className="flex flex-col">
                 <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
-                  Verification
+                  Verification Method
                 </span>
-                {/* ◄ FIXED: Swapped out hardcoded text-iron-volt for dynamic theme.accentText */}
                 <span className={`${theme.accentText} italic text-md uppercase`}>
-                  {leg.verificationMethod === 'video' ? 'video' : leg.verificationMethod === 'photo' ? '📸 PHOTO' : '⏱️ GPS_SYNC'}
+                  {leg.verificationMethod === 'video' ? '🎥 AI_VIDEO' : leg.verificationMethod === 'photo' ? '📸 PHOTO' : '⏱️ GPS_SYNC'}
                 </span>
               </div>
               
               <div className="flex flex-col text-right">
                 <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
-                  win
+                  Est_Component_Yield
                 </span>
                 <div className="relative group self-end">
                   <div className="absolute inset-0 bg-black -skew-x-12 transform border-r-2 border-iron-green/30" />
                   <span className="relative z-10 px-3 text-iron-green font-black italic text-xl animate-pulse block">
-                    +{leg.creditReward || 0}
+                    +{leg.creditReward || 0} CR
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* DEMON ALERT FLOODWAY */}
+          {/* DEMON PROTOCOL FLOODWAY */}
           {isDemonMode && (
-            <div className=" text-iron-red p-3 text-center font-mono text-[10px] font-black z-10  tracking-[0.2em]  animate-pulse">
-            DEMON LEG
+            <div className="bg-iron-red/10 text-iron-red p-3.5 text-center font-mono text-[10px] font-black z-10 mt-6 border border-iron-red/30 tracking-[0.2em] rounded-xl animate-pulse">
+              ⚠️ CRITICAL SYSTEM ACTIVE: SEVERE PENALTIES ENFORCED ON DISMISSAL ⚠️
             </div>
           )}
         </div>
 
-        {/* 2. FIXED BUTTON CONTAINER */}
-        <div className="p-6 bg-inherit border-t border-zinc-900 relative z-20">
+        {/* FIXED OPERATION RUNTIME FOOTER PANEL */}
+        <div className="p-6 bg-zinc-950 border-t border-zinc-900 relative z-20">
           <button
-            className={`w-full py-4 font-black italic text-lg uppercase transition-all active:scale-[0.97] border-1  transition-all duration-200
-              ${isInSlip 
-                ? 'bg-iron-red border-iron-red text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]' 
-                : `${theme.buttonBg} ${theme.buttonBorder}`
-              }`}
+            className={`w-full py-4 font-black italic text-3xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none rounded-xl ${theme.buttonBg}`}
             onClick={() => {
               onToggleSlip(leg);
-              onClose();
+              // Also update programmatic dismissal when user hits the primary deployment buttons!
+              setIsExiting(true);
+              setTimeout(() => {
+                onClose();
+              }, 180);
             }}
           >
-            {isInSlip ? ' remove FROM SLIP' : ' Add to  slip'}
+            <span>{isInSlip ? 'REMOVE COMPONENT' : 'DEPLOY COMPONENT'}</span>
+            <span className="text-[8px] font-mono mt-1.5 tracking-[0.6em] font-black text-black/60">
+              {isInSlip ? 'WIPE_DRAFT_CONFIGURATION' : 'COMMIT_DATA_SEGMENT_LIVE'}
+            </span>
           </button>
         </div>
       </motion.div>
