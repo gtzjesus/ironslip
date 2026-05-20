@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react'; // Added useEffect
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
 import LegsHeader from '@/app/components/dashboard/legs/Legsheader';
@@ -14,7 +14,29 @@ export default function LegsPage() {
   const { isLoaded, isSignedIn } = useUser();
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
+  
+  // 1. Initialize empty—we will safely load it on mounting to prevent Next.js hydration mismatches
   const [activeSlip, setActiveSlip] = useState<any[]>([]);
+
+  // 2. EFFECT A: Pull draft from LocalStorage when user mounts into the route
+  useEffect(() => {
+    const savedDraft = localStorage.getItem('iron_slip_draft');
+    if (savedDraft) {
+      try {
+        setActiveSlip(JSON.parse(savedDraft));
+      } catch (error) {
+        console.error('Failed parsing slip draft:', error);
+      }
+    }
+  }, []);
+
+  // 3. EFFECT B: Watch the activeSlip array. Anytime a leg is added or removed, write it to memory!
+  useEffect(() => {
+    // Only write if state is mounted to prevent overwriting with an initial empty array
+    if (isLoaded) {
+      localStorage.setItem('iron_slip_draft', JSON.stringify(activeSlip));
+    }
+  }, [activeSlip, isLoaded]);
 
   const filteredLegs = useMemo(() => {
     if (activeCategory === 'all') return legs;
@@ -29,6 +51,12 @@ export default function LegsPage() {
       if (activeSlip.length >= 5) return alert('MAX_CAPACITY: 5_LEGS');
       setActiveSlip([...activeSlip, leg]);
     }
+  };
+
+  // 4. Wrap clear method so it sanitizes both React state AND the storage disk simultaneously
+  const handleClearSlipData = () => {
+    setActiveSlip([]);
+    localStorage.removeItem('iron_slip_draft');
   };
 
   return (
@@ -72,12 +100,14 @@ export default function LegsPage() {
           </div>
         )}
       </div>
+
+      {/* Passing down our robust clear handler */}
       <SlipNavbar
         activeSlip={activeSlip}
         onRemoveLeg={(id) =>
           setActiveSlip((prev) => prev.filter((l) => l._id !== id))
         }
-        clearSlipData={() => setActiveSlip([])} // ◄ Drop this line in!
+        clearSlipData={handleClearSlipData} 
       />
 
       {selectedLeg && (
