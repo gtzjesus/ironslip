@@ -44,7 +44,7 @@ export default function LegExpansion({
         dataValue: 'text-white',
         accentText: 'text-iron-red font-black', // ◄ Replaces iron-volt with red on Demon
         buttonBg: 'bg-black',
-        buttonBorder: 'border-iron-red text-iron-red hover:bg-iron-red/10',
+        buttonBorder: 'border-iron-red text-iron-red ',
         warningText: 'text-iron-red animate-pulse',
       }
     : {
@@ -57,7 +57,7 @@ export default function LegExpansion({
         dataValue: 'text-white',
         accentText: 'text-iron-volt font-bold', // ◄ Uses iron-volt for Standard
         buttonBg: 'bg-black',
-        buttonBorder: 'border-iron-volt text-iron-volt hover:bg-iron-volt/10',
+        buttonBorder: 'border-iron-volt text-iron-volt ',
         warningText: 'text-iron-volt',
       };
 
@@ -150,8 +150,8 @@ export default function LegExpansion({
 
           {/* DEMON ALERT FLOODWAY */}
           {isDemonMode && (
-            <div className="bg-iron-red/10 text-iron-red p-3 text-center font-mono text-[10px] font-black z-10 mt-6 border border-iron-red/30 tracking-[0.2em] rounded-xl animate-pulse">
-              ⚠️ WARNING: HIGH STAKES PROTOCOL ACTIVE ⚠️
+            <div className=" text-iron-red p-3 text-center font-mono text-[10px] font-black z-10  tracking-[0.2em]  animate-pulse">
+            DEMON LEG
             </div>
           )}
         </div>
@@ -159,7 +159,7 @@ export default function LegExpansion({
         {/* 2. FIXED BUTTON CONTAINER */}
         <div className="p-6 bg-inherit border-t border-zinc-900 relative z-20">
           <button
-            className={`w-full py-4 font-black italic text-lg uppercase transition-all active:scale-[0.97] border-2 rounded-xl transition-all duration-200
+            className={`w-full py-4 font-black italic text-lg uppercase transition-all active:scale-[0.97] border-1  transition-all duration-200
               ${isInSlip 
                 ? 'bg-iron-red border-iron-red text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]' 
                 : `${theme.buttonBg} ${theme.buttonBorder}`
