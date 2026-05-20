@@ -49,7 +49,7 @@ export default function LegExpansion({
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-red/40 shadow-[0_0_80px_rgba(239,68,68,0.15)]',
         titleText: 'text-white',
-        watermark: 'text-iron-red/[0.03]',
+        watermark: 'text-iron-red/[0.05]',
         dataCoreBg: 'bg-zinc-900/40 backdrop-blur-md border-[0.5px] border-iron-red/30',
         dataLabel: 'text-zinc-500',
         dataValue: 'text-white',
@@ -61,7 +61,7 @@ export default function LegExpansion({
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-volt/30 shadow-[0_0_80px_rgba(163,230,53,0.08)]',
         titleText: 'text-iron-volt',
-        watermark: 'text-iron-volt/[0.03]',
+        watermark: 'text-iron-volt/[0.05]',
         dataCoreBg: 'bg-zinc-900/60 backdrop-blur-md border-[0.5px] border-zinc-800/60',
         dataLabel: 'text-zinc-400',
         dataValue: 'text-white',
@@ -132,7 +132,7 @@ export default function LegExpansion({
           </div>
 
           {/* COHESIVE CORE DATA MODULE BOX */}
-          <div className={`${theme.dataCoreBg} mt-6 space-y-6 relative z-10 p-5 rounded-xl`}>
+          <div className={`${theme.dataCoreBg} mt-6 space-y-6 relative z-10 p-5 `}>
             <div className="flex justify-between items-end border-b border-zinc-800/80 pb-3">
               <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
                 Target
