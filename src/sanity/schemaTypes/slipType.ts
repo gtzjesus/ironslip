@@ -15,13 +15,14 @@ const ironNames = [
 
 export const slipType = defineType({
   name: 'slip',
-  title: 'Iron Slips',
+  title: 'Iron Slips (Templates)',
   type: 'document',
 
   fields: [
+    // 1. IDENTITY & GENERATION
     defineField({
       name: 'title',
-      title: 'Slip Name',
+      title: 'Slip Template Name',
       type: 'string',
       initialValue: () =>
         ironNames[Math.floor(Math.random() * ironNames.length)],
@@ -29,7 +30,7 @@ export const slipType = defineType({
     }),
     defineField({
       name: 'slipNumber',
-      title: 'Slip ID / Number',
+      title: 'Slip Blueprint ID',
       type: 'string',
       initialValue: () => `SLIP-${Math.floor(1000 + Math.random() * 9000)}`,
       readOnly: true,
@@ -43,8 +44,6 @@ export const slipType = defineType({
         source: 'title',
         maxLength: 96,
       },
-      // This ensures that when the random title is picked,
-      // the slug is also ready to go immediately.
       initialValue: (props) => {
         const title = props?.title || '';
         return {
@@ -55,60 +54,64 @@ export const slipType = defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // 2. THE CORE PARLAY BUILDER
     defineField({
       name: 'legs',
       title: 'Parlay Legs (Requirements)',
       type: 'array',
-      // We are now referencing the 'leg' document type
+      description: 'Link the specific workout or discipline challenges required for this slip.',
       of: [{ type: 'reference', to: [{ type: 'leg' }] }],
       validation: (Rule) =>
-        Rule.min(1).error('A parlay must have at least one leg.'),
+        Rule.min(1).error('A parlay blueprint must reference at least one leg.'),
     }),
 
+    // 3. THE ECONOMY ENGINE (Global Rules)
     defineField({
       name: 'stakeAmount',
-      title: 'Stake (Risk)',
+      title: 'Stake Amount (Cost to Play)',
       type: 'number',
-      description: 'How many Iron Credits it costs to "play" this slip.',
+      description: 'How many Iron Credits it costs a user to buy into this slip.',
       validation: (Rule) => Rule.required().min(0),
     }),
-
     defineField({
       name: 'creditValue',
-      title: 'Payout (Reward)',
+      title: 'Payout Amount (Reward)',
       type: 'number',
-      description: 'Total Iron Credits earned if the user hits the slip.',
+      description: 'Total Iron Credits returned to the user if they hit all legs.',
       validation: (Rule) => Rule.required().min(0),
     }),
 
+    // 4. UI STYLING ACCENTS (For Dark Mode Polish)
     defineField({
-      name: 'status',
-      title: 'Status',
+      name: 'cardVariant',
+      title: 'UI Visual Variant',
       type: 'string',
+      description: 'Determines the card styling, neon glows, or borders in Next.js.',
       options: {
         list: [
-          { title: 'Open / Active', value: 'active' },
-          { title: 'Hit (Completed)', value: 'hit' },
-          { title: 'Missed', value: 'missed' },
+          { title: '⚡ Standard Cyberpunk (Amber/Black)', value: 'standard' },
+          { title: '🔥 High Voltage (Neon Cyan/Blue)', value: 'voltage' },
+          { title: '😈 Demon Core (Blood Red/Charked)', value: 'demon' },
         ],
-        layout: 'radio',
       },
-      initialValue: 'active',
+      initialValue: 'standard',
     }),
   ],
 
+  // 5. STUDIO PREVIEW (Keep it clean & functional)
   preview: {
     select: {
       title: 'title',
       slipNumber: 'slipNumber',
-      status: 'status',
+      legs: 'legs',
+      stake: 'stakeAmount',
+      payout: 'creditValue',
     },
-    prepare({ title, slipNumber, status }) {
-      const statusEmoji =
-        status === 'hit' ? '✅' : status === 'missed' ? '❌' : '🔥';
+    prepare({ title, slipNumber, legs, stake, payout }) {
+      const legsCount = legs ? legs.length : 0;
       return {
         title: `${title} (${slipNumber})`,
-        subtitle: `${statusEmoji} STATUS: ${status?.toUpperCase() || 'ACTIVE'}`,
+        subtitle: `⛓️ ${legsCount} Leg${legsCount === 1 ? '' : 's'} | Risk: ${stake} 🪙 | Win: ${payout} 🪙`,
       };
     },
   },

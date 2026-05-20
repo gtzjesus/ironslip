@@ -24,11 +24,13 @@ const DEMON_PHRASES = [
 interface SlipNavbarProps {
   activeSlip: any[];
   onRemoveLeg: (id: string) => void;
+  clearSlipData: () => void; // ◄ Added this line to handle state clearing
 }
 
 export default function SlipNavbar({
   activeSlip,
   onRemoveLeg,
+  clearSlipData, // ◄ Destructure it here
 }: SlipNavbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activePhrase, setActivePhrase] = useState('');
@@ -41,7 +43,7 @@ export default function SlipNavbar({
     const list = hasDemon ? DEMON_PHRASES : STANDARD_PHRASES;
     const randomPhrase = list[Math.floor(Math.random() * list.length)];
     setActivePhrase(randomPhrase);
-  }, [hasDemon]);
+  }, [hasDemon, activeSlip.length]); // Added length safety to refresh phrases cleanly
 
   if (activeSlip.length === 0) return null;
 
@@ -85,25 +87,19 @@ export default function SlipNavbar({
                     : 'brightness-[0.85] bg-black border-iron-volt  shadow-[0_-10px_40px_rgba(0,0,0,0.6)]'
                 }`}
               >
-                {/* HAZARD OVERLAY: Red diagonal warning stripes painted over the yellow base */}
+                {/* HAZARD OVERLAY */}
                 {hasDemon && (
                   <div className="absolute inset-0 opacity-[0.12] pointer-events-none bg-[linear-gradient(45deg,#ef4444_25%,transparent_25%,transparent_50%,#ef4444_50%,#ef4444_75%,transparent_75%,transparent)] bg-[length:30px_30px]" />
                 )}
 
                 <div className="relative z-10 flex items-center gap-3 text-left">
                   <div>
-                    <p className={`text-[10px]  text-iron-volt font-mono leading-none uppercase tracking-wider ${
+                    <p className={`text-[10px] font-mono leading-none uppercase tracking-wider ${
                       hasDemon ? 'text-iron-red flex items-center gap-1 animate-pulse' : 'text-black/60'
                     }`}>
-                      {hasDemon ? (
-                        <>
-                           👹 demon slip
-                        </>
-                      ) : (
-                        'iron slip'
-                      )}
+                      {hasDemon ? '👹 demon slip' : 'iron slip'}
                     </p>
-                    <p className="text-sm font-black italic uppercase  text-iron-volt">
+                    <p className="text-sm font-black italic uppercase text-iron-volt">
                       {activeSlip.length} / 5 LEGS
                     </p>
                   </div>
@@ -111,17 +107,17 @@ export default function SlipNavbar({
 
                 <div className="relative z-10 flex items-center gap-4">
                   <div className="text-right mr-2">
-                    <p className="text-[8px] text-iron-volt font-mono uppercase text-black/50">
+                    <p className="text-[8px] font-mono uppercase text-black/50">
                       win up to 1.23x
                     </p>
-                    <p className={`text-xs uppercase  text-iron-volt italic leading-none tracking-tight ${
+                    <p className={`text-xs uppercase italic leading-none tracking-tight ${
                       hasDemon ? 'text-iron-red font-black tracking-wide' : 'text-black'
                     }`}>
                       {activePhrase}
                     </p>
                   </div>  
                   
-                  {/* BUTTON SLOT: Heavy black core with a piercing red glowing aura */}
+                  {/* BUTTON SLOT */}
                   <div 
                     className={`p-3 transition-all duration-300 flex items-center justify-center border-2 overflow-hidden w-11 h-11 ${
                       isEligibleToExpand 
@@ -174,6 +170,7 @@ export default function SlipNavbar({
             multiplier={multiplier}
             hasDemon={hasDemon}
             minReviewsRequired={MIN_REVIEWS_REQUIRED}
+            clearSlipData={clearSlipData} // ◄ Successfully passing it here now!
           />
         )}
       </AnimatePresence>

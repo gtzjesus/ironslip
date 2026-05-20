@@ -72,12 +72,12 @@ export default function LegsPage() {
           </div>
         )}
       </div>
-
       <SlipNavbar
         activeSlip={activeSlip}
         onRemoveLeg={(id) =>
           setActiveSlip((prev) => prev.filter((l) => l._id !== id))
         }
+        clearSlipData={() => setActiveSlip([])} // ◄ Drop this line in!
       />
 
       {selectedLeg && (
