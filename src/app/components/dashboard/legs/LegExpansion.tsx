@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface LegExpansionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,37 +32,52 @@ export default function LegExpansion({
 
   const isDemonMode = leg.isDemon === true || leg.difficulty === 'demon';
 
+  // ◄ DYNAMIC THEME ENGINE: Completely separates Neon Volt from Pure Hazard Red
   const theme = isDemonMode
     ? {
-        modalBg: '!bg-iron-volt',
-        titleText: 'text-black',
-        watermark: 'text-black/10',
-        dataCoreBg: 'bg-iron-volt',
+        modalBg: '!bg-zinc-950',
+        borderStyle: 'border-[0.5px] border-iron-red shadow-[0_0_40px_rgba(239,68,68,0.15)]',
+        titleText: 'text-white',
+        watermark: 'text-iron-red/10',
+        dataCoreBg: 'bg-zinc-900/30 border-[0.5px] border-iron-red/30',
         dataLabel: 'text-zinc-500',
-        dataValue: 'text-black',
+        dataValue: 'text-white',
+        accentText: 'text-iron-red font-black', // ◄ Replaces iron-volt with red on Demon
         buttonBg: 'bg-black',
-        buttonText: 'text-iron-volt',
-        warningText: 'text-black',
+        buttonBorder: 'border-iron-red text-iron-red hover:bg-iron-red/10',
+        warningText: 'text-iron-red animate-pulse',
       }
     : {
         modalBg: '!bg-black',
+        borderStyle: 'border-[0.5px] border-zinc-800/80 shadow-[0_0_30px_rgba(0,0,0,0.8)]',
         titleText: 'text-iron-volt',
-        watermark: 'text-iron-volt/20',
-        dataCoreBg: 'bg-zinc-900/40',
-        dataLabel: 'text-zinc-200',
+        watermark: 'text-iron-volt/10',
+        dataCoreBg: 'bg-zinc-900/40 border-[0.5px] border-zinc-800/60',
+        dataLabel: 'text-zinc-400',
         dataValue: 'text-white',
+        accentText: 'text-iron-volt font-bold', // ◄ Uses iron-volt for Standard
         buttonBg: 'bg-black',
-        buttonText: 'text-iron-volt',
+        buttonBorder: 'border-iron-volt text-iron-volt hover:bg-iron-volt/10',
         warningText: 'text-iron-volt',
       };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex  justify-center p-10 bg-black/85 backdrop-blur-xs overflow-hidden">
+    // Backdrop Fade
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-10 bg-black/90 backdrop-blur-xs overflow-hidden"
+    >
       {/* THE MODAL CONTAINER */}
-      <div
-        className={`cl-modalContent ${theme.modalBg} w-full max-w-lg h-[85vh] relative flex flex-col border shadow-sm overflow-hidden`}
+      <motion.div
+        initial={{ x: '-100vw' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100vw' }}
+        transition={{ type: 'spring', damping: 28, stiffness: 150 }}
+        className={`cl-modalContent ${theme.modalBg} ${theme.borderStyle} w-full max-w-lg h-[85vh] relative flex flex-col overflow-hidden rounded-2xl`}
       >
-        {/* THE ABORT BUTTON - Stay Fixed Top */}
+        {/* THE ABORT BUTTON */}
         <button
           onClick={onClose}
           className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-iron-red px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
@@ -69,104 +85,97 @@ export default function LegExpansion({
           [ X ]
         </button>
 
-        {/* 1. SCROLLABLE CONTENT AREA - Agregado overflow-x-hidden */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 pt-25 scrollbar-hide relative">
-          {/* WATERMARK (Inside scroll so it moves with content) */}
+        {/* 1. SCROLLABLE CONTENT AREA */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 pt-24 scrollbar-hide relative">
+          {/* WATERMARK */}
           <span
-            className={`absolute top-0 -left-4 text-9xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
+            className={`absolute top-4 -left-2 text-9xl font-black italic ${theme.watermark} uppercase pointer-events-none select-none z-0 whitespace-nowrap`}
           >
             {leg.category || 'IRON'}
           </span>
 
           {/* IDENTITY & HEADER */}
           <div className="space-y-1 relative z-10 pr-16 mb-4">
+            <span className={`text-[9px] font-mono tracking-[0.2em] font-bold block ${theme.warningText}`}>
+              // SYSTEM_{hazardWarning.trim()}
+            </span>
             <h2
-              className={`${theme.titleText} font-black italic text-5xl uppercase tracking-tighter leading-none`}
+              className={`${theme.titleText} font-black italic text-5xl uppercase tracking-tighter leading-none mt-1`}
             >
               {leg.task}
             </h2>
           </div>
 
-          {/* CORE STATS */}
-          <div
-            className={` ${theme.dataCoreBg} mt-10 space-y-5 relative z-10 border border-black/50`}
-          >
-            <div className="flex justify-between items-end border-b border-iron-red/60 ">
-              <span
-                className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
-              >
-                Target
+          {/* CORE STATS CARD */}
+          <div className={` ${theme.dataCoreBg} mt-8 space-y-5 relative z-10 p-5 rounded-xl`}>
+            <div className="flex justify-between items-end border-b border-zinc-800/80 pb-3">
+              <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
+                Target Parameter
               </span>
-              <span
-                className={`${theme.dataValue} font-black italic text-lg uppercase`}
-              >
+              <span className={`${theme.dataValue} font-black italic text-xl uppercase tracking-tight`}>
                 {leg.requirementValue} {leg.requirementUnit}
               </span>
             </div>
 
-            <div className="flex justify-between items-center border-b border-iron-red/60 pb-1">
-              <span
-                className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
-              >
-                Complete in
+            <div className="flex justify-between items-center border-b border-zinc-800/80 pb-3">
+              <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
+                Time window
               </span>
-              <span className="text-iron-red font-mono text-sm uppercase font-black italic">
+              <span className={`${isDemonMode ? 'text-iron-red' : 'text-white'} font-mono text-sm uppercase font-black italic`}>
                 {leg.timeLimit || 24} HOURS
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 pt-1">
               <div className="flex flex-col">
-                <span
-                  className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
-                >
-                  Verification method
+                <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
+                  Verification
                 </span>
-                <span className="text-iron-red font-black italic text-md uppercase">
-                  {leg.verificationMethod}
+                {/* ◄ FIXED: Swapped out hardcoded text-iron-volt for dynamic theme.accentText */}
+                <span className={`${theme.accentText} italic text-md uppercase`}>
+                  {leg.verificationMethod === 'video' ? '🎥 AI_VIDEO' : leg.verificationMethod === 'photo' ? '📸 PHOTO' : '⏱️ GPS_SYNC'}
                 </span>
               </div>
+              
               <div className="flex flex-col text-right">
-                <span
-                  className={`${theme.dataLabel} font-mono italic text-[11px] uppercase`}
-                >
-                  Win
+                <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
+                  Est_Yield
                 </span>
                 <div className="relative group self-end">
                   <div className="absolute inset-0 bg-black -skew-x-12 transform border-r-2 border-iron-green/30" />
-                  <span className="relative z-10 px-3 text-iron-green font-black italic text-lg animate-pulse block">
-                    +{leg.creditReward || 0}
+                  <span className="relative z-10 px-3 text-iron-green font-black italic text-xl animate-pulse block">
+                    +{leg.creditReward || 0} CR
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* DEMON ALERT */}
+          {/* DEMON ALERT FLOODWAY */}
           {isDemonMode && (
-            <div className="bg-iron-volt/40 text-iron-red p-2 text-center font-mono text-[9px] font-black z-10 mt-4 border border-iron-red/20">
-              DEMON ACTIVE
+            <div className="bg-iron-red/10 text-iron-red p-3 text-center font-mono text-[10px] font-black z-10 mt-6 border border-iron-red/30 tracking-[0.2em] rounded-xl animate-pulse">
+              ⚠️ WARNING: HIGH STAKES PROTOCOL ACTIVE ⚠️
             </div>
           )}
         </div>
 
-        {/* 2. FIXED BUTTON CONTAINER - Pinned to bottom */}
-        <div className="p-6 bg-inherit border-t border-black/5 relative z-20">
-<button
-  className={`w-full py-4 font-black italic text-md uppercase transition-all active:scale-95 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] border-2
-    ${isInSlip 
-      ? 'bg-iron-red border-iron-red text-white' 
-      : `border-iron-volt ${theme.buttonBg} ${theme.buttonText}`
-    }`}
-  onClick={() => {
-    onToggleSlip(leg);
-    onClose();
-  }}
->
-  {isInSlip ? 'REMOVE FROM SLIP' : 'add to slip'}
-</button>
+        {/* 2. FIXED BUTTON CONTAINER */}
+        <div className="p-6 bg-inherit border-t border-zinc-900 relative z-20">
+          <button
+            className={`w-full py-4 font-black italic text-lg uppercase transition-all active:scale-[0.97] border-2 rounded-xl transition-all duration-200
+              ${isInSlip 
+                ? 'bg-iron-red border-iron-red text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]' 
+                : `${theme.buttonBg} ${theme.buttonBorder}`
+              }`}
+            onClick={() => {
+              onToggleSlip(leg);
+              onClose();
+            }}
+          >
+            {isInSlip ? '❌ ABORT FROM SLIP' : '⚡ Add to current slip'}
+          </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
