@@ -54,7 +54,7 @@ export default function LegExpansion({
         dataLabel: 'text-zinc-500',
         dataValue: 'text-white',
         accentText: 'text-iron-red font-black',
-        buttonBg: 'bg-iron-red hover:bg-red-500 shadow-[0_0_25px_rgba(239,68,68,0.25)] text-black',
+        buttonBg: 'bg-iron-red  shadow-[0_0_25px_rgba(239,68,68,0.25)] text-black',
         warningText: 'text-iron-red animate-pulse',
       }
     : {
@@ -66,7 +66,7 @@ export default function LegExpansion({
         dataLabel: 'text-zinc-400',
         dataValue: 'text-white',
         accentText: 'text-iron-volt font-bold',
-        buttonBg: 'bg-iron-volt hover:bg-white shadow-[0_0_25px_rgba(163,230,53,0.15)] text-black',
+        buttonBg: 'bg-iron-volt  shadow-[0_0_25px_rgba(163,230,53,0.15)] text-black',
         warningText: 'text-iron-volt',
       };
 
@@ -125,7 +125,7 @@ export default function LegExpansion({
           {/* IDENTITY PROTOCOL TAGGING */}
           <div className="space-y-1 relative z-10 pr-16 mt-4">
             <h2
-              className={`${theme.titleText} font-black italic text-5xl uppercase tracking-tighter leading-none mt-1`}
+              className={`${theme.titleText} font-black italic text-6xl uppercase tracking-tighter leading-none mt-1`}
             >
               {leg.task}
             </h2>
@@ -135,40 +135,40 @@ export default function LegExpansion({
           <div className={`${theme.dataCoreBg} mt-6 space-y-6 relative z-10 p-5 rounded-xl`}>
             <div className="flex justify-between items-end border-b border-zinc-800/80 pb-3">
               <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
-                Target Parameters
+                Target
               </span>
-              <span className={`${theme.dataValue} font-black italic text-xl uppercase tracking-tight`}>
+              <span className={`${theme.dataValue} font-black italic text-lg uppercase tracking-tight`}>
                 {leg.requirementValue} {leg.requirementUnit}
               </span>
             </div>
 
             <div className="flex justify-between items-center border-b border-zinc-800/80 pb-3">
               <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
-                Operational Window
+                complete in
               </span>
               <span className={`${isDemonMode ? 'text-iron-red' : 'text-white'} font-mono text-sm uppercase font-black italic`}>
                 {leg.timeLimit || 24} HOURS
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-1">
+            <div className="grid grid-cols-2 gap-4 pt-5">
               <div className="flex flex-col">
                 <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
-                  Verification Method
+                  Verification 
                 </span>
                 <span className={`${theme.accentText} italic text-md uppercase`}>
-                  {leg.verificationMethod === 'video' ? '🎥 AI_VIDEO' : leg.verificationMethod === 'photo' ? '📸 PHOTO' : '⏱️ GPS_SYNC'}
+                  {leg.verificationMethod === 'video' ? 'video' : leg.verificationMethod === 'photo' ? 'photo' : '⏱️ GPS_SYNC'}
                 </span>
               </div>
               
               <div className="flex flex-col text-right">
                 <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
-                  Est_Component_Yield
+             win
                 </span>
                 <div className="relative group self-end">
                   <div className="absolute inset-0 bg-black -skew-x-12 transform border-r-2 border-iron-green/30" />
                   <span className="relative z-10 px-3 text-iron-green font-black italic text-xl animate-pulse block">
-                    +{leg.creditReward || 0} CR
+                    +{leg.creditReward || 0} 
                   </span>
                 </div>
               </div>
@@ -177,8 +177,8 @@ export default function LegExpansion({
 
           {/* DEMON PROTOCOL FLOODWAY */}
           {isDemonMode && (
-            <div className="bg-iron-red/10 text-iron-red p-3.5 text-center font-mono text-[10px] font-black z-10 mt-6 border border-iron-red/30 tracking-[0.2em] rounded-xl animate-pulse">
-              ⚠️ CRITICAL SYSTEM ACTIVE: SEVERE PENALTIES ENFORCED ON DISMISSAL ⚠️
+            <div className="uppercase text-iron-red p-3.5 text-center font-mono text-[10px] font-black z-10   tracking-[0.2em]  animate-pulse">
+              demon leg
             </div>
           )}
         </div>
@@ -186,7 +186,7 @@ export default function LegExpansion({
         {/* FIXED OPERATION RUNTIME FOOTER PANEL */}
         <div className="p-6 bg-zinc-950 border-t border-zinc-900 relative z-20">
           <button
-            className={`w-full py-4 font-black italic text-3xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none rounded-xl ${theme.buttonBg}`}
+            className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none ${theme.buttonBg}`}
             onClick={() => {
               onToggleSlip(leg);
               // Also update programmatic dismissal when user hits the primary deployment buttons!
@@ -196,10 +196,8 @@ export default function LegExpansion({
               }, 180);
             }}
           >
-            <span>{isInSlip ? 'REMOVE COMPONENT' : 'DEPLOY COMPONENT'}</span>
-            <span className="text-[8px] font-mono mt-1.5 tracking-[0.6em] font-black text-black/60">
-              {isInSlip ? 'WIPE_DRAFT_CONFIGURATION' : 'COMMIT_DATA_SEGMENT_LIVE'}
-            </span>
+            <span>{isInSlip ? 'REMOVE from slip' : 'add to slip'}</span>
+         
           </button>
         </div>
       </motion.div>
