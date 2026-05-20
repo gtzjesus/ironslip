@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useEffect, useMemo } from 'react'; // Added useEffect
+import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion'; 
+import { SlidersHorizontal, ChevronUp } from 'lucide-react'; 
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
 import LegsHeader from '@/app/components/dashboard/legs/Legsheader';
@@ -15,10 +17,11 @@ export default function LegsPage() {
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
   
-  // 1. Initialize empty—we will safely load it on mounting to prevent Next.js hydration mismatches
+  // Drives the visibility of the secondary filter drawer bar below the main header
+  const [showFilters, setShowFilters] = useState(false);
+
   const [activeSlip, setActiveSlip] = useState<any[]>([]);
 
-  // 2. EFFECT A: Pull draft from LocalStorage when user mounts into the route
   useEffect(() => {
     const savedDraft = localStorage.getItem('iron_slip_draft');
     if (savedDraft) {
@@ -30,9 +33,7 @@ export default function LegsPage() {
     }
   }, []);
 
-  // 3. EFFECT B: Watch the activeSlip array. Anytime a leg is added or removed, write it to memory!
   useEffect(() => {
-    // Only write if state is mounted to prevent overwriting with an initial empty array
     if (isLoaded) {
       localStorage.setItem('iron_slip_draft', JSON.stringify(activeSlip));
     }
@@ -53,25 +54,76 @@ export default function LegsPage() {
     }
   };
 
-  // 4. Wrap clear method so it sanitizes both React state AND the storage disk simultaneously
   const handleClearSlipData = () => {
     setActiveSlip([]);
     localStorage.removeItem('iron_slip_draft');
   };
 
+  const isFilteringActive = activeCategory !== 'all';
+
   return (
     <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 relative">
-      <div className="flex-shrink-0 p-4 pb-0">
-        <LegsHeader />
+      
+      {/* 1. MASTER STACKED NAV HOUSING */}
+      <div className="flex-shrink-0 p-4 pb-0 flex flex-col">
+        
+        {/* ROW ALPHA: Primary Header Cell left entirely untouched for title & user balances */}
+        <div className="w-full">
+          <LegsHeader />
+        </div>
+
+        {/* ROW BRAVO: Second Navbar Sub-Dock (Houses the tactical filter trigger & sliding deck) */}
         {isLoaded && isSignedIn && (
-          <LegFilterNav
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-          />
+          <div className=" flex flex-col justify-between items-center w-full">
+            <div className="flex justify-between items-center">
+              
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.2em] px-2.5 py-1 rounded border transition-all duration-200 active:scale-95 ${
+                  showFilters
+                    ? 'bg-zinc-900 border-zinc-800 text-white'
+                    : isFilteringActive
+                      ? 'border-iron-volt/50 text-iron-volt shadow-[0_0_10px_rgba(163,230,53,0.1)] bg-zinc-950'
+                      : 'border-zinc-900 text-zinc-500 hover:text-zinc-400 bg-transparent'
+                }`}
+              >
+                {showFilters ? (
+                  <>
+                    <span>hide filters</span>
+                    <ChevronUp className="w-3 h-3" />
+                  </>
+                ) : (
+                  <>
+                    <span>{isFilteringActive ? 'filters active' : 'show filters'}</span>
+                    <SlidersHorizontal className="w-2.5 h-2.5" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* DYNAMIC SECONDARY SLIDE DRAWER CONTAINER */}
+            <AnimatePresence initial={false}>
+              {showFilters && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ type: 'tween', ease: 'easeInOut', duration: 0.15 }}
+                  className="overflow-hidden"
+                >
+                  <LegFilterNav
+                    activeCategory={activeCategory}
+                    onCategoryChange={setActiveCategory}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         )}
       </div>
 
-      <div className="flex-1 mt-4 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
+      {/* 2. MAIN SCROLLABLE MATRIX LIST FRAME */}
+      <div className="flex-1 mt-3 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
         {loading || !isLoaded ? (
           <div className="flex items-center justify-center py-20">
             <p className="text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
@@ -101,7 +153,7 @@ export default function LegsPage() {
         )}
       </div>
 
-      {/* Passing down our robust clear handler */}
+      {/* FIXED FOOTER NAV SLIP SYSTEM */}
       <SlipNavbar
         activeSlip={activeSlip}
         onRemoveLeg={(id) =>
@@ -110,6 +162,7 @@ export default function LegsPage() {
         clearSlipData={handleClearSlipData} 
       />
 
+      {/* PERSISTENT FULL-SCREEN COMPONENT SHUTTER MODAL */}
       {selectedLeg && (
         <LegExpansion
           leg={selectedLeg}
