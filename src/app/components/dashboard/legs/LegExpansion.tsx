@@ -52,7 +52,7 @@ export default function LegExpansion({
         borderStyle: 'border-[0.5px] border-zinc-800/80 shadow-[0_0_30px_rgba(0,0,0,0.8)]',
         titleText: 'text-iron-volt',
         watermark: 'text-iron-volt/10',
-        dataCoreBg: 'bg-zinc-900/40 border-[0.5px] border-zinc-800/60',
+        dataCoreBg: 'bg-zinc-900/70 border-[0.5px] border-zinc-800/60',
         dataLabel: 'text-zinc-400',
         dataValue: 'text-white',
         accentText: 'text-iron-volt font-bold', // ◄ Uses iron-volt for Standard
@@ -67,7 +67,7 @@ export default function LegExpansion({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-10 bg-black/90 backdrop-blur-xs overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 bg-black/90 backdrop-blur-xs overflow-hidden"
     >
       {/* THE MODAL CONTAINER */}
       <motion.div
@@ -96,9 +96,6 @@ export default function LegExpansion({
 
           {/* IDENTITY & HEADER */}
           <div className="space-y-1 relative z-10 pr-16 mb-4">
-            <span className={`text-[9px] font-mono tracking-[0.2em] font-bold block ${theme.warningText}`}>
-              // SYSTEM_{hazardWarning.trim()}
-            </span>
             <h2
               className={`${theme.titleText} font-black italic text-5xl uppercase tracking-tighter leading-none mt-1`}
             >
@@ -107,19 +104,19 @@ export default function LegExpansion({
           </div>
 
           {/* CORE STATS CARD */}
-          <div className={` ${theme.dataCoreBg} mt-8 space-y-5 relative z-10 p-5 rounded-xl`}>
+          <div className={` ${theme.dataCoreBg} mt-10 space-y-7 relative z-10 p-3`}>
             <div className="flex justify-between items-end border-b border-zinc-800/80 pb-3">
               <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
-                Target Parameter
+                Target 
               </span>
-              <span className={`${theme.dataValue} font-black italic text-xl uppercase tracking-tight`}>
+              <span className={`${theme.dataValue} font-black italic text-lg uppercase tracking-tight`}>
                 {leg.requirementValue} {leg.requirementUnit}
               </span>
             </div>
 
             <div className="flex justify-between items-center border-b border-zinc-800/80 pb-3">
               <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider`}>
-                Time window
+                complete in
               </span>
               <span className={`${isDemonMode ? 'text-iron-red' : 'text-white'} font-mono text-sm uppercase font-black italic`}>
                 {leg.timeLimit || 24} HOURS
@@ -133,18 +130,18 @@ export default function LegExpansion({
                 </span>
                 {/* ◄ FIXED: Swapped out hardcoded text-iron-volt for dynamic theme.accentText */}
                 <span className={`${theme.accentText} italic text-md uppercase`}>
-                  {leg.verificationMethod === 'video' ? '🎥 AI_VIDEO' : leg.verificationMethod === 'photo' ? '📸 PHOTO' : '⏱️ GPS_SYNC'}
+                  {leg.verificationMethod === 'video' ? 'video' : leg.verificationMethod === 'photo' ? '📸 PHOTO' : '⏱️ GPS_SYNC'}
                 </span>
               </div>
               
               <div className="flex flex-col text-right">
                 <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
-                  Est_Yield
+                  win
                 </span>
                 <div className="relative group self-end">
                   <div className="absolute inset-0 bg-black -skew-x-12 transform border-r-2 border-iron-green/30" />
                   <span className="relative z-10 px-3 text-iron-green font-black italic text-xl animate-pulse block">
-                    +{leg.creditReward || 0} CR
+                    +{leg.creditReward || 0}
                   </span>
                 </div>
               </div>
@@ -172,7 +169,7 @@ export default function LegExpansion({
               onClose();
             }}
           >
-            {isInSlip ? '❌ ABORT FROM SLIP' : '⚡ Add to current slip'}
+            {isInSlip ? ' remove FROM SLIP' : ' Add to  slip'}
           </button>
         </div>
       </motion.div>
