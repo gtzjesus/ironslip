@@ -1,49 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, AlertTriangle, ChevronsRight, Lock, Skull } from 'lucide-react'; 
 import SlipReviewOverlay from './SlipReviewOverlay'; 
 
-const STANDARD_PHRASES = [
-  'INITIALIZE CONTRACT',
-  'LOCK IN SLIP',
-  'EXECUTE PROTOCOL',
-  'PUNCH IT',
-];
-
-const DEMON_PHRASES = [
-  'INITIALIZE HAZARD',
-  'ACCEPT TERMS',
-  'ENGAGE DRIVE',
-  'LOCK AND LOAD',
-  'ENTER THE GRID',
-  'EXECUTE MAYHEM',
-];
-
 interface SlipNavbarProps {
   activeSlip: any[];
   onRemoveLeg: (id: string) => void;
-  clearSlipData: () => void; // ◄ Added this line to handle state clearing
+  clearSlipData: () => void;
 }
 
 export default function SlipNavbar({
   activeSlip,
   onRemoveLeg,
-  clearSlipData, // ◄ Destructure it here
+  clearSlipData,
 }: SlipNavbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activePhrase, setActivePhrase] = useState('');
 
   const hasDemon = activeSlip.some(
     (leg) => leg.isDemon || leg.difficulty === 'demon',
   );
-
-  useEffect(() => {
-    const list = hasDemon ? DEMON_PHRASES : STANDARD_PHRASES;
-    const randomPhrase = list[Math.floor(Math.random() * list.length)];
-    setActivePhrase(randomPhrase);
-  }, [hasDemon, activeSlip.length]); // Added length safety to refresh phrases cleanly
 
   if (activeSlip.length === 0) return null;
 
@@ -83,7 +60,7 @@ export default function SlipNavbar({
                   isEligibleToExpand ? 'cursor-pointer' : 'cursor-not-allowed'
                 } ${
                   hasDemon 
-                    ? 'bg-iron-volt border-iron-red shadow-[0_-10px_40px_rgba(239,68,68,0.5)]' 
+                    ? ' border-iron-red shadow-[0_-10px_40px_rgba(239,68,68,0.5)]' 
                     : 'brightness-[0.85] bg-black border-iron-volt  shadow-[0_-10px_40px_rgba(0,0,0,0.6)]'
                 }`}
               >
@@ -95,7 +72,7 @@ export default function SlipNavbar({
                 <div className="relative z-10 flex items-center gap-3 text-left">
                   <div>
                     <p className={`text-[10px] font-mono leading-none uppercase tracking-wider ${
-                      hasDemon ? 'text-iron-red flex items-center gap-1 animate-pulse' : 'text-black/60'
+                      hasDemon ? 'text-iron-red flex items-center gap-1 animate-pulse' : 'text-iron-volt/60'
                     }`}>
                       {hasDemon ? '👹 demon slip' : 'iron slip'}
                     </p>
@@ -107,13 +84,13 @@ export default function SlipNavbar({
 
                 <div className="relative z-10 flex items-center gap-4">
                   <div className="text-right mr-2">
-                    <p className="text-[8px] font-mono uppercase text-black/50">
+                    <p className="text-[8px] font-mono uppercase text-iron-volt/50">
                       win up to 1.23x
                     </p>
-                    <p className={`text-xs uppercase italic leading-none tracking-tight ${
-                      hasDemon ? 'text-iron-red font-black tracking-wide' : 'text-black'
+                    <p className={`text-xs uppercase font-black italic leading-none tracking-tight ${
+                      hasDemon ? 'text-iron-red tracking-wide' : 'text-iron-volt'
                     }`}>
-                      {activePhrase}
+                      {hasDemon ? 'INITIALIZE HAZARD' : 'LOCK IN SLIP'}
                     </p>
                   </div>  
                   
@@ -126,7 +103,7 @@ export default function SlipNavbar({
                           : 'bg-black border-iron-volt text-iron-volt' 
                         : hasDemon
                           ? 'bg-zinc-900 border-zinc-800 text-zinc-600'
-                          : 'bg-black/10 border-black/10 text-black/30'
+                          : 'bg-black/10 border-black/10 text-iron-volt/30'
                     }`}
                   >
                     {isEligibleToExpand ? (
@@ -170,7 +147,7 @@ export default function SlipNavbar({
             multiplier={multiplier}
             hasDemon={hasDemon}
             minReviewsRequired={MIN_REVIEWS_REQUIRED}
-            clearSlipData={clearSlipData} // ◄ Successfully passing it here now!
+            clearSlipData={clearSlipData}
           />
         )}
       </AnimatePresence>
