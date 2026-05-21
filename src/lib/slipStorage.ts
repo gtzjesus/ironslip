@@ -2,6 +2,7 @@ export interface LocalUserSlip {
   id: string;
   title: string;
   type: 'IRON' | 'DEMON';
+  wagerAllocated: number; // ◄ ADDED: Tracks the user stake/investment for the parlay
   totalPayout: number;
   multiplier: number;
   status: 'PENDING' | 'HIT' | 'MISSED';

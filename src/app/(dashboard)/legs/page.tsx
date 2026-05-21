@@ -67,7 +67,7 @@ export default function LegsPage() {
       {/* 1. MASTER STACKED NAVIGATION CELL BAR PACK */}
       <div className="flex-shrink-0 p-4 pb-0 flex flex-col">
         
-  {/* ROW ALPHA: Primary Header Cell left entirely untouched for title & user balances */}
+    {/* ROW ALPHA: Primary Header Cell left entirely untouched for title & user balances */}
         <div className="w-full">
           <LegsHeader />
         </div>
