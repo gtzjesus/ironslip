@@ -14,9 +14,6 @@ interface SlipReviewOverlayProps {
   hasDemon: boolean;
   minReviewsRequired: number;
   clearSlipData: () => void;
-  // ⚡ ADD THESE TWO LINES BELOW:
-  totalPayout?: number; 
-  multiplier?: number;
 }
 
 export default function SlipReviewOverlay({

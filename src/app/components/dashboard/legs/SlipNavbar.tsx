@@ -132,8 +132,6 @@ export default function SlipNavbar({
             onClose={() => setIsExpanded(false)}
             activeSlip={activeSlip}
             onRemoveLeg={onRemoveLeg}
-            totalPayout={totalPayout}
-            multiplier={multiplier}
             hasDemon={hasDemon}
             minReviewsRequired={MIN_REVIEWS_REQUIRED}
             clearSlipData={clearSlipData}
