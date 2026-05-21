@@ -2,7 +2,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, ShieldAlert, Coins, Flame } from 'lucide-react';
+import { Trash2, ShieldAlert, Coins, Flame, Zap } from 'lucide-react';
 import { slipStorage } from '@/lib/slipStorage';
 import { useRouter } from 'next/navigation';
 
@@ -29,7 +29,7 @@ export default function SlipReviewOverlay({
   
   // ◄ NEW STATE: Tracks local exit execution state to match your expansion dismissals 
   const [isExiting, setIsExiting] = useState(false);
-  const [wager, setWager] = useState<number>(10);
+  const [wager, setWager] = useState<number | ''>(10); // ⚡ Updated to support clean text clearing
   const [userBalance, setUserBalance] = useState<number>(750); // Mock account balance
 
   // ◄ MATH ENGINE: Implements 15% House Margin
@@ -69,7 +69,8 @@ export default function SlipReviewOverlay({
     };
   }, [activeSlip, hasDemon]);
 
-  const dynamicPayout = Math.floor(wager * oddsMatrix.multiplier);
+  // Safe evaluation fallback if input field is blanked out
+  const dynamicPayout = Math.floor((Number(wager) || 0) * oddsMatrix.multiplier);
 
   if (!isOpen) return null;
 
@@ -82,24 +83,36 @@ export default function SlipReviewOverlay({
     }, 180);
   };
 
-  const handleWagerChange = (amount: number) => {
-    if (amount < 1) return;
-    if (amount > userBalance) {
+  // 🔧 FIXED TYPING INTERCEPTOR ENGINE
+  const handleWagerChange = (valStr: string) => {
+    if (valStr === '') {
+      setWager('');
+      return;
+    }
+
+    const numericValue = Number(valStr);
+    if (isNaN(numericValue)) return;
+
+    if (numericValue > userBalance) {
       setWager(userBalance);
       return;
     }
-    setWager(amount);
+    
+    setWager(numericValue);
   };
 
   const handleExecuteContract = () => {
-    if (activeSlip.length === 0 || wager <= 0 || wager > userBalance) return;
+    const activeWagerNum = Number(wager) || 0;
+    
+    // 🛡️ HARD SECURITY LOCKDOWN: Prevents zero, null, or balance exploitation attacks
+    if (activeSlip.length === 0 || activeWagerNum <= 0 || activeWagerNum > userBalance) return;
 
-    setUserBalance(prev => prev - wager);
+    setUserBalance(prev => prev - activeWagerNum);
 
     slipStorage.saveSlip({
       title: `${hasDemon ? 'DEMON' : 'IRON'} PARLAY`,
       type: hasDemon ? 'DEMON' : 'IRON',
-      wagerAllocated: wager,
+      wagerAllocated: activeWagerNum,
       totalPayout: dynamicPayout,
       multiplier: oddsMatrix.multiplier,
       legs: activeSlip.map(leg => ({
@@ -164,7 +177,7 @@ export default function SlipReviewOverlay({
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b border-zinc-900/40">
           <div>
             <h2 className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter leading-none`}>
-               Lock in your <br /> {hasDemon ? 'DEMON' : 'IRON'} slip
+              {activeSlip.length}-LEG  {hasDemon ? 'DEMON' : 'IRON'} SLIP
             </h2>
           </div>
           <button
@@ -185,18 +198,38 @@ export default function SlipReviewOverlay({
               return (
                 <div
                   key={leg._id}
-                  className={`bg-black/30 p-4 flex justify-between items-center border ${
-                    isLegDemon ? 'border-iron-red/20' : 'border-zinc-900'
+                  className={`relative w-full text-left border-1 p-4 px-2 mb-1 overflow-hidden transition-all flex justify-between items-center ${
+                    isLegDemon
+                      ? 'border-iron-red'
+                      : 'bg-zinc-950 border-zinc-800'
                   }`}
                 >
-                  <div className="flex gap-4 items-center text-left leading-none">
-                    <div className={`w-1 h-8  ${isLegDemon ? 'bg-iron-red' : 'bg-iron-volt'}`} />
-                    <div className="flex flex-col justify-center leading-none">
-                      <h4 className="font-black italic uppercase text-lg tracking-tight text-white mb-1">
+                  <div className="relative z-10 flex justify-between items-center flex-1 pr-4">
+                    <div>
+                      <p
+                        className={`font-mono text-[8px] uppercase tracking-widest ${
+                          isLegDemon ? 'animate-pulse text-iron-red' : 'text-zinc-500'
+                        }`}
+                      >
+                        {isLegDemon ? 'DEMON 👹' : leg.category}
+                      </p>
+
+                      <h3
+                        className={`font-black italic text-xl uppercase tracking-tighter transition-all duration-500 ${
+                          isLegDemon ? 'text-iron-red' : 'text-white'
+                        }`}
+                      >
                         {leg.task}
-                      </h4>
-                      <p className="font-mono text-[9px] uppercase tracking-wider text-zinc-500">
-                        INDEX VALUE: <span className={isLegDemon ? 'text-iron-red font-bold' : 'text-iron-volt'}>+{leg.creditReward} CR</span>
+                      </h3>
+                    </div>
+
+                    <div className="text-right">
+                      <p
+                        className={`font-black italic text-sm transition-all duration-500 ${
+                          isLegDemon ? 'text-iron-red' : 'text-iron-volt'
+                        }`}
+                      >
+                        +{leg.creditReward}
                       </p>
                     </div>
                   </div>
@@ -206,7 +239,7 @@ export default function SlipReviewOverlay({
                       onRemoveLeg(leg._id);
                       if (activeSlip.length - 1 < minReviewsRequired) onClose();
                     }}
-                    className="p-2.5  bg-zinc-900/60 text-zinc-500  transition-colors"
+                    className="p-2.5 bg-zinc-900/60 text-zinc-500 transition-colors z-20 relative"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -218,22 +251,28 @@ export default function SlipReviewOverlay({
 
         {/* INTERACTIVE CHIP STACK WAGER CONTROLLER */}
         <div className={`${theme.dataCoreBg} p-5 space-y-4`}>
-
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2 text-zinc-400 font-mono text-[11px] uppercase tracking-wider">
-              <Coins className="w-4 h-4 text-iron-volt" />
-              <span>Enter Your Wager Amount</span>
+          {hasDemon && (
+            <div className="flex items-center justify-center animate-pulse gap-2 text-iron-red text-[9px] font-mono font-black tracking-widest pt-1">
+              <span>👹DEMON MULTIPLIER ACTIVATED👹</span>
             </div>
-            <div className="text-[11px] font-mono text-zinc-500">
-              BANKROLL: <span className="text-white font-bold">{userBalance} CR</span>
+          )}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-1 text-zinc-400 font-mono text-[10px] uppercase tracking-wider">
+              <Coins className="w-4 h-4 text-iron-volt" />
+              <span>Enter wager</span>
+            </div>
+            <div className="text-[12px] font-mono text-zinc-500">
+                <span className="flex gap-1 text-white font-bold">  <Zap
+            className={`w-3 h-3 `}
+          />{userBalance}</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
             <input
               type="number"
-              value={wager === 0 ? '' : wager}
-              onChange={(e) => handleWagerChange(Number(e.target.value))}
+              value={wager}
+              onChange={(e) => handleWagerChange(e.target.value)}
               className="w-full bg-black/60 border border-zinc-800 text-white px-4 py-3 font-mono text-xl text-left focus:outline-none focus:border-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0.00"
             />
@@ -241,29 +280,22 @@ export default function SlipReviewOverlay({
 
           {/* Live Dynamic Return Payout Indicator */}
           <div className="flex justify-between items-center pt-2 border-t border-zinc-800/50">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-400">To Win Payout:</span>
+            <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-400">To Win:</span>
             <span className={`font-black italic text-2xl tracking-tight ${theme.accentText}`}>
-              +{dynamicPayout} <span className="text-xs font-mono font-bold text-zinc-500">CR</span>
+              +{dynamicPayout} <span className="text-xs font-mono font-bold text-zinc-500"></span>
             </span>
           </div>
 
-          {hasDemon && (
-            <div className="flex items-center gap-2 text-iron-red text-[9px] font-mono font-black tracking-widest pt-1">
-              <ShieldAlert className="w-4 h-4 text-iron-red animate-pulse" /> 
-              <span>HAZARD MULTIPLIER ACTIVATED</span>
-            </div>
-          )}
-        </div>
-
-        {/* FIXED LOCKED FOOTER PANEL */}
-        <div className="p-6 bg-zinc-950 border-t border-zinc-900 relative z-20">
-          <button
-            disabled={wager <= 0 || wager > userBalance || activeSlip.length === 0}
-            className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none disabled:opacity-20 disabled:cursor-not-allowed ${theme.buttonBg}`}
-            onClick={handleExecuteContract}
-          >
-            <span>initiate slip!</span>
-          </button>
+          {/* FIXED LOCKED FOOTER PANEL */}
+          <div className="relative z-20">
+            <button
+              disabled={(Number(wager) || 0) <= 0 || (Number(wager) || 0) > userBalance || activeSlip.length === 0}
+              className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none disabled:opacity-20 disabled:cursor-not-allowed ${theme.buttonBg}`}
+              onClick={handleExecuteContract}
+            >
+              initiate slip!
+            </button>
+          </div>
         </div>
       </motion.div>
     </motion.div>
