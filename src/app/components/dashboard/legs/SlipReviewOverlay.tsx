@@ -163,9 +163,8 @@ export default function SlipReviewOverlay({
         {/* HEADER AREA */}
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b border-zinc-900/40">
           <div>
- 
             <h2 className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter leading-none`}>
-               Lock in your <br /> {hasDemon ? 'DEMON' : 'IRON'}  slip
+               Lock in your <br /> {hasDemon ? 'DEMON' : 'IRON'} slip
             </h2>
           </div>
           <button
@@ -178,14 +177,9 @@ export default function SlipReviewOverlay({
 
         {/* SCROLLABLE CONFIG MATRIX */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 scrollbar-hide space-y-5 z-10">
- 
-
-   
-
+          
           {/* CONSTITUENT COMPONENTS MATRIX */}
           <div className="space-y-1.5 pt-1">
-  
-
             {activeSlip.map((leg) => {
               const isLegDemon = leg.isDemon === true || leg.difficulty === 'demon';
               return (
@@ -222,49 +216,44 @@ export default function SlipReviewOverlay({
           </div>
         </div>
 
-               {/* INTERACTIVE CHIP STACK WAGER CONTROLLER */}
-          <div className={`${theme.dataCoreBg} p-5  space-y-4`}>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2 text-zinc-400 font-mono text-[11px] uppercase tracking-wider">
-                <Coins className="w-4 h-4 text-iron-volt" />
-                <span>ALLOCATE LIQUID CAPITAL LIABILITY</span>
-              </div>
-              <div className="text-[11px] font-mono text-zinc-500">
-                BANKROLL: <span className="text-white font-bold">{userBalance} CR</span>
-              </div>
-            </div>
+        {/* INTERACTIVE CHIP STACK WAGER CONTROLLER */}
+        <div className={`${theme.dataCoreBg} p-5 space-y-4`}>
 
-            <div className="flex flex-col gap-2">
-              <input
-                type="number"
-                value={wager === 0 ? '' : wager}
-                onChange={(e) => handleWagerChange(Number(e.target.value))}
-                className="w-full bg-black/60 border border-zinc-800 text-white  px-4 py-3 font-mono text-xl text-left focus:outline-none focus:border-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                placeholder="0.00"
-              />
-              
-              {/* TACTICAL VALUE SHORTCUT PRESET CHIPS */}
-              <div className="grid grid-cols-4 gap-2 pt-1">
-                {[10, 50, 100].map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => handleWagerChange(wager + val)}
-                    className="py-2.5 bg-zinc-900/80  text-zinc-400 border border-zinc-800/80 font-mono text-[11px] font-bold uppercase  transition-colors active:scale-95"
-                  >
-                    +{val}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => handleWagerChange(userBalance)}
-                  className="py-2.5 bg-iron-red/10  text-iron-red border border-iron-red/30 font-mono text-[11px] font-black uppercase  transition-colors active:scale-95"
-                >
-                  ALL IN
-                </button>
-              </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2 text-zinc-400 font-mono text-[11px] uppercase tracking-wider">
+              <Coins className="w-4 h-4 text-iron-volt" />
+              <span>Enter Your Wager Amount</span>
+            </div>
+            <div className="text-[11px] font-mono text-zinc-500">
+              BANKROLL: <span className="text-white font-bold">{userBalance} CR</span>
             </div>
           </div>
+
+          <div className="flex flex-col gap-2">
+            <input
+              type="number"
+              value={wager === 0 ? '' : wager}
+              onChange={(e) => handleWagerChange(Number(e.target.value))}
+              className="w-full bg-black/60 border border-zinc-800 text-white px-4 py-3 font-mono text-xl text-left focus:outline-none focus:border-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="0.00"
+            />
+          </div>
+
+          {/* Live Dynamic Return Payout Indicator */}
+          <div className="flex justify-between items-center pt-2 border-t border-zinc-800/50">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-400">To Win Payout:</span>
+            <span className={`font-black italic text-2xl tracking-tight ${theme.accentText}`}>
+              +{dynamicPayout} <span className="text-xs font-mono font-bold text-zinc-500">CR</span>
+            </span>
+          </div>
+
+          {hasDemon && (
+            <div className="flex items-center gap-2 text-iron-red text-[9px] font-mono font-black tracking-widest pt-1">
+              <ShieldAlert className="w-4 h-4 text-iron-red animate-pulse" /> 
+              <span>HAZARD MULTIPLIER ACTIVATED</span>
+            </div>
+          )}
+        </div>
 
         {/* FIXED LOCKED FOOTER PANEL */}
         <div className="p-6 bg-zinc-950 border-t border-zinc-900 relative z-20">
