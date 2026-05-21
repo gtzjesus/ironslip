@@ -206,13 +206,13 @@ export default function SlipReviewOverlay({
                 >
                   <div className="relative z-10 flex justify-between items-center flex-1 pr-4">
                     <div>
-                      <p
+                      {/* <p
                         className={`font-mono text-[8px] uppercase tracking-widest ${
                           isLegDemon ? 'animate-pulse text-iron-red' : 'text-zinc-500'
                         }`}
                       >
                         {isLegDemon ? 'DEMON 👹' : leg.category}
-                      </p>
+                      </p> */}
 
                       <h3
                         className={`font-black italic text-xl uppercase tracking-tighter transition-all duration-500 ${
