@@ -178,7 +178,7 @@ export default function LegExpansion({
           {/* DEMON PROTOCOL FLOODWAY */}
           {isDemonMode && (
             <div className="uppercase text-iron-red p-3.5 text-center font-mono text-[10px] font-black z-10   tracking-[0.2em]  animate-pulse">
-              demon leg
+              👹demon leg👹
             </div>
           )}
         </div>

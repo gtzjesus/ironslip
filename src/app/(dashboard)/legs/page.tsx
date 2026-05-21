@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; 
+// ◄ OPTIMIZED: Framer Motion imports are completely stripped out to save bundle size and memory overhead
 import { SlidersHorizontal, ChevronUp } from 'lucide-react'; 
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
@@ -17,7 +17,7 @@ export default function LegsPage() {
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
   
-  // Drives the visibility of the secondary filter drawer bar below the main header
+  // Controls the instant visibility toggle of the sub-navbar filters
   const [showFilters, setShowFilters] = useState(false);
 
   const [activeSlip, setActiveSlip] = useState<any[]>([]);
@@ -64,10 +64,10 @@ export default function LegsPage() {
   return (
     <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 relative">
       
-      {/* 1. MASTER STACKED NAV HOUSING */}
+      {/* 1. MASTER STACKED NAVIGATION CELL BAR PACK */}
       <div className="flex-shrink-0 p-4 pb-0 flex flex-col">
         
-        {/* ROW ALPHA: Primary Header Cell left entirely untouched for title & user balances */}
+  {/* ROW ALPHA: Primary Header Cell left entirely untouched for title & user balances */}
         <div className="w-full">
           <LegsHeader />
         </div>
@@ -101,28 +101,22 @@ export default function LegsPage() {
               </button>
             </div>
 
-            {/* DYNAMIC SECONDARY SLIDE DRAWER CONTAINER */}
-            <AnimatePresence initial={false}>
-              {showFilters && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ type: 'tween', ease: 'easeInOut', duration: 0.15 }}
-                  className="overflow-hidden"
-                >
-                  <LegFilterNav
-                    activeCategory={activeCategory}
-                    onCategoryChange={setActiveCategory}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* ◄ OPTIMIZED VISIBILITY ENGINE
+                Removed AnimatePresence and motion elements. This performs an instant layout insertion
+                with native scroll containers unblocked immediately. Absolute zero overhead on phone GPUs. */}
+            {showFilters && (
+              <div className="w-full overflow-x-auto overflow-y-hidden">
+                <LegFilterNav
+                  activeCategory={activeCategory}
+                  onCategoryChange={setActiveCategory}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* 2. MAIN SCROLLABLE MATRIX LIST FRAME */}
+      {/* 2. CORE SCROLLABLE MATRIX CARD AREA */}
       <div className="flex-1 mt-3 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
         {loading || !isLoaded ? (
           <div className="flex items-center justify-center py-20">
@@ -153,7 +147,7 @@ export default function LegsPage() {
         )}
       </div>
 
-      {/* FIXED FOOTER NAV SLIP SYSTEM */}
+      {/* SOLID STATIC MINIMALIST FOOTER FIXED COMMAND CAP */}
       <SlipNavbar
         activeSlip={activeSlip}
         onRemoveLeg={(id) =>
@@ -162,7 +156,7 @@ export default function LegsPage() {
         clearSlipData={handleClearSlipData} 
       />
 
-      {/* PERSISTENT FULL-SCREEN COMPONENT SHUTTER MODAL */}
+      {/* DETAILED EXPANSION WINDOW MODAL SCREEN */}
       {selectedLeg && (
         <LegExpansion
           leg={selectedLeg}
