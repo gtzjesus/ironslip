@@ -212,7 +212,7 @@ export default function SlipReviewOverlay({
                       onRemoveLeg(leg._id);
                       if (activeSlip.length - 1 < minReviewsRequired) onClose();
                     }}
-                    className="p-2.5  bg-zinc-900/60 border border-zinc-800/60 text-zinc-500  transition-colors"
+                    className="p-2.5  bg-zinc-900/60 text-zinc-500  transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -273,7 +273,7 @@ export default function SlipReviewOverlay({
             className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none disabled:opacity-20 disabled:cursor-not-allowed ${theme.buttonBg}`}
             onClick={handleExecuteContract}
           >
-            <span>start slip</span>
+            <span>initiate slip!</span>
           </button>
         </div>
       </motion.div>
