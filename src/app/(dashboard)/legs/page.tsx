@@ -63,7 +63,8 @@ export default function LegsPage() {
 
   return (
     <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 relative">
-      
+        {/* 📱 SAFARI TINT FORCE: Case 1 */}
+        <meta name="theme-color" content="#000000" />
       {/* 1. MASTER STACKED NAVIGATION CELL BAR PACK */}
       <div className="flex-shrink-0 p-4 pb-0 flex flex-col">
         

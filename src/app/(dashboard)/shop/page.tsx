@@ -3,6 +3,8 @@
 export default function ShopPage() {
   return (
     <div className="p-6 pt-12">
+        {/* 📱 SAFARI TINT FORCE: Case 1 */}
+        <meta name="theme-color" content="#000000" />
       <header className="mb-8">
         <p className="text-iron-volt font-mono text-[10px] tracking-[0.3em] uppercase">
           Marketplace

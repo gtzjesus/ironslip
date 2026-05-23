@@ -8,11 +8,12 @@ export default function AvatarPage() {
 
   if (!isLoaded) return null;
 
-  // If they somehow land here without being signed in,
-  // we just show a "Access Restricted" message instead of a login box.
   if (!isSignedIn) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-black text-[#c4a000]">
+        {/* 📱 SAFARI TINT FORCE: Case 1 */}
+        <meta name="theme-color" content="#000000" />
+        
         <h2 className="font-black italic uppercase text-2xl">
           Access_Restricted
         </h2>
@@ -25,6 +26,9 @@ export default function AvatarPage() {
 
   return (
     <div className="p-6 pt-12 max-w-2xl mx-auto min-h-screen">
+      {/* 📱 SAFARI TINT FORCE: Case 2 */}
+      <meta name="theme-color" content="#000000" />
+
       <motion.header
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}

@@ -15,6 +15,8 @@ export default function DashboardHome() {
      * items-center: Centers the phone-column in the middle of the screen
      */
     <main className="h-screen w-full overflow-hidden flex flex-col p-2 bg-black max-w-2xl mx-auto">
+        {/* 📱 SAFARI TINT FORCE: Case 1 */}
+        <meta name="theme-color" content="#000000" />
       <div className="flex-shrink-0 p-2">
         <FeedHeader />
       </div>

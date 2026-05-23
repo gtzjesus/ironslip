@@ -12,7 +12,8 @@ export default function SlipsPage() {
 
   return (
     <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 px-4 py-8">
-      
+        {/* 📱 SAFARI TINT FORCE: Case 1 */}
+        <meta name="theme-color" content="#000000" />
       {/* HUD Header Terminal */}
       <div className="mb-8 border-b border-zinc-800 pb-4">
         <p className="font-mono text-[10px] text-zinc-500 tracking-[0.4em] uppercase">SYSTEM_MANIFEST</p>
