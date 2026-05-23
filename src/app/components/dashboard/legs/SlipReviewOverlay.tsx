@@ -30,7 +30,7 @@ export default function SlipReviewOverlay({
   // ◄ TRACKS LOCAL EXIT EXECUTION STATE
   const [isExiting, setIsExiting] = useState(false);
   const [wager, setWager] = useState<number | ''>(10); // Updated to support clean text clearing
-  const [userBalance, setUserBalance] = useState<number>(750); // Mock account balance
+  const [userBalance, setUserBalance] = useState<number>(800); // Mock account balance
 
   // 🧠 ENFORCED CORE BUSINESS LOGIC VALIDATION BOUNDARIES
   const isSlipSizeValid = activeSlip.length >= 3 && activeSlip.length <= 5;
@@ -255,7 +255,7 @@ export default function SlipReviewOverlay({
         </div>
 
         {/* INTERACTIVE CHIP STACK WAGER CONTROLLER */}
-        <div className={`${theme.dataCoreBg} p-5 space-y-4 brightness-[0.75]`}>
+        <div className={`${theme.dataCoreBg} p-5 space-y-4`}>
           {hasDemon && (
             <div className="flex items-center justify-center animate-pulse gap-2 text-iron-red text-[9px] font-mono font-black tracking-widest pt-1">
               <span>👹DEMON MULTIPLIER ACTIVATED👹</span>

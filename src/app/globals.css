@@ -96,3 +96,22 @@ body {
   z-index: 10;
   pointer-events: none;
 }
+
+/* Add this at the absolute bottom of your globals.css */
+html {
+  /* Forces Safari to render colors using the standard device sRGB space without washing out */
+  color-profile: sRGB;
+  -webkit-font-smoothing: antialiased;
+  
+  /* Prevents iOS Safari from changing background colors ambiently during overscroll elastic bouncing */
+  background-color: #FED500 !important; 
+}
+
+/* Fixes the phone notch background consistency */
+@supports (-webkit-touch-callout: none) {
+  html, body {
+    /* Ensures the safe area inset properties match the background solid value exactly */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
