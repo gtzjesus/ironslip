@@ -2,7 +2,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, ShieldAlert, Coins, Flame, Zap } from 'lucide-react';
+import { Trash2, Coins, Zap } from 'lucide-react';
 import { slipStorage } from '@/lib/slipStorage';
 import { useRouter } from 'next/navigation';
 
@@ -27,10 +27,13 @@ export default function SlipReviewOverlay({
 }: SlipReviewOverlayProps) {
   const router = useRouter();
   
-  // ◄ NEW STATE: Tracks local exit execution state to match your expansion dismissals 
+  // ◄ TRACKS LOCAL EXIT EXECUTION STATE
   const [isExiting, setIsExiting] = useState(false);
-  const [wager, setWager] = useState<number | ''>(10); // ⚡ Updated to support clean text clearing
+  const [wager, setWager] = useState<number | ''>(10); // Updated to support clean text clearing
   const [userBalance, setUserBalance] = useState<number>(750); // Mock account balance
+
+  // 🧠 ENFORCED CORE BUSINESS LOGIC VALIDATION BOUNDARIES
+  const isSlipSizeValid = activeSlip.length >= 3 && activeSlip.length <= 5;
 
   // ◄ MATH ENGINE: Implements 15% House Margin
   const oddsMatrix = useMemo(() => {
@@ -44,7 +47,7 @@ export default function SlipReviewOverlay({
     const legCountBonus = 1 + (activeSlip.length * 0.12);
     const hazardModifier = hasDemon ? 1.40 : 1.00;
 
-    // 🧠 Business Protection Margin (House Keeps 15%)
+    // Business Protection Margin (House Keeps 15%)
     const HOUSE_EDGE = 0.15; 
     const finalMultiplier = compoundDifficulty * legCountBonus * hazardModifier * (1 - HOUSE_EDGE);
 
@@ -74,7 +77,7 @@ export default function SlipReviewOverlay({
 
   if (!isOpen) return null;
 
-  // ⚡ CUSTOM DISMISSAL INTERCEPTOR: Maps 1:1 with expansion speed
+  // ⚡ CUSTOM DISMISSAL INTERCEPTOR
   const handleControlledClose = () => {
     setIsExiting(true);
     setTimeout(() => {
@@ -104,8 +107,8 @@ export default function SlipReviewOverlay({
   const handleExecuteContract = () => {
     const activeWagerNum = Number(wager) || 0;
     
-    // 🛡️ HARD SECURITY LOCKDOWN: Prevents zero, null, or balance exploitation attacks
-    if (activeSlip.length === 0 || activeWagerNum <= 0 || activeWagerNum > userBalance) return;
+    // 🛡️ HARD SECURITY LOCKDOWN: Stops transactions if parameters bypass standard state checks
+    if (!isSlipSizeValid || activeWagerNum <= 0 || activeWagerNum > userBalance) return;
 
     setUserBalance(prev => prev - activeWagerNum);
 
@@ -135,27 +138,37 @@ export default function SlipReviewOverlay({
   };
 
   // 🎨 PARALLEL THEME CONFIGURATION DESIGN MATRIX
+  // 🔄 TRUE INVERSIONS: Solid color deck plates with high-contrast elements mapped inside them
   const theme = hasDemon
     ? {
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-red/40 shadow-[0_0_80px_rgba(239,68,68,0.15)]',
         titleText: 'text-white',
-        dataCoreBg: 'bg-zinc-900/40 backdrop-blur-md border-[0.5px] border-iron-red/30',
-        dataLabel: 'text-zinc-500',
-        dataValue: 'text-white',
-        accentText: 'text-iron-red font-black',
-        buttonBg: 'bg-iron-red shadow-[0_0_25px_rgba(239,68,68,0.25)] text-black',
+        dataCoreBg: 'bg-iron-red border-t border-black/20', // Solid Demon Red deck plate
+        labelColor: 'text-black/60', // Dark contrast labels
+        valueColor: 'text-black font-bold', // Dark contrast values
+        accentText: 'text-black font-black', // Bold target returns over red background
+        inputBg: 'bg-white/30 border border-black/20 text-black placeholder-black/40', // Visible input values on red
+        buttonBg: 'bg-black text-iron-red hover:bg-black/90 shadow-md', // Solid black button with red text
       }
     : {
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-volt/30 shadow-[0_0_80px_rgba(163,230,53,0.08)]',
         titleText: 'text-iron-volt',
-        dataCoreBg: 'bg-iron-volt backdrop-blur-md border-[0.5px] border-zinc-800/60',
-        dataLabel: 'text-zinc-400',
-        dataValue: 'text-white',
-        accentText: 'text-iron-volt font-bold',
-        buttonBg: 'bg-iron-volt shadow-[0_0_25px_rgba(163,230,53,0.15)] text-black',
+        dataCoreBg: 'bg-iron-volt border-t border-black/20', // Solid soft yellow deck plate
+        labelColor: 'text-black/60', // Dark contrast labels
+        valueColor: 'text-black font-bold', // Dark contrast values
+        accentText: 'text-black font-black', // Extra bold target returns
+        inputBg: 'bg-white/40 border border-black/20 text-black placeholder-black/40', // Safe, visible high-contrast input values
+        buttonBg: 'bg-black text-iron-volt hover:bg-black/90 shadow-md', // Inverted button: solid black with yellow text
       };
+
+  // Custom UI feedback for button depending on contract validation state
+  const getButtonLabel = () => {
+    if (activeSlip.length < 3) return `3 legs needed (${activeSlip.length}/3)`;
+    if (activeSlip.length > 5) return 'MAX CAPACITY MET (MAX 5)';
+    return 'initiate slip!';
+  };
 
   return (
     // 1. BACKDROP OVERLAY MASK
@@ -206,14 +219,6 @@ export default function SlipReviewOverlay({
                 >
                   <div className="relative z-10 flex justify-between items-center flex-1 pr-4">
                     <div>
-                      {/* <p
-                        className={`font-mono text-[8px] uppercase tracking-widest ${
-                          isLegDemon ? 'animate-pulse text-iron-red' : 'text-zinc-500'
-                        }`}
-                      >
-                        {isLegDemon ? 'DEMON 👹' : leg.category}
-                      </p> */}
-
                       <h3
                         className={`font-black italic text-xl uppercase tracking-tighter transition-all duration-500 ${
                           isLegDemon ? 'text-iron-red' : 'text-white'
@@ -250,50 +255,55 @@ export default function SlipReviewOverlay({
         </div>
 
         {/* INTERACTIVE CHIP STACK WAGER CONTROLLER */}
-        <div className={`${theme.dataCoreBg} p-5 space-y-4`}>
+        <div className={` brightness-[0.75] ${theme.dataCoreBg} p-5 space-y-4`}>
           {hasDemon && (
-            <div className="flex items-center justify-center animate-pulse gap-2 text-iron-red text-[9px] font-mono font-black tracking-widest pt-1">
+            <div className="flex items-center justify-center animate-pulse gap-2 text-black text-[9px] font-mono font-black tracking-widest pt-1">
               <span>👹DEMON MULTIPLIER ACTIVATED👹</span>
             </div>
           )}
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-1 text-zinc-400 font-mono text-[10px] uppercase tracking-wider">
-              <Coins className="w-4 h-4 text-iron-volt" />
+            <div className={`flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider ${theme.labelColor}`}>
+              <Coins className="w-4 h-4 text-black" />
               <span>Enter wager</span>
             </div>
-            <div className="text-[12px] font-mono text-zinc-500">
-                <span className="flex gap-1 text-white font-bold">  <Zap
-            className={`w-3 h-3 `}
-          />{userBalance}</span>
+            <div className="text-[12px] font-mono">
+                <span className={`flex gap-1 items-center ${theme.valueColor}`}>  
+                  <Zap className="w-3 h-3 text-black" />{userBalance}
+                </span>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
             <input
               type="number"
+              disabled={!isSlipSizeValid}
               value={wager}
               onChange={(e) => handleWagerChange(e.target.value)}
-              className="w-full bg-black/60 border border-zinc-800 text-white px-4 py-3 font-mono text-xl text-left focus:outline-none focus:border-zinc-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              placeholder="0.00"
+              className={`w-full px-4 py-3 font-mono text-xl text-left focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${theme.inputBg}`}
+              placeholder={isSlipSizeValid ? "0.00" : "LOCKDOWN: ADD LEGS"}
             />
           </div>
 
           {/* Live Dynamic Return Payout Indicator */}
-          <div className="flex justify-between items-center pt-2 border-t border-zinc-800/50">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-400">To Win:</span>
+          <div className={`flex justify-between items-center pt-2 border-t ${hasDemon ? 'border-black/20' : 'border-black/10'}`}>
+            <span className={`font-mono text-[11px] uppercase tracking-wider ${theme.labelColor}`}>To Win:</span>
             <span className={`font-black italic text-2xl tracking-tight ${theme.accentText}`}>
-              +{dynamicPayout} <span className="text-xs font-mono font-bold text-zinc-500"></span>
+              +{isSlipSizeValid ? dynamicPayout : 0}
             </span>
           </div>
 
           {/* FIXED LOCKED FOOTER PANEL */}
           <div className="relative z-20">
             <button
-              disabled={(Number(wager) || 0) <= 0 || (Number(wager) || 0) > userBalance || activeSlip.length === 0}
-              className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none disabled:opacity-20 disabled:cursor-not-allowed ${theme.buttonBg}`}
+              disabled={
+                !isSlipSizeValid || 
+                (Number(wager) || 0) <= 0 || 
+                (Number(wager) || 0) > userBalance
+              }
+              className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none disabled:bg-zinc-900 disabled:text-zinc-600 disabled:border-zinc-800 disabled:shadow-none disabled:opacity-40 disabled:cursor-not-allowed ${theme.buttonBg}`}
               onClick={handleExecuteContract}
             >
-              initiate slip!
+              {getButtonLabel()}
             </button>
           </div>
         </div>

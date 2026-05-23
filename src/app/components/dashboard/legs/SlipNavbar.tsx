@@ -60,8 +60,8 @@ export default function SlipNavbar({
                   isEligibleToExpand ? 'cursor-pointer' : 'cursor-not-allowed'
                 } ${
                   hasDemon 
-                    ? 'border-iron-red bg-black/95 shadow-lg shadow-black/80' // ◄ CLEAN: Pure matte black, crisp red border, no background glow cards
-                    : 'bg-black border-iron-volt/40 shadow-lg shadow-black/80'
+                    ? 'border-iron-red brightness-[0.75] bg-iron-red shadow-lg shadow-black/80' // ◄ CLEAN: Pure matte black, crisp red border, no background glow cards
+                    : 'bg-iron-volt brightness-[0.75] border-iron-volt/40 shadow-lg  shadow-black/80'
                 }`}
               >
                 {/* LEFT DATA CELL: LEGS VOLUME */}
@@ -71,7 +71,7 @@ export default function SlipNavbar({
                     {hasDemon ? 'DEMON slip' : 'IRON slip'}
                   </p>
                   <p className={`text-sm font-black uppercase tracking-tight italic leading-none ${
-                    hasDemon ? 'text-white' : 'text-iron-volt'
+                    hasDemon ? 'text-black' : 'text-black'
                   }`}>
                     {activeSlip.length} / 5 LEGS
                   </p>
@@ -85,9 +85,9 @@ export default function SlipNavbar({
                       win up to x{multiplier.toFixed(2)}
                     </p>
                     <p className={`text-sm font-black uppercase tracking-tight italic leading-none ${
-                      hasDemon ? 'text-white' : 'text-iron-volt' // ◄ CLEAN: Main typography rests on solid white in demon mode instead of eye-straining red
+                      hasDemon ? 'text-black' : 'text-black' // ◄ CLEAN: Main typography rests on solid white in demon mode instead of eye-straining red
                     }`}>
-                      {hasDemon ? 'LOCK IN SLIP' : 'LOCK IN SLIP'}
+                      {hasDemon ? 'LOCK IN demon' : 'LOCK IN SLIP'}
                     </p>
                   </div>  
                   

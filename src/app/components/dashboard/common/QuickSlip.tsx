@@ -9,7 +9,7 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
   const ButtonContent = (
     <motion.div
       /* ADDED OPACITY MODIFIERS: bg-iron-volt/90 and bg-iron-red/90 */
-      className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-all duration-200 min-h-[100px] brightness-[0.85] shadow-lg`}
+      className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-all duration-200 min-h-[100px] brightness-[0.75] shadow-lg`}
     >
       <h3 className="text-black font-black italic text-xl uppercase leading-none">
         {isSignedIn ? (
