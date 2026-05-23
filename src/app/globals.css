@@ -1,12 +1,12 @@
-
-
 @import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
+  /* 🔄 FIXED: Root canvas defaults directly to your custom Iron Volt gold color */
+  --background: #F1C232;
   --foreground: #171717;
+  
   /* Brand Colors */
-  --iron-volt: #F1C232 ;
+  --iron-volt: #F1C232;
   --iron-volt-glow: rgba(255, 211, 0, 0.3);
   --iron-red: #ff003c;
   --iron-green: #00ff41;
@@ -16,7 +16,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000;
+    /* Keeps root fallback gold if requested across system view changes */
+    --background: #F1C232; 
     --foreground: #ededed;
   }
 }
@@ -24,7 +25,6 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* This allows you to use bg-iron-volt, text-iron-volt, etc. */
   --color-iron-volt: var(--iron-volt);
   --color-iron-red: var(--iron-red);
   --color-iron-green: var(--iron-green);
@@ -36,6 +36,7 @@
 @theme inline {
   --color-iron-black: var(--iron-black);
 }
+
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -50,7 +51,6 @@ html,
 body {
   height: 100%;
   overflow: hidden;
-  /* Prevents that annoying rubber-band pull on iOS */
   position: fixed;
   width: 100%;
   background: var(--background);
@@ -85,7 +85,7 @@ body {
   }
   50% {
     box-shadow: 0 0 40px rgba(255, 211, 0, 0.5);
-    border-color: #ffffff; /* Subtle "surge" of white in the yellow border */
+    border-color: #ffffff;
   }
 }
 
@@ -98,21 +98,10 @@ body {
       transform: translateY(600%);
     }
   }
-
-  /* Si quieres ocultar el scrollbar de forma limpia con Tailwind */
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
 }
 
 /* 3. APPLYING BOTH TO THE CLERK MODAL */
 .cl-modalContent {
-  /* forgeSlam runs once for 0.6s */
-  /* forgePulse runs infinitely, but waits 0.6s to start so the slam finishes first */
   animation:
     forgeSlam 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards,
     forgePulse 3s ease-in-out infinite 0.6s !important;
@@ -123,7 +112,7 @@ body {
   position: relative;
 }
 
-/* 4. OPTIONAL: SCANLINE OVERLAY (Adds that videogame CRT texture) */
+/* 4. SCANLINE OVERLAY */
 .cl-modalContent::before {
   content: ' ';
   position: absolute;

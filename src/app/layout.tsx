@@ -32,7 +32,7 @@ export default function RootLayout({
       appearance={{
         variables: {
           colorPrimary: '#ff003c', // Iron Red for primary actions
-          colorBackground: '#ffd300', // Your custom Yellow Background
+          colorBackground: '#F1C232', // Matched directly to your defined --iron-volt variable
           colorText: '#000000', // Bold Black Text
           colorInputBackground: '#f4f4f5',
           colorInputText: '#000000',
@@ -52,7 +52,7 @@ export default function RootLayout({
 
           /* THE BUTTON: Yellow-themed setup with Black text */
           formButtonPrimary:
-            'bg-black !text-[#ffd300] font-black uppercase italic  transition-all py-3 shadow-md',
+            'bg-black !text-[#F1C232] font-black uppercase italic  transition-all py-3 shadow-md',
 
           /* INPUT FIELDS */
           formFieldLabel:
@@ -73,8 +73,9 @@ export default function RootLayout({
         },
       }}
     >
-      <html lang="en" className="bg-black">
-        <body className="bg-black text-white antialiased selection:bg-[#ffd300] selection:text-black">
+      {/* 🔄 FIXED: Swapped out bg-black for bg-iron-volt to claim ownership of phone edges */}
+      <html lang="en" className="bg-iron-volt">
+        <body className="bg-iron-volt text-white antialiased selection:bg-black selection:text-iron-volt">
           {children}
         </body>
       </html>

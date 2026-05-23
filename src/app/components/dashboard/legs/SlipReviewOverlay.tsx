@@ -138,18 +138,18 @@ export default function SlipReviewOverlay({
   };
 
   // 🎨 PARALLEL THEME CONFIGURATION DESIGN MATRIX
-  // 🔄 TRUE INVERSIONS: Solid color deck plates with high-contrast elements mapped inside them
+  // 🔄 TRUE INVERSION: Made standard theme solid yellow with all text elements and matching borders mapped to pure black
   const theme = hasDemon
     ? {
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-red/40 shadow-[0_0_80px_rgba(239,68,68,0.15)]',
         titleText: 'text-white',
-        dataCoreBg: 'bg-iron-red border-t border-black/20', // Solid Demon Red deck plate
-        labelColor: 'text-black/60', // Dark contrast labels
-        valueColor: 'text-black font-bold', // Dark contrast values
-        accentText: 'text-black font-black', // Bold target returns over red background
-        inputBg: 'bg-white/30 border border-black/20 text-black placeholder-black/40', // Visible input values on red
-        buttonBg: 'bg-black text-iron-red hover:bg-black/90 shadow-md', // Solid black button with red text
+        dataCoreBg: 'bg-zinc-900/40 backdrop-blur-md border-[0.5px] border-iron-red/30',
+        labelColor: 'text-zinc-500',
+        valueColor: 'text-white',
+        accentText: 'text-iron-red font-black',
+        inputBg: 'bg-black/60 border border-zinc-800 text-white',
+        buttonBg: 'bg-iron-red text-black shadow-[0_0_25px_rgba(239,68,68,0.25)]',
       }
     : {
         modalBg: 'bg-zinc-950',
@@ -255,20 +255,20 @@ export default function SlipReviewOverlay({
         </div>
 
         {/* INTERACTIVE CHIP STACK WAGER CONTROLLER */}
-        <div className={` brightness-[0.75] ${theme.dataCoreBg} p-5 space-y-4`}>
+        <div className={`${theme.dataCoreBg} p-5 space-y-4 brightness-[0.75]`}>
           {hasDemon && (
-            <div className="flex items-center justify-center animate-pulse gap-2 text-black text-[9px] font-mono font-black tracking-widest pt-1">
+            <div className="flex items-center justify-center animate-pulse gap-2 text-iron-red text-[9px] font-mono font-black tracking-widest pt-1">
               <span>👹DEMON MULTIPLIER ACTIVATED👹</span>
             </div>
           )}
           <div className="flex justify-between items-center">
             <div className={`flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider ${theme.labelColor}`}>
-              <Coins className="w-4 h-4 text-black" />
+              <Coins className={`w-4 h-4 ${hasDemon ? 'text-iron-volt' : 'text-black'}`} />
               <span>Enter wager</span>
             </div>
             <div className="text-[12px] font-mono">
                 <span className={`flex gap-1 items-center ${theme.valueColor}`}>  
-                  <Zap className="w-3 h-3 text-black" />{userBalance}
+                  <Zap className={`w-3 h-3 ${hasDemon ? 'text-iron-volt' : 'text-black'}`} />{userBalance}
                 </span>
             </div>
           </div>
@@ -285,7 +285,7 @@ export default function SlipReviewOverlay({
           </div>
 
           {/* Live Dynamic Return Payout Indicator */}
-          <div className={`flex justify-between items-center pt-2 border-t ${hasDemon ? 'border-black/20' : 'border-black/10'}`}>
+          <div className={`flex justify-between items-center pt-2 border-t ${hasDemon ? 'border-zinc-800/50' : 'border-black/10'}`}>
             <span className={`font-mono text-[11px] uppercase tracking-wider ${theme.labelColor}`}>To Win:</span>
             <span className={`font-black italic text-2xl tracking-tight ${theme.accentText}`}>
               +{isSlipSizeValid ? dynamicPayout : 0}

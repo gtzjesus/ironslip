@@ -66,7 +66,7 @@ export default function SlipNavbar({
               >
                 {/* LEFT DATA CELL: LEGS VOLUME */}
                 <div className="relative z-10 flex flex-col justify-center items-start leading-none">
-                  <p className="text-[9px] font-mono uppercase tracking-[0.15em] mb-1 text-zinc-500">
+                  <p className="text-[9px] font-mono uppercase tracking-[0.15em] mb-1 text-black">
                     {/* ◄ CLEAN: Removed separate colored indicators, keeping text clean and readable */}
                     {hasDemon ? 'DEMON slip' : 'IRON slip'}
                   </p>
@@ -81,7 +81,7 @@ export default function SlipNavbar({
                 <div className="relative z-10 flex items-center gap-4">
                   {/* TEXT GROUP: STACKED AND ALIGNED TO THE RIGHT */}
                   <div className="flex flex-col justify-center items-end text-right leading-none">
-                    <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-500 mb-1">
+                    <p className="text-[8px] font-mono uppercase tracking-widest text-black mb-1">
                       win up to x{multiplier.toFixed(2)}
                     </p>
                     <p className={`text-sm font-black uppercase tracking-tight italic leading-none ${
@@ -113,7 +113,7 @@ export default function SlipNavbar({
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
                         <Lock className="w-2.5 h-2.5 mb-0.5 text-zinc-600" />
-                        <span className="text-[8px] font-mono font-black text-zinc-500">{legsNeeded}</span>
+                        <span className="text-[8px] font-mono font-black text-black">{legsNeeded}</span>
                       </div>
                     )}
                   </div>
