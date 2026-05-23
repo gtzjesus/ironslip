@@ -73,8 +73,14 @@ export default function RootLayout({
         },
       }}
     >
-      {/* 🔄 FIXED: Swapped out bg-black for bg-iron-volt to claim ownership of phone edges */}
       <html lang="en" className="bg-iron-volt">
+        <head>
+          {/* 📱 SAFARI CORRECTION INJECTIONS */}
+          {/* Forces Safari's top status bar background styling */}
+          <meta name="theme-color" content="#F1C232" />
+          {/* Targets Safari specific top-notch status text behaviors */}
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        </head>
         <body className="bg-iron-volt text-white antialiased selection:bg-black selection:text-iron-volt">
           {children}
         </body>
