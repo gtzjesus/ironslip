@@ -150,7 +150,7 @@ export default function SlipReviewOverlay({
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-volt/30 shadow-[0_0_80px_rgba(163,230,53,0.08)]',
         titleText: 'text-iron-volt',
-        dataCoreBg: 'bg-zinc-900/60 backdrop-blur-md border-[0.5px] border-zinc-800/60',
+        dataCoreBg: 'bg-iron-volt backdrop-blur-md border-[0.5px] border-zinc-800/60',
         dataLabel: 'text-zinc-400',
         dataValue: 'text-white',
         accentText: 'text-iron-volt font-bold',
