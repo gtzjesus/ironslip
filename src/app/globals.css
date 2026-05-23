@@ -58,36 +58,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* 1. THE ENTRANCE SLAM (Runs once) */
-@keyframes forgeSlam {
-  0% {
-    transform: translateX(-100vw) skewX(20deg);
-    /* filter: brightness(0); */
-    opacity: 0;
-  }
-  70% {
-    transform: translateX(5vw) skewX(-5deg);
-    /* filter: brightness(0.80); */
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(0) skewX(0);
-    /* filter: brightness(0.80); */
-  }
-}
 
-/* 2. THE POWER PULSE (Loops forever) */
-@keyframes forgePulse {
-  0%,
-  100% {
-    box-shadow: 0 0 15px rgba(255, 211, 0, 0.2);
-    border-color: #F1C232;
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(255, 211, 0, 0.5);
-    border-color: #ffffff;
-  }
-}
 
 @layer utilities {
   @keyframes scan {
