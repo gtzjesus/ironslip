@@ -70,6 +70,41 @@ body {
     }
   }
 }
+/* ==========================================================================
+   ARCADE HARD METALLIC SLAM MOTIONS
+   ========================================================================== */
+
+@keyframes videoGameSlam {
+  0% {
+    transform: translateX(-100vw) scaleX(1.2) skewX(-10deg);
+    opacity: 0;
+  }
+  55% {
+    /* Hard overshoot past the target destination to create the impact impact */
+    transform: translateX(4vw) scaleX(0.95) skewX(2deg);
+    opacity: 1;
+  }
+  75% {
+    /* Snapping bounce back slightly left */
+    transform: translateX(-1.5vw) scaleX(1.02) skewX(-1deg);
+  }
+  90% {
+    /* Minor micro-settle adjustment */
+    transform: translateX(0.5vw) scaleX(0.99);
+  }
+  100% {
+    /* Solid concrete lock */
+    transform: translateX(0) scaleX(1) skewX(0);
+    opacity: 1;
+  }
+}
+
+.animate-videogame-slam {
+  /* Utilizing a violent, top-loaded tracking curve to force the hyper-speed initial entry */
+  animation: videoGameSlam 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
 
 /* 3. APPLYING BOTH TO THE CLERK MODAL */
 .cl-modalContent {

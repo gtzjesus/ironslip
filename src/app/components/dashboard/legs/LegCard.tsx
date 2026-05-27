@@ -14,7 +14,7 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
   return (
     <button
       onClick={() => isSignedIn && onClick(leg)} // Only click if signed in
-      className={`relative w-full text-left border-1 p-4 px-2 mb-1 overflow-hidden transition-all active:scale-[0.98] ${
+      className={`relative w-full text-left border-1 p-4 px-2 mb-1 overflow-hidden transition-all ${
         isDemon
           ? '   border-iron-red '
           : 'bg-zinc-950 border-zinc-800'

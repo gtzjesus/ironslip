@@ -18,7 +18,7 @@ export default function LegFilterNav({
   onCategoryChange,
 }: LegFilterNavProps) {
   return (
-    <div className="mt-8 flex overflow-x-auto gap-2 pb-5 scrollbar-hide no-scrollbar ">
+    <div className="mt-5 flex overflow-x-auto gap-2 pb-5 scrollbar-hide no-scrollbar ">
       {CATEGORIES.map((cat) => {
         const isActive = activeCategory === cat.value;
         return (
@@ -29,7 +29,7 @@ export default function LegFilterNav({
               flex-shrink-0 px-3 py-2 font-mono text-[10px] uppercase tracking-widest border transition-all duration-200
               ${
                 isActive
-                  ? ' bg-iron-volt text-black border-iron-volt font-black italic shadow-[0_0_10px_rgba(250,204,21,0.2)]'
+                  ? ' bg-iron-volt text-black border-iron-volt font-black  shadow-[0_0_10px_rgba(250,204,21,0.2)]'
                   : 'bg-transparent text-zinc-600 border-zinc-800 '
               }
             `}

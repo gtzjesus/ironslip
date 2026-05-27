@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface LegExpansionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,9 +16,6 @@ export default function LegExpansion({
   onToggleSlip,
   isInSlip,
 }: LegExpansionProps) {
-  // ◄ NEW STATE: Tracks local exit execution state to allow animations to run completely before unmounting
-  const [isExiting, setIsExiting] = useState(false);
-
   const [hazardWarning] = useState(() => {
     const warnings = [
       ' PROTOCOL_READY ',
@@ -32,14 +28,6 @@ export default function LegExpansion({
   });
 
   if (!leg) return null;
-
-  // ⚡ CUSTOM DISMISSAL INTERCEPTOR: Drives the lighting fast swipe before dropping the component
-  const handleControlledClose = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onClose();
-    }, 180); // Maps 1:1 with your 0.18s horizontal animation sequence
-  };
 
   const isDemonMode = leg.isDemon === true || leg.difficulty === 'demon';
   const displayCategory = (leg.category || 'IRON').toUpperCase();
@@ -71,20 +59,12 @@ export default function LegExpansion({
       };
 
   return (
-    // 1. BACKDROP OVERLAY MASK
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isExiting ? 0 : 1 }} // Syncs alpha down smoothly on dismissal
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden p-0"
-    >
-      {/* 2. THE FULL SCREEN HUD DRAWER CONTAINER */}
-      <motion.div
-        initial={{ x: '-100vw' }}
-        animate={{ x: isExiting ? '100vw' : 0 }} // ◄ DRIVES EXECUTION VIEW DISMISSAL LEFT TO RIGHT RIGHT NOW
-        exit={{ x: '100vw' }}
-        transition={{ type: 'tween', ease: 'easeOut', duration: 0.18 }}
-        className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white ${theme.modalBg} ${theme.borderStyle}`}
+    // Backdrop overlay is instant on mount/unmount
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden p-0">
+      
+      {/* Drawer layout running the high-impact kinetic entry animation */}
+      <div
+        className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle}`}
       >
         
         {/* TILED WATERMARK BACKGROUND LAYER */}
@@ -112,7 +92,7 @@ export default function LegExpansion({
         {/* HEADER AREA */}
         <div className="p-8 pb-4 relative z-10 flex justify-end items-end border-b-4 border-black/10">
           <button
-            onClick={handleControlledClose} // ◄ Routed to custom dynamic shutdown interceptor
+            onClick={onClose} // Instantly unmounts component safely
             className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-red-600 px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
           >
             [ X ]
@@ -124,9 +104,7 @@ export default function LegExpansion({
           
           {/* IDENTITY PROTOCOL TAGGING */}
           <div className="space-y-1 relative z-10 pr-16 mt-4">
-            <h2
-              className={`${theme.titleText} font-black italic text-6xl uppercase tracking-tighter leading-none mt-1`}
-            >
+            <h2 className={`${theme.titleText} font-black italic text-6xl uppercase tracking-tighter leading-none mt-1`}>
               {leg.task}
             </h2>
           </div>
@@ -163,7 +141,7 @@ export default function LegExpansion({
               
               <div className="flex flex-col text-right">
                 <span className={`${theme.dataLabel} font-mono italic text-[11px] uppercase tracking-wider mb-1`}>
-             win
+                  win
                 </span>
                 <div className="relative group self-end">
                   <div className="absolute inset-0 bg-black -skew-x-12 transform border-r-2 border-iron-green/30" />
@@ -177,7 +155,7 @@ export default function LegExpansion({
 
           {/* DEMON PROTOCOL FLOODWAY */}
           {isDemonMode && (
-            <div className="uppercase text-iron-red p-3.5 text-center font-mono text-[10px] font-black z-10   tracking-[0.2em]  animate-pulse">
+            <div className="uppercase text-iron-red p-3.5 text-center font-mono text-[10px] font-black z-10   tracking-[0.2em]   animate-pulse">
               👹demon leg👹
             </div>
           )}
@@ -189,18 +167,13 @@ export default function LegExpansion({
             className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none ${theme.buttonBg}`}
             onClick={() => {
               onToggleSlip(leg);
-              // Also update programmatic dismissal when user hits the primary deployment buttons!
-              setIsExiting(true);
-              setTimeout(() => {
-                onClose();
-              }, 180);
+              onClose(); // Drops instantly with no delayed lag
             }}
           >
             <span>{isInSlip ? 'REMOVE from slip' : 'add to slip'}</span>
-         
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
