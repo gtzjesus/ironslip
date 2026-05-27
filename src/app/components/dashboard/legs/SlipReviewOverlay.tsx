@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { Trash2, Coins, Zap } from 'lucide-react';
 import { slipStorage } from '@/lib/slipStorage';
 import { useRouter } from 'next/navigation';
@@ -26,11 +25,8 @@ export default function SlipReviewOverlay({
   clearSlipData,
 }: SlipReviewOverlayProps) {
   const router = useRouter();
-  
-  // ◄ TRACKS LOCAL EXIT EXECUTION STATE
-  const [isExiting, setIsExiting] = useState(false);
-  const [wager, setWager] = useState<number | ''>(10); // Updated to support clean text clearing
-  const [userBalance, setUserBalance] = useState<number>(800); // Mock account balance
+  const [wager, setWager] = useState<number | ''>(10); // Soporte limpio de borrado de texto
+  const [userBalance, setUserBalance] = useState<number>(800); // Balance mock
 
   // 🧠 ENFORCED CORE BUSINESS LOGIC VALIDATION BOUNDARIES
   const isSlipSizeValid = activeSlip.length >= 3 && activeSlip.length <= 5;
@@ -77,15 +73,6 @@ export default function SlipReviewOverlay({
 
   if (!isOpen) return null;
 
-  // ⚡ CUSTOM DISMISSAL INTERCEPTOR
-  const handleControlledClose = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onClose();
-      setIsExiting(false); // Reset state container pool
-    }, 180);
-  };
-
   // 🔧 FIXED TYPING INTERCEPTOR ENGINE
   const handleWagerChange = (valStr: string) => {
     if (valStr === '') {
@@ -107,7 +94,7 @@ export default function SlipReviewOverlay({
   const handleExecuteContract = () => {
     const activeWagerNum = Number(wager) || 0;
     
-    // 🛡️ HARD SECURITY LOCKDOWN: Stops transactions if parameters bypass standard state checks
+    // 🛡️ HARD SECURITY LOCKDOWN
     if (!isSlipSizeValid || activeWagerNum <= 0 || activeWagerNum > userBalance) return;
 
     setUserBalance(prev => prev - activeWagerNum);
@@ -127,18 +114,11 @@ export default function SlipReviewOverlay({
     });
 
     clearSlipData();
-    
-    // Trigger synchronized exit transition on success execution
-    setIsExiting(true);
-    setTimeout(() => {
-      onClose();
-      setIsExiting(false);
-      router.push('/slips');
-    }, 180);
+    onClose(); // Cierre instantáneo nativo sin lags de JS
+    router.push('/slips');
   };
 
   // 🎨 PARALLEL THEME CONFIGURATION DESIGN MATRIX
-  // 🔄 TRUE INVERSION: Made standard theme solid yellow with all text elements and matching borders mapped to pure black
   const theme = hasDemon
     ? {
         modalBg: 'bg-zinc-950',
@@ -155,15 +135,14 @@ export default function SlipReviewOverlay({
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-volt/30 shadow-[0_0_80px_rgba(163,230,53,0.08)]',
         titleText: 'text-iron-volt',
-        dataCoreBg: 'bg-iron-volt border-t border-black/20', // Solid soft yellow deck plate
-        labelColor: 'text-black/60', // Dark contrast labels
-        valueColor: 'text-black font-bold', // Dark contrast values
-        accentText: 'text-black font-black', // Extra bold target returns
-        inputBg: 'bg-white/40 border border-black/20 text-black placeholder-black/40', // Safe, visible high-contrast input values
-        buttonBg: 'bg-black text-iron-volt hover:bg-black/90 shadow-md', // Inverted button: solid black with yellow text
+        dataCoreBg: 'bg-iron-volt border-t border-black/20', 
+        labelColor: 'text-black/60', 
+        valueColor: 'text-black font-bold', 
+        accentText: 'text-black font-black', 
+        inputBg: 'bg-white/40 border border-black/20 text-black placeholder-black/40', 
+        buttonBg: 'bg-black text-iron-volt hover:bg-black/90 shadow-md', 
       };
 
-  // Custom UI feedback for button depending on contract validation state
   const getButtonLabel = () => {
     if (activeSlip.length < 3) return `3 legs needed (${activeSlip.length}/3)`;
     if (activeSlip.length > 5) return 'MAX CAPACITY MET (MAX 5)';
@@ -171,20 +150,12 @@ export default function SlipReviewOverlay({
   };
 
   return (
-    // 1. BACKDROP OVERLAY MASK
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isExiting ? 0 : 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden p-0"
-    >
-      {/* 2. THE FULL SCREEN HUD DRAWER CONTAINER */}
-      <motion.div
-        initial={{ x: '-100vw' }}
-        animate={{ x: isExiting ? '100vw' : 0 }}
-        exit={{ x: '100vw' }}
-        transition={{ type: 'tween', ease: 'easeOut', duration: 0.18 }}
-        className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white ${theme.modalBg} ${theme.borderStyle}`}
+    // 1. BACKDROP OVERLAY MASK (Div nativo rápido)
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden p-0">
+      
+      {/* 2. THE FULL SCREEN HUD DRAWER CONTAINER (Inyección del Grand Slam de videojuegos) */}
+      <div
+        className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle}`}
       >
         {/* HEADER AREA */}
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b border-zinc-900/40">
@@ -194,7 +165,7 @@ export default function SlipReviewOverlay({
             </h2>
           </div>
           <button
-            onClick={handleControlledClose}
+            onClick={onClose} // Drop instantáneo al presionar la X
             className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-red-600 px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
           >
             [ X ]
@@ -258,7 +229,7 @@ export default function SlipReviewOverlay({
         <div className={`${theme.dataCoreBg} p-5 space-y-4`}>
           {hasDemon && (
             <div className="flex items-center justify-center animate-pulse gap-2 text-iron-red text-[9px] font-mono font-black tracking-widest pt-1">
-              <span>👹DEMON MULTIPLIER ACTIVATED👹</span>
+              <span><span>👹DEMON MULTIPLIER ACTIVATED👹</span></span>
             </div>
           )}
           <div className="flex justify-between items-center">
@@ -307,7 +278,7 @@ export default function SlipReviewOverlay({
             </button>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
