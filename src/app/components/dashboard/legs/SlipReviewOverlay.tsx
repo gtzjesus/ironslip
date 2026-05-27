@@ -118,7 +118,7 @@ export default function SlipReviewOverlay({
     router.push('/slips');
   };
 
-  // 🎨 PARALLEL THEME CONFIGURATION DESIGN MATRIX
+// 🎨 PARALLEL THEME CONFIGURATION DESIGN MATRIX
   const theme = hasDemon
     ? {
         modalBg: 'bg-zinc-950',
@@ -127,20 +127,22 @@ export default function SlipReviewOverlay({
         dataCoreBg: 'bg-zinc-900/40 backdrop-blur-md border-[0.5px] border-iron-red/30',
         labelColor: 'text-zinc-500',
         valueColor: 'text-white',
-        accentText: 'text-iron-red font-black',
-        inputBg: 'bg-black/60 border border-zinc-800 text-white',
+        accentText: 'text-iron-green font-black',
+        inputBg: 'bg-black/60 border border-zinc-800 text-white placeholder-zinc-600',
         buttonBg: 'bg-iron-red text-black shadow-[0_0_25px_rgba(239,68,68,0.25)]',
       }
     : {
         modalBg: 'bg-zinc-950',
         borderStyle: 'border-x-[0.5px] border-iron-volt/30 shadow-[0_0_80px_rgba(163,230,53,0.08)]',
         titleText: 'text-iron-volt',
-        dataCoreBg: 'bg-iron-volt border-t border-black/20', 
-        labelColor: 'text-black/60', 
-        valueColor: 'text-black font-bold', 
-        accentText: 'text-black font-black', 
-        inputBg: 'bg-white/40 border border-black/20 text-black placeholder-black/40', 
-        buttonBg: 'bg-black text-iron-volt hover:bg-black/90 shadow-md', 
+        // ◄ FIXED: Deck plate passes to deep matte black with sharp volt accent boundaries
+        dataCoreBg: 'bg-zinc-950 border-t border-iron-volt/20 p-5 space-y-4', 
+        labelColor: 'text-zinc-400 font-mono text-[10px] uppercase tracking-wider', 
+        valueColor: 'text-iron-volt font-mono font-bold', 
+        accentText: 'text-iron-green font-black italic text-2xl tracking-tight', 
+        // ◄ FIXED: High-contrast inputs -> solid black base, neon text, and sharp muted-volt placeholder tracking
+        inputBg: 'bg-black border border-iron-volt/30 text-iron-volt placeholder-iron-volt/30 focus:border-iron-volt/60 transition-colors', 
+        buttonBg: 'bg-iron-volt text-black font-black hover:bg-iron-volt/90 shadow-[0_0_20px_rgba(163,230,53,0.1)]', 
       };
 
   const getButtonLabel = () => {
@@ -234,12 +236,12 @@ export default function SlipReviewOverlay({
           )}
           <div className="flex justify-between items-center">
             <div className={`flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider ${theme.labelColor}`}>
-              <Coins className={`w-4 h-4 ${hasDemon ? 'text-iron-volt' : 'text-black'}`} />
+              <Coins className={`w-4 h-4 ${hasDemon ? 'text-iron-volt' : 'text-iron-volt'}`} />
               <span>Enter wager</span>
             </div>
             <div className="text-[12px] font-mono">
                 <span className={`flex gap-1 items-center ${theme.valueColor}`}>  
-                  <Zap className={`w-3 h-3 ${hasDemon ? 'text-iron-volt' : 'text-black'}`} />{userBalance}
+                  <Zap className={`w-3 h-3 ${hasDemon ? 'text-iron-volt' : 'text-iron-volt'}`} />{userBalance}
                 </span>
             </div>
           </div>
