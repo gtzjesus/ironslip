@@ -7,7 +7,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks/clerk(.*)' 
 ]);
 
-// 2. Run the Clerk authentication middleware checks
+// 2. Run the ssClerk authentication middleware checks
 export default clerkMiddleware(async (auth, req) => {
   // If the user is trying to access a private route, enforce login protection
   if (!isPublicRoute(req)) {
