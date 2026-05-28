@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
   let evt: WebhookEvent
 
-  // Verify the signature to ensure this actually came from Clerk
+  // Verify the signature to ensure this actually came from Clerkdsa
   try {
     evt = wh.verify(blob, {
       'svix-id': svix_id,
