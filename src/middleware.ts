@@ -1,24 +1,19 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// 1. Define which routes are strictly public
-const isPublicRoute = createRouteMatcher([
-  '/',                     
-  '/account(.*)',          
-  '/api/webhooks/clerk(.*)' 
-]);
+// This tells Clerk: "DO NOT block requests going to our webhook path!"
+const isPublicRoute = createRouteMatcher(['/api/webhooks(.*)']);
 
-// 2. Run the ssClerk authentication middleware checks
-export default clerkMiddleware(async (auth, req) => {
-  // If the user is trying to access a private route, enforce login protection
-  if (!isPublicRoute(req)) {
+export default clerkMiddleware(async (auth, request) => {
+  if (!isPublicRoute(request)) {
     await auth.protect();
   }
 });
 
-// Your existing config setup remains completely untouched and safe
 export const config = {
   matcher: [
+    // Runs middleware on all paths except static assets
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always runs middleware for API routes
     '/(api|trpc)(.*)',
   ],
 };
