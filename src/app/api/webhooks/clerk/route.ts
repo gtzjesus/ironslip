@@ -48,8 +48,8 @@ export async function POST(req: Request) {
     const { error } = await supabase
       .from('users')
       .insert({ 
-        id: id,          -- Put Clerk ID into 'id' column
-        email: primaryEmail -- Put email into 'email' column
+        id: id,        
+        email: primaryEmail 
       })
 
     if (error) {
