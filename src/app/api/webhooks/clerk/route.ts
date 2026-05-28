@@ -63,3 +63,9 @@ export async function POST(req: Request) {
 
   return new Response('Webhook processed, ignoring event type', { status: 200 })
 }
+
+// Add this to your route.ts file right below your POST function
+export async function GET() {
+  console.log("CRITICAL DEBUG: A GET request hit the webhook endpoint!");
+  return new Response("If you see this in production, Clerk's POST request is being redirected to a GET request.", { status: 200 });
+}
