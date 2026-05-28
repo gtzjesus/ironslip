@@ -4,29 +4,26 @@ import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
 import { createClient } from '@supabase/supabase-js'
 
-// 1. Connect to our Supabase database using the Vercel keys
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+// CRITICAL FIX: Next.js needs the req parameter available for dynamic async headers mapping
 export async function POST(req: Request) {
   const headerPayload = await headers()
   const svix_id = headerPayload.get('svix-id')
   const svix_timestamp = headerPayload.get('svix-timestamp')
   const svix_signature = headerPayload.get('svix-signature')
 
-  // Security Check: If Clerk's unique stamps are missing, reject immediately
   if (!svix_id || !svix_timestamp || !svix_signature) {
     return new Response('Error: Missing security headers', { status: 400 })
   }
 
-  // Get the raw message content
   const blob = await req.text()
   const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET!)
 
   let evt: WebhookEvent
 
-  // Verify the signature to ensure this actually came from Clerkdsa
   try {
     evt = wh.verify(blob, {
       'svix-id': svix_id,
@@ -40,12 +37,10 @@ export async function POST(req: Request) {
 
   const eventType = evt.type
 
-  // 2. If a new user signed up, catch their data!
   if (eventType === 'user.created') {
     const { id, email_addresses } = evt.data
     const primaryEmail = email_addresses[0]?.email_address
 
-    // 3. Insert them into our Supabase 'users' table
     const { error } = await supabase
       .from('users')
       .insert({ 
@@ -64,8 +59,7 @@ export async function POST(req: Request) {
   return new Response('Webhook processed, ignoring event type', { status: 200 })
 }
 
-// Add this to your route.ts file right below your POST function
+// CRITICAL DEBUG HANDLER: Captures traffic if an upstream router forces a GET redirect
 export async function GET() {
-  console.log("CRITICAL DEBUG: A GET request hit the webhook endpoint!");
-  return new Response("If you see this in production, Clerk's POST request is being redirected to a GET request.", { status: 200 });
+  return new Response("If you see this, a network redirect transformed Clerk's POST request into a GET request.", { status: 405 });
 }
