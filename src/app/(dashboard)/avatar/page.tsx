@@ -1,4 +1,5 @@
 'use client';
+import QuickSlip from '@/components/dashboard/common/QuickSlip';
 import { useUser, SignOutButton } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import { UserCheck, Zap, Construction } from 'lucide-react';
@@ -20,6 +21,9 @@ export default function AvatarPage() {
         <p className="font-mono text-[10px] mt-2">
           Initialize via Feed Terminal
         </p>
+
+        <QuickSlip isSignedIn={!!isSignedIn} />
+        
       </div>
     );
   }

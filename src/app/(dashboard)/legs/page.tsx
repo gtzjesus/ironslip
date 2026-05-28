@@ -5,11 +5,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { SlidersHorizontal, ChevronUp } from 'lucide-react'; 
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
-import LegsHeader from '@/app/components/dashboard/legs/Legsheader';
-import LegCard from '@/app/components/dashboard/legs/LegCard';
-import LegExpansion from '@/app/components/dashboard/legs/LegExpansion';
-import LegFilterNav from '@/app/components/dashboard/legs/LegFilterNav';
-import SlipNavbar from '@/app/components/dashboard/legs/SlipNavbar'; 
+import LegsHeader from '@/components/dashboard/legs/Legsheader';
+import LegCard from '@/components/dashboard/legs/LegCard';
+import LegExpansion from '@/components/dashboard/legs/LegExpansion';
+import LegFilterNav from '@/components/dashboard/legs/LegFilterNav';
+import SlipNavbar from '@/components/dashboard/legs/SlipNavbar'; 
 
 export default function LegsPage() {
   const { legs, loading } = useLegs();
