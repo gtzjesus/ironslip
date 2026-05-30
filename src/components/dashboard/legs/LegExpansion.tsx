@@ -88,7 +88,7 @@ export default function LegExpansion({
         <div className="p-8 pb-4 relative z-10 flex justify-end items-end border-b-4 border-black/10">
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase tracking-[0.4em] bg-red-600 px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
+            className="absolute top-5 right-5 text-black font-mono text-[12px] uppercase tracking-[0.4em] bg-red-600 px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
           >
             [ escape ]
           </button>
@@ -181,11 +181,11 @@ export default function LegExpansion({
               onClick={() => setIsDemonSelected(!isDemonSelected)}
               className={`px-4 py-2 font-mono text-xs uppercase font-black tracking-wider transition-all border ${
                 isDemonSelected 
-                  ? 'bg-iron-red border-white text-black shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
-                  : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-white'
+                  ? 'bg-iron-volt  text-black shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
+                  : 'bg-iron-red  text-black '
               }`}
             >
-              {isDemonSelected ? 'GO REGULAR' : 'go DEMON'}
+              {isDemonSelected ? 'GO standard' : 'go DEMON'}
             </button>
           </div>
 
