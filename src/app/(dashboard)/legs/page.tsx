@@ -180,7 +180,7 @@ export default function LegsPage() {
           leg={selectedLeg}
           onClose={() => setSelectedLeg(null)}
           onToggleSlip={toggleLegInSlip}
-          isInSlip={activeSlip.some((l) => l._id === selectedLeg._id)}
+       isInSlip={activeSlip.some((item) => item._id.includes(selectedLeg._id))}
         />
       )}
     </main>
