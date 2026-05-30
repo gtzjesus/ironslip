@@ -1,9 +1,7 @@
 import { type SchemaTypeDefinition } from 'sanity';
-import { slipType } from './slipType';
-import { legType } from './legType';
-import { userType } from './userType';
-import { productType } from './productType';
+// ⚡️ Agregamos las llaves para llamar exactamente a la constante legType
+import { legType } from './legType'; 
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [userType, slipType, legType, productType],
+  types: [legType],
 };

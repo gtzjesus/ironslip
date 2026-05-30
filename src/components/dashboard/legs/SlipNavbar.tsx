@@ -8,12 +8,14 @@ interface SlipNavbarProps {
   activeSlip: any[];
   onRemoveLeg: (id: string) => void;
   clearSlipData: () => void;
+  userBalance: number; // Added the userBalance prop definition here
 }
 
 export default function SlipNavbar({
   activeSlip,
   onRemoveLeg,
   clearSlipData,
+  userBalance, // Destructured userBalance here
 }: SlipNavbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -122,6 +124,7 @@ export default function SlipNavbar({
           hasDemon={hasDemon}
           minReviewsRequired={MIN_REVIEWS_REQUIRED}
           clearSlipData={clearSlipData}
+          userBalance={userBalance} // Now passing down the valid variable!
         />
       )}
     </>

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+
 import { useState, useEffect, useMemo } from 'react';
 // ◄ OPTIMIZED: Framer Motion imports are completely stripped out to save bundle size and memory overhead
 import { SlidersHorizontal, ChevronUp } from 'lucide-react'; 
@@ -11,17 +12,36 @@ import LegExpansion from '@/components/dashboard/legs/LegExpansion';
 import LegFilterNav from '@/components/dashboard/legs/LegFilterNav';
 import SlipNavbar from '@/components/dashboard/legs/SlipNavbar'; 
 
+// 🔥 IMPORTAMOS TU MOTOR FINANCIERO REAL
+import { getUserBalance } from '@/actions/supabase/slips';
+
 export default function LegsPage() {
   const { legs, loading } = useLegs();
   const { isLoaded, isSignedIn } = useUser();
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
-  
-  // Controls the instant visibility toggle of the sub-navbar filters
   const [showFilters, setShowFilters] = useState(false);
-
   const [activeSlip, setActiveSlip] = useState<any[]>([]);
 
+  // 🧠 EL BALANCE EMPIEZA EN 0 Y SE LLENA CON DATA REAL DE SUPABASE
+  const [userBalance, setUserBalance] = useState<number>(0);
+
+  // 🔥 SINCRONIZACIÓN BANCARIA EN VIVO
+  useEffect(() => {
+    async function syncWallet() {
+      if (isLoaded && isSignedIn) {
+        const res = await getUserBalance();
+        if (res.success) {
+          setUserBalance(res.credits); // ⚡️ Inyección de tus créditos reales de la base de datos
+        } else {
+          console.error('Failed to sync live wallet credits:', res.error);
+        }
+      }
+    }
+    syncWallet();
+  }, [isLoaded, isSignedIn]);
+
+  // Manejo de borradores locales en localStorage
   useEffect(() => {
     const savedDraft = localStorage.getItem('iron_slip_draft');
     if (savedDraft) {
@@ -63,21 +83,20 @@ export default function LegsPage() {
 
   return (
     <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 relative">
-        {/* 📱 SAFARI TINT FORCE: Case 1 */}
-        <meta name="theme-color" content="#000000" />
+      {/* 📱 SAFARI TINT FORCE: Case 1 */}
+      <meta name="theme-color" content="#000000" />
+      
       {/* 1. MASTER STACKED NAVIGATION CELL BAR PACK */}
       <div className="flex-shrink-0 p-4 pb-0 flex flex-col">
-        
-    {/* ROW ALPHA: Primary Header Cell left entirely untouched for title & user balances */}
         <div className="w-full">
-          <LegsHeader />
+          {/* ⚡️ LE PASAMOS EL BALANCE TOTALMENTE DINÁMICO AL HEADER */}
+          <LegsHeader userBalance={userBalance} />
         </div>
 
-        {/* ROW BRAVO: Second Navbar Sub-Dock (Houses the tactical filter trigger & sliding deck) */}
+        {/* ROW BRAVO: Second Navbar Sub-Dock */}
         {isLoaded && isSignedIn && (
-          <div className=" flex flex-col justify-between items-center w-full">
+          <div className="flex flex-col justify-between items-center w-full">
             <div className="flex justify-between items-center">
-              
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.2em] px-2.5 py-1 rounded border transition-all duration-200 active:scale-95 ${
@@ -102,9 +121,6 @@ export default function LegsPage() {
               </button>
             </div>
 
-            {/* ◄ OPTIMIZED VISIBILITY ENGINE
-                Removed AnimatePresence and motion elements. This performs an instant layout insertion
-                with native scroll containers unblocked immediately. Absolute zero overhead on phone GPUs. */}
             {showFilters && (
               <div className="w-full overflow-x-auto overflow-y-hidden">
                 <LegFilterNav
@@ -155,6 +171,7 @@ export default function LegsPage() {
           setActiveSlip((prev) => prev.filter((l) => l._id !== id))
         }
         clearSlipData={handleClearSlipData} 
+        userBalance={userBalance}
       />
 
       {/* DETAILED EXPANSION WINDOW MODAL SCREEN */}

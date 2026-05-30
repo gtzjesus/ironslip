@@ -9,14 +9,23 @@ interface LegProps {
 }
 
 export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
-  const isDemon = leg.isDemon;
+  // 🔬 DETECTOR DE BASE DE DATOS (Abre F12 en tu navegador para auditar la data real)
+  console.log("DATOS DE LA LEG EN CARD:", leg);
+
+  // 🧠 Evaluamos si el documento ya viene forzado como demon o si es regular
+  const isDemon = leg.isDemon === true || leg.difficulty === 'demon';
+
+  // ⚡️ EXTRACTOR DINÁMICO: Si no encuentra los nuevos campos, busca el viejo por si hay caché, o mete un fallback duro
+  const displayReward = isDemon
+    ? (leg.demonReward ?? leg.creditReward ?? 350)
+    : (leg.regularReward ?? leg.creditReward ?? 100);
 
   return (
     <button
       onClick={() => isSignedIn && onClick(leg)} // Only click if signed in
-      className={`relative w-full text-left border-1 p-4 px-2 mb-1 overflow-hidden transition-all ${
+      className={`relative w-full text-left border-[0.5px] p-4 px-2 mb-1 overflow-hidden transition-all ${
         isDemon
-          ? '   border-iron-red '
+          ? 'border-iron-red bg-zinc-950/20'
           : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default' : 'cursor-pointer '}`}
     >
@@ -24,10 +33,10 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
         <div>
           <p
             className={`font-mono text-[8px] uppercase tracking-widest ${
-              isDemon ? 'animate-pulse' : 'text-zinc-500'
+              isDemon ? 'animate-pulse text-iron-red' : 'text-zinc-500'
             }`}
           >
-            {isDemon ? 'DEMON 👹' : leg.category}
+            {isDemon ? 'DEMON 👹' : (leg.category || 'LIFTING')}
           </p>
 
           {/* BLURRED TASK NAME */}
@@ -41,17 +50,17 @@ export default function LegCard({ leg, onClick, isSignedIn }: LegProps) {
         </div>
 
         <div className="text-right">
-          {/* BLURRED REWARD */}
+          {/* 🎯 EL REWARD CORREGIDO AQUÍ */}
           <p
             className={`font-black italic text-sm transition-all duration-500 ${
-              isDemon ? ' text-iron-red' : 'text-iron-volt'
+              isDemon ? 'text-iron-red' : 'text-iron-volt'
             } ${!isSignedIn ? 'blur-[4px] select-none' : ''}`}
           >
-            +{leg.creditReward}
+            +{displayReward}
           </p>
 
           {!isSignedIn && (
-            <p className="text-[6px] font-mono uppercase text-iron-red mt-1"></p>
+            <p className="text-[6px] font-mono uppercase text-iron-red mt-1">[ LOCKED ]</p>
           )}
         </div>
       </div>

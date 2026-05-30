@@ -2,24 +2,34 @@ import { client } from '@/sanity/lib/client';
 import { useState, useEffect } from 'react';
 
 export function useLegs() {
-  const [legs, setLegs] = useState([]);
+  const [legs, setLegs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLegs = async () => {
       try {
-        // Query de GROQ: Trae todo el tipo 'leg'
-        const query = `*[_type == "leg"] | order(_createdAt desc)`;
+        // 🔥 QUERY DE GROQ OPTIMIZADO: Mapeamos los campos nuevos explícitamente
+        const query = `*[_type == "leg"] | order(_createdAt desc) {
+          _id,
+          task,
+          category,
+          regularTarget,
+          regularReward,
+          demonTarget,
+          demonReward,
+          verificationMethod
+        }`;
+        
         const data = await client.fetch(query);
         setLegs(data);
       } catch (error) {
-        console.error('Error fetching legs:', error);
+        console.error('❌ Error fetching legs from Sanity:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLegs();
+  	fetchLegs();
   }, []);
 
   return { legs, loading };
