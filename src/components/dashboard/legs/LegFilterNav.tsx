@@ -2,10 +2,8 @@
 
 const CATEGORIES = [
   { label: 'ALL', value: 'all' },
-  { label: 'IRON', value: 'iron' },
-  { label: 'CARDIO', value: 'cardio' },
-  { label: 'LIFESTYLE', value: 'lifestyle' },
-  { label: 'WILDCARD', value: 'wildcard' },
+  { label: 'lifting', value: 'lifting' },
+  
 ];
 
 interface LegFilterNavProps {
