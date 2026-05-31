@@ -11,6 +11,8 @@
   "dependencies": {
     "@clerk/nextjs": "^7.3.0",
     "@clerk/themes": "^2.4.57",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "@rive-app/react-canvas": "^4.28.3",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.23.0",
@@ -24,7 +26,8 @@
     "sanity": "^5.23.0",
     "styled-components": "^6.4.1",
     "svix": "^1.94.0",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
