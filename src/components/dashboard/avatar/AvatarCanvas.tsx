@@ -19,12 +19,10 @@ function Model() {
 
   return (
     <group ref={group} dispose={null}>
-      {/* QUITAMOS el <Center> estúpido que lo mandaba al techo y 
-          lo bajamos manualmente en el eje Y para que entre el torso */}
       <primitive 
         object={scene} 
-        scale={2.5} 
-        position={[0, -2.5, 0]} 
+        scale={1.8} 
+        position={[0, -1.8, 0]} 
       />
     </group>
   );
@@ -32,13 +30,11 @@ function Model() {
 
 export default function AvatarCanvas() {
   return (
-    // 👈 "margin top" real: Usamos pt-32 (padding top) y transformamos el contenedor 
-    // para empujar TODO el bloque 3D hacia abajo de la pantalla
-    <div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden z-0 pt-40 flex flex-col items-center justify-start">
+    <div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden z-0 flex items-center justify-center">
       <Suspense fallback={null}>
         <Canvas 
-          className="w-full h-[80vh]"
-          camera={{ position: [0, 0, 4.5], fov: 45 }}
+          className="w-full h-full"
+          camera={{ position: [0, 0, 5], fov: 45 }}
           gl={{ preserveDrawingBuffer: true }}
         >
           <ambientLight intensity={1.5} />
@@ -47,10 +43,14 @@ export default function AvatarCanvas() {
 
           <Model />
 
-          {/* Ponemos el target en 0 para que la cámara mire al centro de este nuevo espacio abajo */}
           <OrbitControls 
             enableZoom={false}
-            target={[0, 1, 0]}
+            enablePan={false}
+            target={[0, 0, 0]}
+            minAzimuthAngle={-Math.PI / 4} 
+            maxAzimuthAngle={Math.PI / 4}
+            minPolarAngle={1.2} 
+            maxPolarAngle={1.8}
           />
         </Canvas>
       </Suspense>
