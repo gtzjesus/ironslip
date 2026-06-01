@@ -21,8 +21,8 @@ function Model() {
     <group ref={group} dispose={null}>
       <primitive 
         object={scene} 
-        scale={1.8} 
-        position={[0, -1.8, 0]} 
+        scale={1.6} 
+        position={[0, -1.5, 0]} 
       />
     </group>
   );
@@ -34,7 +34,7 @@ export default function AvatarCanvas() {
       <Suspense fallback={null}>
         <Canvas 
           className="w-full h-full"
-          camera={{ position: [0, 0, 5], fov: 45 }}
+          camera={{ position: [0, 0, 6.5], fov: 45 }}
           gl={{ preserveDrawingBuffer: true }}
         >
           <ambientLight intensity={1.5} />
