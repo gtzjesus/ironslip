@@ -50,7 +50,7 @@ export default function AvatarCanvas() {
           {/* Ponemos el target en 0 para que la cámara mire al centro de este nuevo espacio abajo */}
           <OrbitControls 
             enableZoom={false}
-            target={[0, 1.2, 1]}
+            target={[0, 1, 0]}
           />
         </Canvas>
       </Suspense>
