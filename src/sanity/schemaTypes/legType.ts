@@ -12,6 +12,12 @@ export const legType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'animationKey',
+      title: 'animation key',
+      type: 'string',
+      initialValue: 'idle',
+    }),
+    defineField({
       name: 'category',
       title: 'category',
       type: 'string',
@@ -21,8 +27,6 @@ export const legType = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-
-    // 🟢 CONFIGURACIÓN REGULAR (PRINCIPIANTE / INTERMEDIO)
     defineField({
       name: 'regularTarget',
       title: 'regular target description',
@@ -43,8 +47,6 @@ export const legType = defineType({
       rows: 3,
       description: 'Instrucciones para la IA en modo normal.',
     }),
-
-    // 👹 CONFIGURACIÓN DEMON (SÓLO PARA ELITE ATHLETES)
     defineField({
       name: 'demonTarget',
       title: '👹demon target description',
@@ -66,8 +68,6 @@ export const legType = defineType({
       rows: 3,
       description: 'Instrucciones despiadadas para la IA. Exige ver intensidad máxima.',
     }),
-
-    // CONTROL GLOBAL
     defineField({
       name: 'verificationMethod',
       title: 'verification method',

@@ -1,39 +1,34 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { createClient } from '@supabase/supabase-js';
 
-// 1. Rutas públicas
-const isPublicRoute = createRouteMatcher(['/', '/legs(.*)', '/home']);
+// 🟢 AGREGADO: '/studio(.*)' para que Clerk no bloquee el acceso a Sanity
+const isPublicRoute = createRouteMatcher(['/', '/legs(.*)', '/home', '/studio(.*)']);
 
-// 2. Inicialización segura de Supabase (Previene crashes por variables faltantes en producción)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-// Inicializamos el cliente condicionalmente solo si las variables existen
 const supabase = supabaseUrl && supabaseServiceKey 
   ? createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
-        persistSession: false, // Obligatorio para entornos Edge/Serverless
+        persistSession: false,
       }
     })
   : null;
 
 export default clerkMiddleware(async (auth, request) => {
-  // 3. Protegemos las rutas privadas primero
   if (!isPublicRoute(request)) {
+    const fallbackUrl = new URL('/home', request.url).toString();
+    
     await auth.protect({
-      unauthenticatedUrl: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || '/home',
+      unauthenticatedUrl: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || fallbackUrl,
     });
   }
 
-  // 4. Capturamos la sesión en el backend de forma segura
   const authObject = await auth();
   const userId = authObject?.userId;
   const sessionClaims = authObject?.sessionClaims;
 
-  // 5. Sincronización a Supabase
   if (userId && supabase) {
-    // Si usas Clerk y no has mapeado el email en los JWT claims personalizados, 
-    // a veces viene en 'primary_email_address' o dentro del objeto primaryEmail
     const email = (sessionClaims?.email as string) || "";
     
     try {

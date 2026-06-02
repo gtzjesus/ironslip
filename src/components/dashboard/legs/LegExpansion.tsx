@@ -7,7 +7,7 @@ interface LegExpansionProps {
   leg: any;
   onClose: () => void;
   onToggleSlip: (leg: any) => void;
-  isInSlip: boolean;
+  isInSlip: boolean; // El padre determina esto basándose en el ID base de Sanity
 }
 
 export default function LegExpansion({
@@ -16,7 +16,7 @@ export default function LegExpansion({
   onToggleSlip,
   isInSlip,
 }: LegExpansionProps) {
-  // ⚡️ ESTADO CLAVE: El usuario decide si quiere deblokear el infierno o ir normal
+  // ⚡️ ESTADO CLAVE: El usuario decide si quiere desbloquear el infierno o ir normal
   const [isDemonSelected, setIsDemonSelected] = useState(false);
 
   if (!leg) return null;
@@ -54,19 +54,25 @@ export default function LegExpansion({
           : 'bg-iron-volt shadow-[0_0_25px_rgba(163,230,53,0.15)] text-black font-bold',
       };
 
-  const handleInjectToSlip = () => {
-    // 🧠 LA SOLUCIÓN: Mantenemos el leg._id intacto para que el padre pueda agregar/remover sin romperse
-    const mutatedLeg = {
-      ...leg,
-      _id: leg._id, // 👈 ID original sagrado. No se toca.
-      task: isDemonSelected ? `${leg.task} 👹` : leg.task,
-      creditReward: creditsEarned,
-      isDemon: isDemonSelected,
-      requirementValue: targetDescription,
-      requirementUnit: '', 
-    };
-    
-    onToggleSlip(mutatedLeg);
+  const handleActionClick = () => {
+    if (isInSlip) {
+      // Si ya existe en el slip, mandamos el objeto original o manejamos la remoción directamente
+      onToggleSlip(leg);
+    } else {
+      // 🧠 MUTACIÓN DEL CONTRATO: Empaquetamos la pierna con los valores seleccionados
+      const mutatedLeg = {
+        ...leg,
+        // Mantener una referencia clara al _id original para evitar duplicados en estados complejos
+        _id: `${leg._id}-${isDemonSelected ? 'demon' : 'regular'}`, 
+        originalId: leg._id,
+        task: isDemonSelected ? `${leg.task} 👹` : leg.task,
+        creditReward: creditsEarned,
+        isDemon: isDemonSelected,
+        requirementValue: targetDescription,
+        requirementUnit: '', 
+      };
+      onToggleSlip(mutatedLeg);
+    }
     onClose();
   };
 
@@ -196,7 +202,7 @@ export default function LegExpansion({
         <div className="p-6 bg-zinc-950 border-t border-zinc-900 relative z-20">
           <button
             className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none ${theme.buttonBg}`}
-            onClick={handleInjectToSlip}
+            onClick={handleActionClick}
           >
             <span>{isInSlip ? 'REMOVE FROM SLIP' : 'ADD TO SLIP'}</span>
           </button>
