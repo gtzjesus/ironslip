@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { createClient } from '@supabase/supabase-js';
 
 // 🟢 AGREGADO: '/studio(.*)' para que Clerk no bloquee el acceso a Sanity
-const isPublicRoute = createRouteMatcher(['/', '/legs(.*)', '/home', '/studio(.*)']);
+const isPublicRoute = createRouteMatcher(['/', '/legs(.*)', '/home', '/studio(.*)','/avatar(.*)']);
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
