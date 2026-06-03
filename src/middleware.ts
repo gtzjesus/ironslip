@@ -35,7 +35,8 @@ export default clerkMiddleware(async (auth, request) => {
       const { error } = await supabase
         .from('users')
         .upsert(
-          { id: userId, email: email },
+          { id: userId, email: email, avatar_skin: '/models/avatar.glb' },
+          
           { onConflict: 'id' }
         );
 

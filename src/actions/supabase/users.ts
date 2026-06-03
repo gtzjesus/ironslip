@@ -20,7 +20,7 @@ export async function syncUserToSupabase(id: string, email: string) {
     const { data, error } = await supabase
       .from('users')
       .upsert(
-        { id: id, email: email },
+        { id: id, email: email, avatar_skin: '/models/avatar.glb' },
         { onConflict: 'id' }
       )
       .select()

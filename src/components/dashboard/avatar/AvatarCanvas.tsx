@@ -6,11 +6,16 @@ import { Suspense, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
-function Model() {
+// Definimos la interfaz de TypeScript para recibir la URL desde la página
+interface AvatarCanvasProps {
+  avatarUrl: string;
+}
+
+function Model({ url }: { url: string }) {
   const group = useRef<THREE.Group>(null);
   
-  // Cargamos el modelo exportado de Blender (Asegúrate que esté en public/models/avatar.glb)
-  const { scene, animations } = useGLTF('/models/avatar.glb');
+  // 🟢 Dinámico: Cargamos el modelo que viene desde la base de datos de Supabase
+  const { scene, animations } = useGLTF(url);
   
   // Clonamos de forma segura el esqueleto y la escena sin errores de tipos de TS
   const clone = SkeletonUtils.clone(scene);
@@ -19,24 +24,28 @@ function Model() {
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
-    // LOG DE CONTROL: Abre la consola (F12) para ver 'Avatar_Idle' y el fantasma de mixamo
-    console.log("Animaciones disponibles en tu archivo GLB:", Object.keys(actions));
+    // LOG DE CONTROL: Abre la consola (F12) para ver las animaciones del GLB actual
+    console.log(`Model cargado [${url}]. Animaciones disponibles:`, Object.keys(actions));
 
     // Forzamos a que tu Breathing Idle sea la animación por defecto
     const miAnimacionDefault = 'Avatar_Idle';
 
     if (actions[miAnimacionDefault]) {
-      // Si encuentra tu animación, la arranca con un fade suave de 0.5 segundos
       actions[miAnimacionDefault]!.reset().fadeIn(0.5).play();
     } else {
-      // Plan de respaldo: Si por algo no se llama exactamente así, toca la primera que encuentre
+      // Plan de respaldo: si cambia la skin a una sin 'Avatar_Idle', toca la primera que herede
       const primeraDisponible = Object.keys(actions)[0];
       if (primeraDisponible && actions[primeraDisponible]) {
         console.warn(`No se encontró '${miAnimacionDefault}', reproduciendo: ${primeraDisponible}`);
         actions[primeraDisponible]!.reset().fadeIn(0.5).play();
       }
     }
-  }, [actions]);
+
+    // Detener animaciones al desmontar o cambiar de modelo para evitar fugas de memoria
+    return () => {
+      Object.values(actions).forEach((action) => action?.stop());
+    };
+  }, [actions, url]); // 🟢 Monitoreamos el hook si la URL del skin cambia
 
   return (
     <group ref={group} dispose={null}>
@@ -49,7 +58,7 @@ function Model() {
   );
 }
 
-export default function AvatarCanvas() {
+export default function AvatarCanvas({ avatarUrl }: AvatarCanvasProps) {
   return (
     <div className="fixed inset-0 w-screen h-screen bg-black overflow-hidden z-0 flex items-center justify-center">
       <Suspense fallback={null}>
@@ -62,7 +71,8 @@ export default function AvatarCanvas() {
           <directionalLight position={[5, 5, 5]} intensity={2.5} />
           <directionalLight position={[-5, 5, -5]} intensity={1} />
 
-          <Model />
+          {/* Inyectamos el componente con el url dinámico */}
+          <Model url={avatarUrl} />
 
           <OrbitControls 
             enableZoom={false}
@@ -79,5 +89,5 @@ export default function AvatarCanvas() {
   );
 }
 
-// Pre-carga del modelo en memoria para evitar pantallas en blanco colgadas
+// Dejamos la pre-carga del base para optimizar la primera entrada
 useGLTF.preload('/models/avatar.glb');

@@ -126,3 +126,4 @@ export async function getUserBalance() {
     return { success: false, error: 'INTERNAL_ERROR', credits: 0 };
   }
 }
+
