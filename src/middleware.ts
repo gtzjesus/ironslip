@@ -1,7 +1,7 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher, createClerkClient } from "@clerk/nextjs/server";
 import { createClient } from '@supabase/supabase-js';
 
-// 🟢 RUTAS PÚBLICAS BLINDADAS: Abrimos sign-in, sign-up y tu laboratorio de avatares
+// 🟢 RUTAS PÚBLICAS BLINDADAS
 const isPublicRoute = createRouteMatcher([
   '/', 
   '/legs(.*)', 
@@ -23,6 +23,9 @@ const supabase = supabaseUrl && supabaseServiceKey
     })
   : null;
 
+// Inicializamos el cliente de Clerk para consultas directas al backend
+const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+
 export default clerkMiddleware(async (auth, request) => {
   // 1. Proteger rutas privadas
   if (!isPublicRoute(request)) {
@@ -33,15 +36,26 @@ export default clerkMiddleware(async (auth, request) => {
     });
   }
 
-  // 2. Sincronización en segundo plano Clerk ──> Supabase
+  // 2. Sincronización Clerk ──> Supabase
   const authObject = await auth();
   const userId = authObject?.userId;
   const sessionClaims = authObject?.sessionClaims;
 
   if (userId && supabase) {
-    // 🟢 EXTRACCIÓN SEGURO DEL EMAIL: Primero busca en el token personalizado de Clerk, 
-    // si no, intenta con los metadatos estándar del fallback.
-    const email = (sessionClaims?.email as string) || "";
+    // Intentamos sacar el email del token de sesión primero
+    let email = (sessionClaims?.email as string) || "";
+    
+    // 🛡️ BYPASS INFALIBLE: Si el token está vacío (por temas de caché en Dev Mode), 
+    // hacemos un fetch directo al API de Clerk usando el userId en un milisegundo.
+    if (!email) {
+      try {
+        console.log(`🔍 [Middleware] Email vacío en sesión para ${userId}. Extrayendo vía API...`);
+        const user = await clerk.users.getUser(userId);
+        email = user.emailAddresses?.[0]?.emailAddress || "";
+      } catch (clerkError) {
+        console.error("❌ Falló el fetch directo a Clerk API:", clerkError);
+      }
+    }
     
     try {
       const { error } = await supabase
@@ -49,20 +63,22 @@ export default clerkMiddleware(async (auth, request) => {
         .upsert(
           { 
             id: userId, 
-            email: email, // ⚡️ Ahora llegará lleno gracias al ajuste en el dashboard de Clerk
-            avatar_skin: '/models/avatar.glb' // Aseguramos que herede su monito base
+            email: email, 
+            avatar_skin: '/models/avatar.glb' 
           },
           { onConflict: 'id' }
         );
 
       if (error) {
         console.error("⚠️ Supabase Sync Error Object:", error);
+      } else {
+        console.log(`✅ Sync exitoso para: ${email || "SIN_EMAIL"}`);
       }
     } catch (e) {
       console.error("⚠️ Background Middleware Sync Failed Exception:", e);
     }
   } else if (userId && !supabase) {
-    console.error("❌ Supabase client was not initialized. Missing environment variables.");
+    console.error("❌ Supabase client was not initialized.");
   }
 });
 
