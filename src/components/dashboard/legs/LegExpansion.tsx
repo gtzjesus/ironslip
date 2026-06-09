@@ -87,14 +87,15 @@ export default function LegExpansion({
           ))}
         </div>
 
-        {/* HEADER COMPACTADO */}
-        <div className="p-5 pb-2 relative z-50 flex justify-between items-start border-b-[0.5px] border-zinc-900 bg-zinc-950/40 backdrop-blur-sm">
-          <h2 className={`${theme.titleText} font-black italic text-3xl sm:text-5xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[85%]`}>
+
+        {/* HEADER INTEGRADO (Sin cortes visuales, flota sobre el background) */}
+        <div className="p-5 pb-1 pt-6 relative z-50 flex justify-between items-start bg-transparent">
+          <h2 className={`${theme.titleText} font-black italic text-3xl sm:text-5xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[85%] drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]`}>
             {leg.task}
           </h2>
           <button
             onClick={onClose}
-            className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0"
+            className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0 mt-0.5"
           >
             [ x ]
           </button>
