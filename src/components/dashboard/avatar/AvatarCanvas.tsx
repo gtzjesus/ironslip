@@ -9,9 +9,10 @@ import { SkeletonUtils } from 'three-stdlib';
 interface AvatarCanvasProps {
   avatarUrl: string;
   activeAnimation: string;
+  isDemon: boolean;
 }
 
-function Model({ url, activeAnimation }: { url: string; activeAnimation: string }) {
+function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation: string; isDemon: boolean }) {
   const group = useRef<THREE.Group>(null);
   const previousAnimation = useRef<string>('');
   
@@ -20,58 +21,61 @@ function Model({ url, activeAnimation }: { url: string; activeAnimation: string 
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
-    console.log(`🤖 Model [${url}] cargado. Animaciones en memoria:`, Object.keys(actions));
-  }, [actions, url]);
-
-  useEffect(() => {
     const currentAction = actions[activeAnimation];
-    
     if (currentAction) {
       if (previousAnimation.current && previousAnimation.current !== activeAnimation) {
-        const prevAction = actions[previousAnimation.current];
-        if (prevAction) {
-          prevAction.fadeOut(0.3);
-        }
+        actions[previousAnimation.current]?.fadeOut(0.3);
       }
-
+      currentAction.setEffectiveTimeScale(isDemon ? 1.25 : 1.0);
       currentAction.reset().fadeIn(0.3).play();
       previousAnimation.current = activeAnimation;
-    } else {
-      console.warn(`⚠️ La animación "${activeAnimation}" no se encuentra en este modelo GLB.`);
     }
-
-    return () => {
-      currentAction?.stop();
-    };
-  }, [actions, activeAnimation]);
+  }, [actions, activeAnimation, isDemon]);
 
   return (
     <group ref={group} dispose={null}>
-      <primitive 
-        object={clone} 
-        scale={1.2}          
-        position={[0, -2.4, 0]} 
-      />
+      <primitive object={clone} scale={1.85} position={[0, -3.4, 0]} />
     </group>
   );
 }
 
-export default function AvatarCanvas({ avatarUrl, activeAnimation }: AvatarCanvasProps) {
+export default function AvatarCanvas({ avatarUrl, activeAnimation, isDemon }: AvatarCanvasProps) {
   return (
-    // 🟢 CORRECCIÓN DE LA UI: Quitamos "fixed inset-0 w-screen h-screen bg-black"
-    // Ahora usa w-full h-full para amoldarse perfectamente al contenedor h-72 de tu LegExpansion
     <div className="w-full h-full relative overflow-hidden z-0 flex items-center justify-center bg-transparent">
       <Suspense fallback={null}>
         <Canvas 
           className="w-full h-full"
-          camera={{ position: [0, 0, 6.5], fov: 42 }} // 🟢 FOV ajustado levemente para encuadre pro
+          camera={{ position: [0, 0, 6.5], fov: 42 }}
           gl={{ preserveDrawingBuffer: true }}
         >
-          <ambientLight intensity={1.5} />
-          <directionalLight position={[5, 5, 5]} intensity={2.5} />
-          <directionalLight position={[-5, 5, -5]} intensity={1} />
+          {/* ⚡️ ILUMINACIÓN GLOBAL RE-CALIBRADA */}
+          {/* Bajamos un pelo el ambiente para que las luces de color resalten chingón */}
+          <ambientLight intensity={isDemon ? 0.4 : 0.8} />
+          
+          {/* 🟢 MODO STANDARD: ENERGÍA IRON VOLT (#F1C232) */}
+          {!isDemon && (
+            <>
+              {/* Luz base para que no se pierdan los detalles del frente */}
+              <directionalLight position={[0, 5, 5]} intensity={1.5} />
+              
+              {/* ¡LA MAGIA VOLT! Luz puntual desde atrás/atrás-derecha que baña el contorno del avatar */}
+              <pointLight position={[3, -1, 2]} intensity={8} color="#F1C232" distance={7} decay={1.2} />
+              
+              {/* Luz de contra sutil para rellenar el lado izquierdo */}
+              <directionalLight position={[-4, 2, -2]} intensity={0.8} color="#fffebb" />
+            </>
+          )}
 
-          <Model url={avatarUrl} activeAnimation={activeAnimation} />
+          {/* 👹 MODO DEMON: FURIA CARMESÍ */}
+          {isDemon && (
+            <>
+              <pointLight position={[0, -3, 2]} intensity={12} color="#ef4444" distance={8} decay={1.5} />
+              <directionalLight position={[3, 5, 2]} intensity={2} color="#ff8888" />
+              <directionalLight position={[-3, -1, -2]} intensity={1.5} color="#450a0a" />
+            </>
+          )}
+
+          <Model url={avatarUrl} activeAnimation={activeAnimation} isDemon={isDemon} />
 
           <OrbitControls 
             enableZoom={false}

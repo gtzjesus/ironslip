@@ -2,7 +2,7 @@
 'use client';
 import { useState } from 'react';
 import { Skull, Shield } from 'lucide-react';
-// 🟢 IMPORTAMOS TU MOTOR 3D
+// 🟢 MOTOR 3D EN TIEMPO REAL
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 
 interface LegExpansionProps {
@@ -18,12 +18,10 @@ export default function LegExpansion({
   onToggleSlip,
   isInSlip,
 }: LegExpansionProps) {
-  // ⚡️ ESTADO CLAVE: El usuario decide si quiere desbloquear el infierno o ir normal
   const [isDemonSelected, setIsDemonSelected] = useState(false);
 
   if (!leg) return null;
 
-  // Extraemos la data dinámicamente según la selección en tiempo real de la UI
   const targetDescription = isDemonSelected ? leg.demonTarget : leg.regularTarget;
   const creditsEarned = isDemonSelected ? leg.demonReward : leg.regularReward;
   const displayCategory = (leg.category || 'IRON').toUpperCase();
@@ -100,27 +98,64 @@ export default function LegExpansion({
             onClick={onClose}
             className="absolute top-5 right-5 text-black font-mono text-[12px] uppercase tracking-[0.4em] bg-red-600 px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
           >
-            [ escape ]
+            [ x ]
           </button>
         </div>
 
         {/* CONTENT */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 scrollbar-hide relative space-y-5 z-10 pb-24">
           
-          {/* HEADER DE MISION */}
-          <div className="space-y-1 relative z-10 mt-2">
-            <div className="flex items-center gap-1.5 opacity-80">
-              <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDemonSelected ? 'bg-iron-red' : 'bg-iron-volt'}`} />
-              <span className="text-[9px] font-mono tracking-[0.3em] text-zinc-400 uppercase">{displayCategory}</span>
-            </div>
-            <h2 className={`${theme.titleText} font-black italic text-4xl sm:text-6xl uppercase tracking-tighter leading-none mt-1 transition-colors duration-500`}>
+          {/* 🟢 HEADER DE MISION ASIMÉTRICO (Title Left / Trigger Right) */}
+          <div className="flex justify-between items-start gap-4 relative z-10 mt-2">
+            {/* LADO IZQUIERDO: TÍTULO */}
+            <h2 className={`${theme.titleText} font-black italic text-4xl sm:text-6xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[65%]`}>
               {leg.task}
             </h2>
+
+            {/* LADO DERECHO: INTERRUPTOR COMPACTO DE DIFICULTAD */}
+            <button
+              onClick={() => !isInSlip && setIsDemonSelected(!isDemonSelected)}
+              disabled={isInSlip}
+              className={`flex items-center gap-2 px-3 py-1.5 font-mono text-[10px] sm:text-xs uppercase font-black tracking-wider transition-all border shrink-0 mt-1 sm:mt-2 shadow-md ${
+                isInSlip ? 'opacity-30 pointer-events-none' : 'active:scale-95'
+              } ${
+                isDemonSelected 
+                  ? 'bg-iron-volt text-black border-iron-volt shadow-[0_0_15px_rgba(241,194,50,0.3)]' 
+                  : 'bg-iron-red text-black border-iron-red shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+              }`}
+            >
+              <span>{isDemonSelected ? 'GO STANDARD' : 'GO DEMON'}</span>
+            </button>
+          </div>
+
+          {/* ORACLE PROMPT BOX */}
+          {(isDemonSelected ? leg.demonAiPrompt : leg.regularAiPrompt) && (
+            <div className={`border p-4 font-mono transition-all duration-500 rounded-sm text-left space-y-1.5 ${isDemonSelected ? 'bg-iron-red/[0.02] border-iron-red/20' : 'bg-zinc-900/30 border-zinc-800/60'}`}>
+              <div className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase opacity-60">
+                <span className="w-1 h-1 bg-zinc-500 rounded-full" />
+                <span>ORACLE_AI_INSTRUCTIONS</span>
+              </div>
+              <p className="text-[11px] leading-relaxed font-medium italic text-zinc-400 border-l border-zinc-800 pl-3">
+                "{isDemonSelected ? leg.demonAiPrompt : leg.regularAiPrompt}"
+              </p>
+            </div>
+          )}
+
+          {/* MOTOR 3D DINÁMICO EN TIEMPO REAL */}
+          <div className="w-full h-72 border border-zinc-900 rounded-sm bg-zinc-950/60 relative overflow-hidden flex items-center justify-center group">
+            <div className={`absolute inset-0 bg-gradient-to-b pointer-events-none z-10 transition-colors duration-500 ${
+              isDemonSelected ? 'from-iron-red/5 to-transparent' : 'from-iron-volt/5 to-transparent'
+            }`} />
+
+            <AvatarCanvas 
+              avatarUrl="/models/avatar.glb" 
+              activeAnimation={leg.animationKey || 'Avatar_Idle'} 
+              isDemon={isDemonSelected}
+            />
           </div>
 
           {/* CORE DATA MODULE BOX */}
           <div className={`${theme.dataCoreBg} mt-6 space-y-4 relative z-10 p-5 transition-all duration-500`}>
-            
             {/* TARGET */}
             <div className="flex flex-col border-b border-zinc-800/80 pb-4 gap-2">
               <span className={`${theme.dataLabel} font-mono text-[11px] uppercase tracking-wider`}>
@@ -145,64 +180,12 @@ export default function LegExpansion({
               <div className="flex flex-col text-right justify-end">
                 <span className={`${theme.dataLabel} font-mono text-[11px] uppercase tracking-wider mb-1`}>win</span>
                 <div className="relative group self-end">
-                  <span className={`relative z-10 font-black text-2xl tracking-tighter block ${isDemonSelected ? 'text-iron-red animate-pulse' : 'text-iron-green'}`}>
+                  <span className={`relative z-10 font-black text-2xl tracking-tighter block ${isDemonSelected ? 'text-iron-red animate-pulse' : 'text-iron-volt'}`}>
                     +{creditsEarned} 
                   </span>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* ORACLE PROMPT BOX */}
-          {(isDemonSelected ? leg.demonAiPrompt : leg.regularAiPrompt) && (
-            <div className={`border p-4 font-mono transition-all duration-500 rounded-sm text-left space-y-1.5 ${isDemonSelected ? 'bg-iron-red/[0.02] border-iron-red/20' : 'bg-zinc-900/30 border-zinc-800/60'}`}>
-              <div className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase opacity-60">
-                <span className="w-1 h-1 bg-zinc-500 rounded-full" />
-                <span>ORACLE_AI_INSTRUCTIONS</span>
-              </div>
-              <p className="text-[11px] leading-relaxed font-medium italic text-zinc-400 border-l border-zinc-800 pl-3">
-                "{isDemonSelected ? leg.demonAiPrompt : leg.regularAiPrompt}"
-              </p>
-            </div>
-          )}
-
-          {/* 🟢 MOTOR 3D DINÁMICO EN TIEMPO REAL */}
-          <div className="w-full h-72 border border-zinc-900 rounded-sm bg-zinc-950/60 relative overflow-hidden flex items-center justify-center group">
-            <div className={`absolute inset-0 bg-gradient-to-b pointer-events-none z-10 transition-colors duration-500 ${
-              isDemonSelected ? 'from-iron-red/5 to-transparent' : 'from-iron-volt/5 to-transparent'
-            }`} />
-
-            {/* Inyección del canvas pasando el string de Sanity dinámicamente */}
-            <AvatarCanvas 
-              avatarUrl="/models/avatar.glb" 
-              activeAnimation={leg.animationKey || 'Avatar_Idle'} 
-            />
-
-            <div className="absolute top-3 left-3 z-10 font-mono text-[8px] text-zinc-500 tracking-widest uppercase pointer-events-none select-none">
-              3D_PREVIEW_READY // MODE: {isDemonSelected ? 'DEMON' : 'STANDARD'}
-            </div>
-          </div>
-
-          {/* ⚡️ INTERRUPTOR DE PROTOCOLO DEMONÍACO */}
-          <div className={`border p-4 relative z-10 flex items-center justify-between transition-colors duration-500 ${isInSlip ? 'opacity-40 pointer-events-none select-none' : ''} ${isDemonSelected ? 'border-iron-red/50 bg-iron-red/5' : 'border-zinc-800 bg-zinc-900/20'}`}>
-            <div className="flex items-center gap-3">
-              {isDemonSelected ? <Skull className="w-6 h-6 text-iron-red animate-bounce" /> : <Shield className="w-6 h-6 text-iron-volt" />}
-              <div className="leading-none">
-                <p className={`text-[8px] font-mono uppercase tracking-widest ${isDemonSelected ? 'text-iron-red' : 'text-zinc-400'}`}>Difficulty</p>
-                <p className="text-sm font-black uppercase italic">{isDemonSelected ? ' DEMON' : 'STANDARD'}</p>
-              </div>
-            </div>
-            <button
-              onClick={() => !isInSlip && setIsDemonSelected(!isDemonSelected)}
-              disabled={isInSlip}
-              className={`px-4 py-2 font-mono text-xs uppercase font-black tracking-wider transition-all border ${
-                isDemonSelected 
-                  ? 'bg-iron-volt text-black shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
-                  : 'bg-iron-red text-black '
-              }`}
-            >
-              {isDemonSelected ? 'GO standard' : 'go DEMON'}
-            </button>
           </div>
 
         </div>
