@@ -11,6 +11,9 @@ export default function AvatarPage() {
   const { isSignedIn, isLoaded } = useUser();
   const [avatarSkin, setAvatarSkin] = useState<string>('/models/avatar.glb');
   const [loadingSkin, setLoadingSkin] = useState<boolean>(true);
+  
+  // 🟢 ESTADO PARA CONTROLAR LA ANIMACIÓN ACTUAL
+  const [currentAnimation, setCurrentAnimation] = useState<string>('breathingidle');
 
   useEffect(() => {
     async function fetchUserSkin() {
@@ -38,7 +41,6 @@ export default function AvatarPage() {
     );
   }
 
-  // Si no está firmado, pantalla negra simple de bloqueo
   if (!isSignedIn) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-black text-zinc-700 font-mono text-xs uppercase tracking-widest">
@@ -51,9 +53,32 @@ export default function AvatarPage() {
     <main className="w-screen h-screen bg-black relative overflow-hidden">
       <meta name="theme-color" content="#000000" />
       
-      {/* EL AVATAR DINÁMICO FLOTANDO EN EL ESPACIO */}
-      {/* Le pasamos la ruta real de Supabase como prop */}
-      <AvatarCanvas avatarUrl={avatarSkin} />
+      {/* EL AVATAR DINÁMICO CON LA PROP DE ANIMACIÓN */}
+      <AvatarCanvas avatarUrl={avatarSkin} activeAnimation={currentAnimation} />
+
+      {/* 🟢 BOTONERA FLOTANTE PARA PASAR EL TEST EN CALIENTE */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex gap-4 bg-zinc-950/80 border border-zinc-800 p-2 rounded-lg backdrop-blur-md">
+        <button 
+          onClick={() => setCurrentAnimation('breathingidle')}
+          className={`px-4 py-2 font-mono text-xs uppercase tracking-wider transition-all rounded ${
+            currentAnimation === 'breathingidle' 
+              ? 'bg-white text-black font-bold' 
+              : 'text-zinc-400 hover:text-white'
+          }`}
+        >
+          Respirar (Idle)
+        </button>
+        <button 
+          onClick={() => setCurrentAnimation('deadlift')}
+          className={`px-4 py-2 font-mono text-xs uppercase tracking-wider transition-all rounded ${
+            currentAnimation === 'deadlift' 
+              ? 'bg-red-600 text-white font-bold shadow-[0_0_15px_rgba(220,38,38,0.5)]' 
+              : 'text-zinc-400 hover:text-white'
+          }`}
+        >
+          Peso Muerto (deadlift)
+        </button>
+      </div>
     </main>
   );
 }
