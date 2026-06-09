@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+// 🟢 IMPORTAMOS EL MOTOR 3D EN TIEMPO REAL
+import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 
 interface LegProps {
   leg: any;
@@ -32,6 +34,23 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
           : 'bg-zinc-950 border-zinc-800 cursor-pointer'
       } ${!isSignedIn ? 'cursor-default' : ''}`}
     >
+      {/* 🦾 BACKGROUND AVATAR HOLOGRÁFICO (Farthest Left, detrás de toda la UI) */}
+      {isSignedIn && !isAlreadyInSlip && (
+        <div className="absolute inset-y-0 left-0 w-24 pointer-events-none z-0 opacity-40 select-none overflow-hidden">
+          {/* Un degradado sutil para fusionar el canvas con el fondo oscuro de la card */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-zinc-950 z-20" />
+          
+          <div className="w-40 h-40 absolute -bottom-8 -left-8 pointer-events-none z-10">
+            <AvatarCanvas 
+              avatarUrl="/models/avatar.glb" 
+              activeAnimation={leg.animationKey || 'Avatar_Idle'} 
+              isDemon={isDemon}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* CONTENIDO PRINCIPAL (Z-10 intacto para flotar arriba del avatar) */}
       <div className="relative z-10 flex justify-between items-center">
         <div>
           <p
@@ -64,7 +83,7 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
           {/* REWARD OR STATUS */}
           {isAlreadyInSlip ? (
             <span className="text-[10px] font-mono uppercase font-bold text-iron-volt tracking-widest bg-iron-volt/10 px-2 py-0.5 border border-iron-volt/20">
-              [ IN SLIP ]
+              [ IN_SLIP ]
             </span>
           ) : (
             <p
