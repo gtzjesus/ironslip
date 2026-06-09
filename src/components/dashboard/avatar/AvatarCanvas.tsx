@@ -9,7 +9,7 @@ import { SkeletonUtils } from 'three-stdlib';
 interface AvatarCanvasProps {
   avatarUrl: string;
   activeAnimation: string;
-  isDemon: boolean;
+  isDemon?: boolean; // 🟢 OPCIONAL (?): Evita que truenen otras páginas como /avatar/page.tsx
 }
 
 function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation: string; isDemon: boolean }) {
@@ -21,25 +21,45 @@ function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
+    console.log(`🤖 Model [${url}] cargado. Animaciones en memoria:`, Object.keys(actions));
+  }, [actions, url]);
+
+  useEffect(() => {
     const currentAction = actions[activeAnimation];
     if (currentAction) {
       if (previousAnimation.current && previousAnimation.current !== activeAnimation) {
         actions[previousAnimation.current]?.fadeOut(0.3);
       }
+      
+      // 👹 Si es modo demonio, la animación corre 25% más rápido (frenética)
       currentAction.setEffectiveTimeScale(isDemon ? 1.25 : 1.0);
       currentAction.reset().fadeIn(0.3).play();
       previousAnimation.current = activeAnimation;
+    } else {
+      console.warn(`⚠️ La animación "${activeAnimation}" no se encuentra en este modelo GLB.`);
     }
+
+    return () => {
+      currentAction?.stop();
+    };
   }, [actions, activeAnimation, isDemon]);
 
   return (
     <group ref={group} dispose={null}>
-      <primitive object={clone} scale={1.85} position={[0, -3.4, 0]} />
+      <primitive 
+        object={clone} 
+        scale={1.35}           
+        position={[0, -2.6, 0]} 
+      />
     </group>
   );
 }
 
-export default function AvatarCanvas({ avatarUrl, activeAnimation, isDemon }: AvatarCanvasProps) {
+export default function AvatarCanvas({ 
+  avatarUrl, 
+  activeAnimation, 
+  isDemon = false // 🟢 PREDETERMINADO: Si otra vista no lo manda, arranca en modo Standard
+}: AvatarCanvasProps) {
   return (
     <div className="w-full h-full relative overflow-hidden z-0 flex items-center justify-center bg-transparent">
       <Suspense fallback={null}>
@@ -48,27 +68,23 @@ export default function AvatarCanvas({ avatarUrl, activeAnimation, isDemon }: Av
           camera={{ position: [0, 0, 6.5], fov: 42 }}
           gl={{ preserveDrawingBuffer: true }}
         >
-          {/* ⚡️ ILUMINACIÓN GLOBAL RE-CALIBRADA */}
-          {/* Bajamos un pelo el ambiente para que las luces de color resalten chingón */}
+          {/* ILUMINACIÓN GLOBAL */}
           <ambientLight intensity={isDemon ? 0.4 : 0.8} />
           
-          {/* 🟢 MODO STANDARD: ENERGÍA IRON VOLT (#F1C232) */}
+          {/* ⚡️ MODO STANDARD: ENERGÍA IRON VOLT (#F1C232) */}
           {!isDemon && (
             <>
-              {/* Luz base para que no se pierdan los detalles del frente */}
               <directionalLight position={[0, 5, 5]} intensity={1.5} />
-              
-              {/* ¡LA MAGIA VOLT! Luz puntual desde atrás/atrás-derecha que baña el contorno del avatar */}
+              {/* Baño de luz amarillo Volt desde el costado que esculpe los bordes low-poly */}
               <pointLight position={[3, -1, 2]} intensity={8} color="#F1C232" distance={7} decay={1.2} />
-              
-              {/* Luz de contra sutil para rellenar el lado izquierdo */}
               <directionalLight position={[-4, 2, -2]} intensity={0.8} color="#fffebb" />
             </>
           )}
 
-          {/* 👹 MODO DEMON: FURIA CARMESÍ */}
+          {/* 👹 MODO DEMON: FURIA CARMESÍ DESDE EL INFIERNO */}
           {isDemon && (
             <>
+              {/* Luz puntual roja violenta desde el suelo apuntando hacia arriba */}
               <pointLight position={[0, -3, 2]} intensity={12} color="#ef4444" distance={8} decay={1.5} />
               <directionalLight position={[3, 5, 2]} intensity={2} color="#ff8888" />
               <directionalLight position={[-3, -1, -2]} intensity={1.5} color="#450a0a" />
