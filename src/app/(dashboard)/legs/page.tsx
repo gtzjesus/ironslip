@@ -143,15 +143,15 @@ export default function LegsPage() {
           </div>
         ) : (
           <div className="grid gap-1 pb-32">
-            {filteredLegs.map((leg: any) => (
-              <LegCard
-                key={leg._id}
-                leg={leg}
-                isSignedIn={!!isSignedIn}
-                onClick={(l) => setSelectedLeg(l)}
-              />
-            ))}
-
+          {filteredLegs.map((leg: any) => (
+            <LegCard
+              key={leg._id}
+              leg={leg}
+              isSignedIn={!!isSignedIn}
+              onClick={(l) => setSelectedLeg(l)}
+              isAlreadyInSlip={activeSlip.some((item: any) => item._id.includes(leg._id))}
+            />
+          ))}
             <div className="mt-8 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">

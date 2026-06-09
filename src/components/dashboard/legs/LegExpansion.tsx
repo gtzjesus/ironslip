@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Skull, Shield } from 'lucide-react';
 // 🟢 MOTOR 3D EN TIEMPO REAL
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
@@ -9,7 +9,7 @@ interface LegExpansionProps {
   leg: any;
   onClose: () => void;
   onToggleSlip: (leg: any) => void;
-  isInSlip: boolean;
+  isInSlip: boolean; // ⚡️ RECIBE TU COMPROBACIÓN INTELIGENTE DE .includes()
 }
 
 export default function LegExpansion({
@@ -18,10 +18,12 @@ export default function LegExpansion({
   onToggleSlip,
   isInSlip,
 }: LegExpansionProps) {
+  // Estado para la dificultad
   const [isDemonSelected, setIsDemonSelected] = useState(false);
 
-  if (!leg) return null;
-
+  // 🔄 EFECTO SENSE: Si ya está en el Slip, forzamos a que si el ID de la misión actual
+  // se guardó modificado, no deje romper la selección.
+  // Como opcional, si queremos blindar que el REMOVE funcione idóneo, mandamos el ID estructurado
   const targetDescription = isDemonSelected ? leg.demonTarget : leg.regularTarget;
   const creditsEarned = isDemonSelected ? leg.demonReward : leg.regularReward;
   const displayCategory = (leg.category || 'IRON').toUpperCase();
@@ -55,21 +57,22 @@ export default function LegExpansion({
       };
 
   const handleActionClick = () => {
-    if (isInSlip) {
-      onToggleSlip(leg);
-    } else {
-      const mutatedLeg = {
-        ...leg,
-        _id: `${leg._id}-${isDemonSelected ? 'demon' : 'regular'}`, 
-        originalId: leg._id,
-        task: isDemonSelected ? `${leg.task} 👹` : leg.task,
-        creditReward: creditsEarned,
-        isDemon: isDemonSelected,
-        requirementValue: targetDescription,
-        requirementUnit: '', 
-      };
-      onToggleSlip(mutatedLeg);
-    }
+    // ⚡️ RECONSTRUCCIÓN DINÁMICA:
+    // Tanto para agregar como para remover, generamos el ID exacto combinado.
+    // Tu función `toggleLegInSlip` en el padre va a usar el `.includes()` o un `.find()`
+    // y al pasarle este objeto con el ID correspondiente sabrá exactamente qué hacer.
+    const mutatedLeg = {
+      ...leg,
+      _id: `${leg._id}-${isDemonSelected ? 'demon' : 'regular'}`, 
+      originalId: leg._id,
+      task: isDemonSelected ? `${leg.task} 👹` : leg.task,
+      creditReward: creditsEarned,
+      isDemon: isDemonSelected,
+      requirementValue: targetDescription,
+      requirementUnit: '', 
+    };
+
+    onToggleSlip(mutatedLeg);
     onClose();
   };
 
@@ -105,25 +108,25 @@ export default function LegExpansion({
         {/* CONTENT */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 scrollbar-hide relative space-y-5 z-10 pb-24">
           
-          {/* 🟢 HEADER DE MISION ASIMÉTRICO (Title Left / Trigger Right) */}
+          {/* HEADER DE MISION ASIMÉTRICO */}
           <div className="flex justify-between items-start gap-4 relative z-10 mt-2">
-            {/* LADO IZQUIERDO: TÍTULO */}
             <h2 className={`${theme.titleText} font-black italic text-4xl sm:text-6xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[65%]`}>
               {leg.task}
             </h2>
 
-            {/* LADO DERECHO: INTERRUPTOR COMPACTO DE DIFICULTAD */}
+            {/* INTERRUPTOR DE DIFICULTAD (Se congela completamente si ya está en el Slip) */}
             <button
               onClick={() => !isInSlip && setIsDemonSelected(!isDemonSelected)}
               disabled={isInSlip}
               className={`flex items-center gap-2 px-3 py-1.5 font-mono text-[10px] sm:text-xs uppercase font-black tracking-wider transition-all border shrink-0 mt-1 sm:mt-2 shadow-md ${
-                isInSlip ? 'opacity-30 pointer-events-none' : 'active:scale-95'
+                isInSlip ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'
               } ${
                 isDemonSelected 
                   ? 'bg-iron-volt text-black border-iron-volt shadow-[0_0_15px_rgba(241,194,50,0.3)]' 
                   : 'bg-iron-red text-black border-iron-red shadow-[0_0_15px_rgba(239,68,68,0.2)]'
               }`}
             >
+              {isDemonSelected ? <Skull className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
               <span>{isDemonSelected ? 'GO STANDARD' : 'GO DEMON'}</span>
             </button>
           </div>
