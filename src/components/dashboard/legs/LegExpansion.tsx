@@ -9,7 +9,7 @@ interface LegExpansionProps {
   leg: any;
   onClose: () => void;
   onToggleSlip: (leg: any) => void;
-  isInSlip: boolean; // ⚡️ RECIBE TU COMPROBACIÓN INTELIGENTE DE .includes()
+  isInSlip: boolean;
 }
 
 export default function LegExpansion({
@@ -18,12 +18,8 @@ export default function LegExpansion({
   onToggleSlip,
   isInSlip,
 }: LegExpansionProps) {
-  // Estado para la dificultad
   const [isDemonSelected, setIsDemonSelected] = useState(false);
 
-  // 🔄 EFECTO SENSE: Si ya está en el Slip, forzamos a que si el ID de la misión actual
-  // se guardó modificado, no deje romper la selección.
-  // Como opcional, si queremos blindar que el REMOVE funcione idóneo, mandamos el ID estructurado
   const targetDescription = isDemonSelected ? leg.demonTarget : leg.regularTarget;
   const creditsEarned = isDemonSelected ? leg.demonReward : leg.regularReward;
   const displayCategory = (leg.category || 'IRON').toUpperCase();
@@ -31,16 +27,16 @@ export default function LegExpansion({
   const theme = isDemonSelected
     ? {
         modalBg: 'bg-zinc-950',
-        borderStyle: 'border-x-[0.5px] border-iron-red/40 shadow-[0_0_80px_rgba(239,68,68,0.15)]',
+        borderStyle: 'border-x-[0.5px] border-iron-red shadow-[0_0_80px_rgba(239,68,68,0.2)]',
         titleText: 'text-white',
-        watermark: 'text-iron-red/[0.05]',
-        dataCoreBg: 'bg-zinc-900/40 backdrop-blur-md border-[0.5px] border-iron-red/30',
+        watermark: 'text-iron-red/[0.04]',
+        dataCoreBg: 'bg-zinc-900/80 border-[0.5px] border-iron-red',
         dataLabel: 'text-zinc-500',
-        dataValue: 'text-iron-red font-black drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]',
+        dataValue: 'text-iron-red font-black drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]',
         accentText: 'text-iron-red font-black',
         buttonBg: isInSlip 
-          ? 'bg-zinc-900 border border-iron-red/40 text-iron-red shadow-[0_0_25px_rgba(239,68,68,0.1)] font-bold' 
-          : 'bg-iron-red shadow-[0_0_25px_rgba(239,68,68,0.25)] text-black font-black',
+          ? 'bg-zinc-950 border-2 border-iron-red text-iron-red shadow-[0_0_25px_rgba(239,68,68,0.15)] font-bold' 
+          : 'bg-iron-red shadow-[0_0_35px_rgba(239,68,68,0.4)] text-black font-black',
       }
     : {
         modalBg: 'bg-zinc-950',
@@ -57,10 +53,6 @@ export default function LegExpansion({
       };
 
   const handleActionClick = () => {
-    // ⚡️ RECONSTRUCCIÓN DINÁMICA:
-    // Tanto para agregar como para remover, generamos el ID exacto combinado.
-    // Tu función `toggleLegInSlip` en el padre va a usar el `.includes()` o un `.find()`
-    // y al pasarle este objeto con el ID correspondiente sabrá exactamente qué hacer.
     const mutatedLeg = {
       ...leg,
       _id: `${leg._id}-${isDemonSelected ? 'demon' : 'regular'}`, 
@@ -77,7 +69,7 @@ export default function LegExpansion({
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden p-0">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md overflow-hidden p-0">
       <div className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle}`}>
         
         {/* WATERMARK BACKGROUND */}
@@ -95,46 +87,26 @@ export default function LegExpansion({
           ))}
         </div>
 
-        {/* HEADER */}
-        <div className="p-8 pb-4 relative z-10 flex justify-end items-end border-b-4 border-black/10">
+        {/* HEADER COMPACTADO */}
+        <div className="p-5 pb-2 relative z-50 flex justify-between items-start border-b-[0.5px] border-zinc-900 bg-zinc-950/40 backdrop-blur-sm">
+          <h2 className={`${theme.titleText} font-black italic text-3xl sm:text-5xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[85%]`}>
+            {leg.task}
+          </h2>
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 text-black font-mono text-[12px] uppercase tracking-[0.4em] bg-red-600 px-2 py-1 z-[100] shadow-md active:scale-90 transition-all border border-white/10"
+            className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0"
           >
             [ x ]
           </button>
         </div>
 
-        {/* CONTENT */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 scrollbar-hide relative space-y-5 z-10 pb-24">
-          
-          {/* HEADER DE MISION ASIMÉTRICO */}
-          <div className="flex justify-between items-start gap-4 relative z-10 mt-2">
-            <h2 className={`${theme.titleText} font-black italic text-4xl sm:text-6xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[65%]`}>
-              {leg.task}
-            </h2>
-
-            {/* INTERRUPTOR DE DIFICULTAD (Se congela completamente si ya está en el Slip) */}
-            <button
-              onClick={() => !isInSlip && setIsDemonSelected(!isDemonSelected)}
-              disabled={isInSlip}
-              className={`flex items-center gap-2 px-3 py-1.5 font-mono text-[10px] sm:text-xs uppercase font-black tracking-wider transition-all border shrink-0 mt-1 sm:mt-2 shadow-md ${
-                isInSlip ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'
-              } ${
-                isDemonSelected 
-                  ? 'bg-iron-volt text-black border-iron-volt shadow-[0_0_15px_rgba(241,194,50,0.3)]' 
-                  : 'bg-iron-red text-black border-iron-red shadow-[0_0_15px_rgba(239,68,68,0.2)]'
-              }`}
-            >
-              {isDemonSelected ? <Skull className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
-              <span>{isDemonSelected ? 'GO STANDARD' : 'GO DEMON'}</span>
-            </button>
-          </div>
+        {/* CONTENT (Padding optimizado para empujar la data hacia arriba) */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 scrollbar-hide relative space-y-4 z-10 pb-6">
 
           {/* ORACLE PROMPT BOX */}
           {(isDemonSelected ? leg.demonAiPrompt : leg.regularAiPrompt) && (
-            <div className={`border p-4 font-mono transition-all duration-500 rounded-sm text-left space-y-1.5 ${isDemonSelected ? 'bg-iron-red/[0.02] border-iron-red/20' : 'bg-zinc-900/30 border-zinc-800/60'}`}>
-              <div className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase opacity-60">
+            <div className={`border p-3 font-mono transition-all duration-500 rounded-sm text-left space-y-1 ${isDemonSelected ? 'bg-zinc-900/80 border-iron-red' : 'bg-zinc-900/30 border-zinc-800/60'}`}>
+              <div className="flex items-center gap-1.5 text-[9px] tracking-widest uppercase opacity-60">
                 <span className="w-1 h-1 bg-zinc-500 rounded-full" />
                 <span>ORACLE_AI_INSTRUCTIONS</span>
               </div>
@@ -144,11 +116,26 @@ export default function LegExpansion({
             </div>
           )}
 
-          {/* MOTOR 3D DINÁMICO EN TIEMPO REAL */}
-          <div className="w-full h-72 border border-zinc-900 rounded-sm bg-zinc-950/60 relative overflow-hidden flex items-center justify-center group">
+          {/* MOTOR 3D CON INTERRUPTOR DE DIFICULTAD INTEGRADO FLOTANDO */}
+          <div className="w-full h-64 border border-zinc-900 rounded-sm bg-zinc-950/60 relative overflow-hidden flex items-center justify-center group">
             <div className={`absolute inset-0 bg-gradient-to-b pointer-events-none z-10 transition-colors duration-500 ${
-              isDemonSelected ? 'from-iron-red/5 to-transparent' : 'from-iron-volt/5 to-transparent'
+              isDemonSelected ? 'from-[#ef4444]/10 to-transparent' : 'from-iron-volt/5 to-transparent'
             }`} />
+
+            {/* ⚡️ BOTÓN FLOTANTE EN EL BACKGROUND DE LA ANIMACIÓN */}
+            <button
+              onClick={() => !isInSlip && setIsDemonSelected(!isDemonSelected)}
+              disabled={isInSlip}
+              className={`absolute top-3 left-3 z-30 flex items-center gap-2 px-3 py-1.5 font-mono text-[10px] uppercase font-black tracking-wider transition-all border shadow-[0_0_20px_rgba(0,0,0,0.8)] ${
+                isInSlip ? 'opacity-40 cursor-not-allowed' : 'active:scale-95'
+              } ${
+                isDemonSelected 
+                  ? 'bg-iron-volt text-black border-iron-volt' 
+                  : 'bg-iron-red text-black border-iron-red'
+              }`}
+            >
+              <span>{isDemonSelected ? 'GO STANDARD' : '👹 GO DEMON'}</span>
+            </button>
 
             <AvatarCanvas 
               avatarUrl="/models/avatar.glb" 
@@ -158,32 +145,32 @@ export default function LegExpansion({
           </div>
 
           {/* CORE DATA MODULE BOX */}
-          <div className={`${theme.dataCoreBg} mt-6 space-y-4 relative z-10 p-5 transition-all duration-500`}>
+          <div className={`${theme.dataCoreBg} space-y-3 relative z-10 p-4 transition-all duration-500 rounded-sm`}>
             {/* TARGET */}
-            <div className="flex flex-col border-b border-zinc-800/80 pb-4 gap-2">
-              <span className={`${theme.dataLabel} font-mono text-[11px] uppercase tracking-wider`}>
+            <div className="flex flex-col border-b border-zinc-800/60 pb-3 gap-1.5">
+              <span className={`${theme.dataLabel} font-mono text-[10px] uppercase tracking-wider`}>
                 target
               </span>
-              <div className="bg-black/40 border border-zinc-900/80 p-3 px-4 rounded-sm">
-                <span className="text-white font-mono text-base md:text-lg font-bold tracking-tight block uppercase leading-snug">
+              <div className="bg-black/40 border border-zinc-900/80 p-2.5 px-3 rounded-sm">
+                <span className="text-white font-mono text-sm md:text-base font-bold tracking-tight block uppercase leading-snug">
                   {targetDescription}
                 </span>
               </div>
             </div>
 
             {/* METADATA GRID */}
-            <div className="grid grid-cols-2 gap-4 pt-1">
-              <div className="flex flex-col">
-                <span className={`${theme.dataLabel} font-mono text-[11px] uppercase tracking-wider mb-1`}>Verification</span>
+            <div className="grid grid-cols-2 gap-4 pt-0.5">
+              <div className="flex flex-col justify-center">
+                <span className={`${theme.dataLabel} font-mono text-[10px] uppercase tracking-wider mb-0.5`}>Verification</span>
                 <span className={`${theme.accentText} font-mono text-xs uppercase tracking-wider transition-colors duration-500`}>
                   {leg.verificationMethod === 'video' ? 'video clip' : 'photo'}
                 </span>
               </div>
               
-              <div className="flex flex-col text-right justify-end">
-                <span className={`${theme.dataLabel} font-mono text-[11px] uppercase tracking-wider mb-1`}>win</span>
+              <div className="flex flex-col text-right justify-center">
+                <span className={`${theme.dataLabel} font-mono text-[10px] uppercase tracking-wider mb-0.5`}>win</span>
                 <div className="relative group self-end">
-                  <span className={`relative z-10 font-black text-2xl tracking-tighter block ${isDemonSelected ? 'text-iron-red animate-pulse' : 'text-iron-volt'}`}>
+                  <span className={`relative z-10 font-black text-2xl tracking-tighter block leading-none ${isDemonSelected ? 'text-iron-red animate-pulse' : 'text-iron-volt'}`}>
                     +{creditsEarned} 
                   </span>
                 </div>
@@ -194,9 +181,9 @@ export default function LegExpansion({
         </div>
 
         {/* FOOTER ACTION PANEL */}
-        <div className="p-6 bg-zinc-950 border-t border-zinc-900 relative z-20">
+        <div className="p-4 bg-zinc-950 border-t border-zinc-900 relative z-20">
           <button
-            className={`w-full py-4 font-black italic text-2xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none ${theme.buttonBg}`}
+            className={`w-full py-3.5 font-black italic text-xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none ${theme.buttonBg}`}
             onClick={handleActionClick}
           >
             <span>{isInSlip ? 'REMOVE FROM SLIP' : 'ADD TO SLIP'}</span>
