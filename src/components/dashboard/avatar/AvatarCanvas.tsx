@@ -48,8 +48,8 @@ function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation
     <group ref={group} dispose={null}>
       <primitive 
         object={clone} 
-        scale={1.35}           
-        position={[0, -2.6, 0]} 
+        scale={1.95}           
+        position={[0, -3.9, 0]} 
       />
     </group>
   );
