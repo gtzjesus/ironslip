@@ -126,6 +126,7 @@ export default function LegsPage() {
                 <LegFilterNav
                   activeCategory={activeCategory}
                   onCategoryChange={setActiveCategory}
+                  legs={legs}
                 />
               </div>
             )}

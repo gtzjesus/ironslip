@@ -15,15 +15,18 @@ export const legType = defineType({
       name: 'animationKey',
       title: 'animation key',
       type: 'string',
-      initialValue: 'idle',
+      initialValue: 'breathingidle',
     }),
-    defineField({
+   defineField({
       name: 'category',
       title: 'category',
       type: 'string',
       initialValue: 'lifting',
       options: {
-        list: [{ title: 'Lifting', value: 'lifting' }],
+        list: [
+          { title: 'Lifting', value: 'lifting' },
+          { title: 'Sports', value: 'sports' },
+        ],
       },
       validation: (Rule) => Rule.required(),
     }),
