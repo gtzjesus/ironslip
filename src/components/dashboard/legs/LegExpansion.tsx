@@ -141,7 +141,7 @@ export default function LegExpansion({
             {/* 🦾 PASAMOS LA PROP DE VISTA DE PERFIL (Asegúrate de cachar 'cameraView' en tu AvatarCanvas) */}
             <AvatarCanvas 
               avatarUrl="/models/avatar.glb" 
-              activeAnimation={leg.animationKey || 'Avatar_Idle'} 
+              activeAnimation={leg.animationKey || 'breathingidle'} 
               isDemon={isDemonSelected}
             />
           </div>

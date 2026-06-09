@@ -40,10 +40,10 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
           {/* Degradado asimétrico para desvanecer las orillas y fundirlo con el fondo oscuro */}
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950 z-20" />
           
-          <div className="w-40 h-40 absolute -bottom-8 -left-2 pointer-events-none z-10">
+          <div className="w-40 h-40 absolute -bottom-18 -left-2 pointer-events-none z-10">
             <AvatarCanvas 
               avatarUrl="/models/avatar.glb" 
-              activeAnimation={leg.animationKey || 'Avatar_Idle'} 
+              activeAnimation={leg.animationKey || 'breathingidle'} 
               isDemon={isDemon}
             />
           </div>
