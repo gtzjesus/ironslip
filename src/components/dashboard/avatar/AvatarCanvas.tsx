@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { Canvas } from '@react-three/fiber';
@@ -9,7 +10,7 @@ import { SkeletonUtils } from 'three-stdlib';
 interface AvatarCanvasProps {
   avatarUrl: string;
   activeAnimation: string;
-  isDemon?: boolean; // 🟢 OPCIONAL (?): Evita que truenen otras páginas como /avatar/page.tsx
+  isDemon?: boolean;
 }
 
 function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation: string; isDemon: boolean }) {
@@ -45,11 +46,14 @@ function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation
   }, [actions, activeAnimation, isDemon]);
 
   return (
-    <group ref={group} dispose={null}>
+    // 💥 TRUCO MAESTRO: Rotamos el contenedor del modelo en el eje Y (0.5 radianes es aprox 30 grados)
+    // Esto hace que aparezca rotado por defecto hacia la derecha/diagonal de entrada.
+    <group ref={group} dispose={null} rotation={[0, -0.75, 0]}>
       <primitive 
         object={clone} 
         scale={1.95}           
-        position={[0, -3.9, 0]} 
+        // Mantiene el offset hacia la izquierda de la pantalla
+        position={[-0.6, -3.9, 0]} 
       />
     </group>
   );
@@ -58,13 +62,14 @@ function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation
 export default function AvatarCanvas({ 
   avatarUrl, 
   activeAnimation, 
-  isDemon = false // 🟢 PREDETERMINADO: Si otra vista no lo manda, arranca en modo Standard
+  isDemon = false
 }: AvatarCanvasProps) {
   return (
     <div className="w-full h-full relative overflow-hidden z-0 flex items-center justify-center bg-transparent">
       <Suspense fallback={null}>
         <Canvas 
           className="w-full h-full"
+          // Cámara limpia frontal original
           camera={{ position: [0, 0, 6.5], fov: 42 }}
           gl={{ preserveDrawingBuffer: true }}
         >
@@ -75,7 +80,6 @@ export default function AvatarCanvas({
           {!isDemon && (
             <>
               <directionalLight position={[0, 5, 5]} intensity={1.5} />
-              {/* Baño de luz amarillo Volt desde el costado que esculpe los bordes low-poly */}
               <pointLight position={[3, -1, 2]} intensity={8} color="#F1C232" distance={7} decay={1.2} />
               <directionalLight position={[-4, 2, -2]} intensity={0.8} color="#fffebb" />
             </>
@@ -84,7 +88,6 @@ export default function AvatarCanvas({
           {/* 👹 MODO DEMON: FURIA CARMESÍ DESDE EL INFIERNO */}
           {isDemon && (
             <>
-              {/* Luz puntual roja violenta desde el suelo apuntando hacia arriba */}
               <pointLight position={[0, -3, 2]} intensity={12} color="#ef4444" distance={8} decay={1.5} />
               <directionalLight position={[3, 5, 2]} intensity={2} color="#ff8888" />
               <directionalLight position={[-3, -1, -2]} intensity={1.5} color="#450a0a" />
@@ -96,7 +99,9 @@ export default function AvatarCanvas({
           <OrbitControls 
             enableZoom={false}
             enablePan={false}
-            target={[0, 0, 0]}
+            // El pivote de rotación sigue al mono desplazado a la izquierda
+            target={[-0.6, 0, 0]}
+            // Mantenemos tus candados frontales exactos para el mouse/touch
             minAzimuthAngle={-Math.PI / 4} 
             maxAzimuthAngle={Math.PI / 4}
             minPolarAngle={1.2} 

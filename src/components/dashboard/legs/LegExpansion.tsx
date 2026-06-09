@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useEffect } from 'react';
-import { Skull, Shield } from 'lucide-react';
+import { useState } from 'react';
 // 🟢 MOTOR 3D EN TIEMPO REAL
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 
@@ -87,8 +86,7 @@ export default function LegExpansion({
           ))}
         </div>
 
-
-        {/* HEADER INTEGRADO (Sin cortes visuales, flota sobre el background) */}
+        {/* HEADER INTEGRADO */}
         <div className="p-5 pb-1 pt-6 relative z-50 flex justify-between items-start bg-transparent">
           <h2 className={`${theme.titleText} font-black italic text-3xl sm:text-5xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[85%] drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]`}>
             {leg.task}
@@ -101,7 +99,7 @@ export default function LegExpansion({
           </button>
         </div>
 
-        {/* CONTENT (Padding optimizado para empujar la data hacia arriba) */}
+        {/* CONTENT */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 scrollbar-hide relative space-y-4 z-10 pb-6">
 
           {/* ORACLE PROMPT BOX */}
@@ -117,13 +115,13 @@ export default function LegExpansion({
             </div>
           )}
 
-          {/* MOTOR 3D CON INTERRUPTOR DE DIFICULTAD INTEGRADO FLOTANDO */}
+          {/* MOTOR 3D CON PARÁMETROS DE CÁMARA LATERAL HABILITADOS */}
           <div className="w-full h-64 border border-zinc-900 rounded-sm bg-zinc-950/60 relative overflow-hidden flex items-center justify-center group">
             <div className={`absolute inset-0 bg-gradient-to-b pointer-events-none z-10 transition-colors duration-500 ${
               isDemonSelected ? 'from-[#ef4444]/10 to-transparent' : 'from-iron-volt/5 to-transparent'
             }`} />
 
-            {/* ⚡️ BOTÓN FLOTANTE EN EL BACKGROUND DE LA ANIMACIÓN */}
+            {/* BOTÓN FLOTANTE EN EL BACKGROUND DE LA ANIMACIÓN */}
             <button
               onClick={() => !isInSlip && setIsDemonSelected(!isDemonSelected)}
               disabled={isInSlip}
@@ -138,6 +136,9 @@ export default function LegExpansion({
               <span>{isDemonSelected ? 'GO STANDARD' : '👹 GO DEMON'}</span>
             </button>
 
+       
+
+            {/* 🦾 PASAMOS LA PROP DE VISTA DE PERFIL (Asegúrate de cachar 'cameraView' en tu AvatarCanvas) */}
             <AvatarCanvas 
               avatarUrl="/models/avatar.glb" 
               activeAnimation={leg.animationKey || 'Avatar_Idle'} 
