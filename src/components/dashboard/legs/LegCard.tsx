@@ -7,7 +7,7 @@ interface LegProps {
   leg: any;
   onClick: (leg: any) => void;
   isSignedIn: boolean;
-  isAlreadyInSlip: boolean; // 🟢 NUEVA PROP: Controla si este ejercicio ya está en juego
+  isAlreadyInSlip: boolean; // Controla si este ejercicio ya está en juego
 }
 
 export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: LegProps) {
@@ -34,13 +34,13 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
           : 'bg-zinc-950 border-zinc-800 cursor-pointer'
       } ${!isSignedIn ? 'cursor-default' : ''}`}
     >
-      {/* 🦾 BACKGROUND AVATAR HOLOGRÁFICO (Farthest Left, detrás de toda la UI) */}
+      {/* 🦾 BACKGROUND AVATAR HOLOGRÁFICO (Flotando a la izquierda del Score) */}
       {isSignedIn && !isAlreadyInSlip && (
-        <div className="absolute inset-y-0 left-0 w-24 pointer-events-none z-0 opacity-40 select-none overflow-hidden">
-          {/* Un degradado sutil para fusionar el canvas con el fondo oscuro de la card */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-zinc-950 z-20" />
+        <div className="absolute inset-y-0 right-20 w-24 pointer-events-none z-0 opacity-45 select-none overflow-hidden">
+          {/* Degradado asimétrico para desvanecer las orillas y fundirlo con el fondo oscuro */}
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950 z-20" />
           
-          <div className="w-40 h-40 absolute -bottom-8 -left-8 pointer-events-none z-10">
+          <div className="w-40 h-40 absolute -bottom-8 -left-2 pointer-events-none z-10">
             <AvatarCanvas 
               avatarUrl="/models/avatar.glb" 
               activeAnimation={leg.animationKey || 'Avatar_Idle'} 
@@ -52,7 +52,8 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
 
       {/* CONTENIDO PRINCIPAL (Z-10 intacto para flotar arriba del avatar) */}
       <div className="relative z-10 flex justify-between items-center">
-        <div>
+        {/* LADO IZQUIERDO: TEXTOS */}
+        <div className="flex-1 min-w-0 pr-4">
           <p
             className={`font-mono text-[8px] uppercase tracking-widest ${
               isAlreadyInSlip
@@ -67,9 +68,9 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
 
           {/* TASK NAME */}
           <h3
-            className={`font-black italic text-xl uppercase tracking-tighter transition-all duration-500 ${
+            className={`font-black italic text-xl uppercase tracking-tighter truncate transition-all duration-500 ${
               isAlreadyInSlip
-                ? 'text-zinc-500 line-through' // Tacha el texto sutilmente si ya se usó
+                ? 'text-zinc-500 line-through' 
                 : isDemon
                 ? 'text-iron-red'
                 : 'text-white'
@@ -79,11 +80,11 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
           </h3>
         </div>
 
-        <div className="text-right flex flex-col items-end justify-center">
-          {/* REWARD OR STATUS */}
+        {/* LADO DERECHO: REWARD / STATUS (Fijo a la derecha del canvas) */}
+        <div className="text-right flex flex-col items-end justify-center shrink-0 min-w-[75px] z-30 bg-transparent">
           {isAlreadyInSlip ? (
             <span className="text-[10px] font-mono uppercase font-bold text-iron-volt tracking-widest bg-iron-volt/10 px-2 py-0.5 border border-iron-volt/20">
-              [ IN_SLIP ]
+              [ IN SLIP ]
             </span>
           ) : (
             <p
