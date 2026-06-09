@@ -2,12 +2,14 @@
 'use client';
 import { useState } from 'react';
 import { Skull, Shield } from 'lucide-react';
+// 🟢 IMPORTAMOS TU MOTOR 3D
+import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 
 interface LegExpansionProps {
   leg: any;
   onClose: () => void;
   onToggleSlip: (leg: any) => void;
-  isInSlip: boolean; // El padre determina esto basándose en el ID base de Sanity
+  isInSlip: boolean;
 }
 
 export default function LegExpansion({
@@ -56,13 +58,10 @@ export default function LegExpansion({
 
   const handleActionClick = () => {
     if (isInSlip) {
-      // Si ya existe en el slip, mandamos el objeto original o manejamos la remoción directamente
       onToggleSlip(leg);
     } else {
-      // 🧠 MUTACIÓN DEL CONTRATO: Empaquetamos la pierna con los valores seleccionados
       const mutatedLeg = {
         ...leg,
-        // Mantener una referencia clara al _id original para evitar duplicados en estados complejos
         _id: `${leg._id}-${isDemonSelected ? 'demon' : 'regular'}`, 
         originalId: leg._id,
         task: isDemonSelected ? `${leg.task} 👹` : leg.task,
@@ -167,11 +166,21 @@ export default function LegExpansion({
             </div>
           )}
 
-          {/* SLOT TEMPORAL PARA EL AVATAR */}
-          <div className="w-full border border-dashed border-zinc-900 p-4 py-6 flex items-center justify-center rounded-sm bg-zinc-950/40">
-            <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-zinc-700 animate-pulse">
-              [ SLOT_AVATAR_INTEGRATION_ZONE ]
-            </span>
+          {/* 🟢 MOTOR 3D DINÁMICO EN TIEMPO REAL */}
+          <div className="w-full h-72 border border-zinc-900 rounded-sm bg-zinc-950/60 relative overflow-hidden flex items-center justify-center group">
+            <div className={`absolute inset-0 bg-gradient-to-b pointer-events-none z-10 transition-colors duration-500 ${
+              isDemonSelected ? 'from-iron-red/5 to-transparent' : 'from-iron-volt/5 to-transparent'
+            }`} />
+
+            {/* Inyección del canvas pasando el string de Sanity dinámicamente */}
+            <AvatarCanvas 
+              avatarUrl="/models/avatar.glb" 
+              activeAnimation={leg.animationKey || 'Avatar_Idle'} 
+            />
+
+            <div className="absolute top-3 left-3 z-10 font-mono text-[8px] text-zinc-500 tracking-widest uppercase pointer-events-none select-none">
+              3D_PREVIEW_READY // MODE: {isDemonSelected ? 'DEMON' : 'STANDARD'}
+            </div>
           </div>
 
           {/* ⚡️ INTERRUPTOR DE PROTOCOLO DEMONÍACO */}

@@ -23,7 +23,7 @@ export const legType = defineType({
       type: 'string',
       initialValue: 'lifting',
       options: {
-        list: [{ title: '🏋️‍♂️ Lifting', value: 'lifting' }],
+        list: [{ title: 'Lifting', value: 'lifting' }],
       },
       validation: (Rule) => Rule.required(),
     }),
