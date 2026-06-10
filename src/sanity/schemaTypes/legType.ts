@@ -26,6 +26,7 @@ export const legType = defineType({
         list: [
           { title: 'Lifting', value: 'lifting' },
           { title: 'Sports', value: 'sports' },
+        { title: 'Calisthenics', value: 'calisthenics' },
         ],
       },
       validation: (Rule) => Rule.required(),
