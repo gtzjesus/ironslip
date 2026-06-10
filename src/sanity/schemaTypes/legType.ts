@@ -28,6 +28,7 @@ export const legType = defineType({
           { title: 'Sports', value: 'sports' },
         { title: 'Calisthenics', value: 'calisthenics' },
         { title: 'Outdoors', value: 'outdoors' },
+        { title: 'Recovery', value: 'recovery' },
         ],
       },
       validation: (Rule) => Rule.required(),
