@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState } from 'react';
-// 🟢 MOTOR 3D EN TIEMPO REAL
+import { useSound } from '@/hooks/useSound';
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 
 interface LegExpansionProps {
@@ -18,6 +18,7 @@ export default function LegExpansion({
   isInSlip,
 }: LegExpansionProps) {
   const [isDemonSelected, setIsDemonSelected] = useState(false);
+  const { playSound } = useSound();
 
   const targetDescription = isDemonSelected ? leg.demonTarget : leg.regularTarget;
   const creditsEarned = isDemonSelected ? leg.demonReward : leg.regularReward;
@@ -52,6 +53,8 @@ export default function LegExpansion({
       };
 
   const handleActionClick = () => {
+    playSound(isInSlip ? 'remove' : 'add');
+    
     const mutatedLeg = {
       ...leg,
       _id: `${leg._id}-${isDemonSelected ? 'demon' : 'regular'}`, 
@@ -64,6 +67,19 @@ export default function LegExpansion({
     };
 
     onToggleSlip(mutatedLeg);
+    onClose();
+  };
+
+  const handleToggleDemon = () => {
+    if (!isInSlip) {
+      // 🔊 Reproduce demon.mp3 al activar, select.mp3 al desactivar
+      playSound(isDemonSelected ? 'select' : 'demon');
+      setIsDemonSelected(!isDemonSelected);
+    }
+  };
+
+  const handleClose = () => {
+    playSound('close');
     onClose();
   };
 
@@ -86,13 +102,13 @@ export default function LegExpansion({
           ))}
         </div>
 
-        {/* HEADER INTEGRADO */}
+        {/* HEADER */}
         <div className="p-5 pb-1 pt-6 relative z-50 flex justify-between items-start bg-transparent">
           <h2 className={`${theme.titleText} font-black italic text-3xl sm:text-5xl uppercase tracking-tighter leading-none transition-colors duration-500 max-w-[85%] drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]`}>
             {leg.task}
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0 mt-0.5"
           >
             [ x ]
@@ -101,8 +117,6 @@ export default function LegExpansion({
 
         {/* CONTENT */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-5 scrollbar-hide relative space-y-4 z-10 pb-6">
-
-          {/* ORACLE PROMPT BOX */}
           {(isDemonSelected ? leg.demonAiPrompt : leg.regularAiPrompt) && (
             <div className={`border p-3 font-mono transition-all duration-500 rounded-sm text-left space-y-1 ${isDemonSelected ? 'bg-zinc-900/80 border-iron-red' : 'bg-zinc-900/30 border-zinc-800/60'}`}>
               <div className="flex items-center gap-1.5 text-[9px] tracking-widest uppercase opacity-60">
@@ -115,30 +129,21 @@ export default function LegExpansion({
             </div>
           )}
 
-          {/* MOTOR 3D CON PARÁMETROS DE CÁMARA LATERAL HABILITADOS */}
           <div className="w-full h-64 border border-zinc-900 rounded-sm bg-zinc-950/60 relative overflow-hidden flex items-center justify-center group">
             <div className={`absolute inset-0 bg-gradient-to-b pointer-events-none z-10 transition-colors duration-500 ${
               isDemonSelected ? 'from-[#ef4444]/10 to-transparent' : 'from-iron-volt/5 to-transparent'
             }`} />
 
-            {/* BOTÓN FLOTANTE EN EL BACKGROUND DE LA ANIMACIÓN */}
             <button
-              onClick={() => !isInSlip && setIsDemonSelected(!isDemonSelected)}
+              onClick={handleToggleDemon}
               disabled={isInSlip}
               className={`absolute top-3 left-3 z-30 flex items-center gap-2 px-3 py-1.5 font-mono text-[10px] uppercase font-black tracking-wider transition-all border shadow-[0_0_20px_rgba(0,0,0,0.8)] ${
                 isInSlip ? 'opacity-40 cursor-not-allowed' : 'active:scale-95'
-              } ${
-                isDemonSelected 
-                  ? 'bg-iron-volt text-black border-iron-volt' 
-                  : 'bg-iron-red text-black border-iron-red'
-              }`}
+              } ${isDemonSelected ? 'bg-iron-volt text-black border-iron-volt' : 'bg-iron-red text-black border-iron-red'}`}
             >
               <span>{isDemonSelected ? 'GO STANDARD' : '👹 GO DEMON'}</span>
             </button>
 
-       
-
-            {/* 🦾 PASAMOS LA PROP DE VISTA DE PERFIL (Asegúrate de cachar 'cameraView' en tu AvatarCanvas) */}
             <AvatarCanvas 
               avatarUrl="/models/avatar.glb" 
               activeAnimation={leg.animationKey || 'breathingidle'} 
@@ -146,13 +151,9 @@ export default function LegExpansion({
             />
           </div>
 
-          {/* CORE DATA MODULE BOX */}
           <div className={`${theme.dataCoreBg} space-y-3 relative z-10 p-4 transition-all duration-500 rounded-sm`}>
-            {/* TARGET */}
             <div className="flex flex-col border-b border-zinc-800/60 pb-3 gap-1.5">
-              <span className={`${theme.dataLabel} font-mono text-[10px] uppercase tracking-wider`}>
-                target
-              </span>
+              <span className={`${theme.dataLabel} font-mono text-[10px] uppercase tracking-wider`}>target</span>
               <div className="bg-black/40 border border-zinc-900/80 p-2.5 px-3 rounded-sm">
                 <span className="text-white font-mono text-sm md:text-base font-bold tracking-tight block uppercase leading-snug">
                   {targetDescription}
@@ -160,7 +161,6 @@ export default function LegExpansion({
               </div>
             </div>
 
-            {/* METADATA GRID */}
             <div className="grid grid-cols-2 gap-4 pt-0.5">
               <div className="flex flex-col justify-center">
                 <span className={`${theme.dataLabel} font-mono text-[10px] uppercase tracking-wider mb-0.5`}>Verification</span>
@@ -171,18 +171,14 @@ export default function LegExpansion({
               
               <div className="flex flex-col text-right justify-center">
                 <span className={`${theme.dataLabel} font-mono text-[10px] uppercase tracking-wider mb-0.5`}>win</span>
-                <div className="relative group self-end">
-                  <span className={`relative z-10 font-black text-2xl tracking-tighter block leading-none ${isDemonSelected ? 'text-iron-red animate-pulse' : 'text-iron-volt'}`}>
-                    +{creditsEarned} 
-                  </span>
-                </div>
+                <span className={`relative z-10 font-black text-2xl tracking-tighter block leading-none ${isDemonSelected ? 'text-iron-red animate-pulse' : 'text-iron-volt'}`}>
+                  +{creditsEarned} 
+                </span>
               </div>
             </div>
           </div>
-
         </div>
 
-        {/* FOOTER ACTION PANEL */}
         <div className="p-4 bg-zinc-950 border-t border-zinc-900 relative z-20">
           <button
             className={`w-full py-3.5 font-black italic text-xl uppercase tracking-tighter transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-none ${theme.buttonBg}`}

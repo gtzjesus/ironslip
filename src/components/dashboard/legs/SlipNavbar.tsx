@@ -3,64 +3,58 @@
 import { useState } from 'react';
 import { Zap, AlertTriangle, ChevronsRight, Lock, Skull } from 'lucide-react'; 
 import SlipReviewOverlay from './SlipReviewOverlay'; 
+import { useSound } from '@/hooks/useSound';
 
 interface SlipNavbarProps {
   activeSlip: any[];
   onRemoveLeg: (id: string) => void;
   clearSlipData: () => void;
-  userBalance: number; // Added the userBalance prop definition here
+  userBalance: number;
 }
 
 export default function SlipNavbar({
   activeSlip,
   onRemoveLeg,
   clearSlipData,
-  userBalance, // Destructured userBalance here
+  userBalance,
 }: SlipNavbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { playSound } = useSound();
 
   const hasDemon = activeSlip.some(
     (leg) => leg.isDemon || leg.difficulty === 'demon',
   );
 
-  // Instantly unmounts layout when slip clears, avoiding animation overhead
   if (activeSlip.length === 0) return null;
 
   const MIN_REVIEWS_REQUIRED = 1;
   const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
   const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
 
-  const baseCredits = activeSlip.reduce(
-    (sum, leg) => sum + (leg.creditReward || 0),
-    0,
-  );
   const multiplier = 1 + activeSlip.length * 0.1;
-  const totalPayout = Math.floor(
-    baseCredits * (hasDemon ? multiplier + 0.5 : multiplier),
-  );
+
+  const handleExpand = () => {
+    if (isEligibleToExpand) {
+      playSound('confirm');
+      setIsExpanded(true);
+    }
+  };
 
   return (
     <>
-      {/* 1. COMPACT DOCK */}
       {!isExpanded && (
-        /* Native layout wrapper using our game-engine style grand slam entry animation keyframe */
         <div className="fixed bottom-[64px] left-0 w-full z-[90] px-2 flex justify-center pointer-events-none animate-videogame-slam">
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
-              onClick={() => {
-                if (isEligibleToExpand) {
-                  setIsExpanded(true);
-                }
-              }}
-              className={`relative overflow-hidden border p-3.5 flex items-center justify-between transition-all duration-300  ${
-                isEligibleToExpand ? 'cursor-pointer' : 'cursor-not-allowed'
+              onClick={handleExpand}
+              className={`relative overflow-hidden border p-3.5 flex items-center justify-between transition-all duration-300 ${
+                isEligibleToExpand ? 'cursor-pointer active:scale-[0.98]' : 'cursor-not-allowed'
               } ${
                 hasDemon 
-                  ? 'border-iron-red  bg-iron-red shadow-lg shadow-black/80' 
-                  : 'bg-iron-volt  border-iron-volt/40 shadow-lg  shadow-black/80'
+                  ? 'border-iron-red bg-iron-red shadow-lg shadow-black/80' 
+                  : 'bg-iron-volt border-iron-volt/40 shadow-lg shadow-black/80'
               }`}
             >
-              {/* LEFT DATA CELL: LEGS VOLUME */}
               <div className="relative z-10 flex flex-col justify-center items-start leading-none">
                 <p className="text-[9px] font-mono uppercase tracking-[0.15em] mb-1 text-black">
                   {hasDemon ? 'DEMON slip' : 'IRON slip'}
@@ -70,9 +64,7 @@ export default function SlipNavbar({
                 </p>
               </div>
 
-              {/* RIGHT HUD BLOCK: CONTROLS & TRANSACTION INDEXES */}
               <div className="relative z-10 flex items-center gap-4">
-                {/* TEXT GROUP: STACKED AND ALIGNED TO THE RIGHT */}
                 <div className="flex flex-col justify-center items-end text-right leading-none">
                   <p className="text-[8px] font-mono uppercase tracking-widest text-black mb-1">
                     win up to x{multiplier.toFixed(2)}
@@ -82,9 +74,8 @@ export default function SlipNavbar({
                   </p>
                 </div>  
                 
-                {/* TACTICAL KEY-SLOT TRIGGER BUTTON */}
                 <div 
-                  className={`p-2 transition-all duration-300 flex items-center justify-center border  overflow-hidden w-9 h-9 flex-shrink-0 ${
+                  className={`p-2 transition-all duration-300 flex items-center justify-center border overflow-hidden w-9 h-9 flex-shrink-0 ${
                     isEligibleToExpand 
                       ? hasDemon 
                         ? 'bg-zinc-900 border-iron-red/50 text-iron-red' 
@@ -96,9 +87,7 @@ export default function SlipNavbar({
                 >
                   {isEligibleToExpand ? (
                     <div className="w-5 h-5 flex items-center justify-center">
-                      <div className="flex items-center justify-center text-inherit">
-                        <ChevronsRight className="w-5 h-5" />
-                      </div>
+                      <ChevronsRight className="w-5 h-5" />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
@@ -108,13 +97,11 @@ export default function SlipNavbar({
                   )}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
       )}
 
-      {/* 2. OVERLAY TRANSITION DRAWER VIEW */}
       {isExpanded && (
         <SlipReviewOverlay
           isOpen={isExpanded}
@@ -124,7 +111,7 @@ export default function SlipNavbar({
           hasDemon={hasDemon}
           minReviewsRequired={MIN_REVIEWS_REQUIRED}
           clearSlipData={clearSlipData}
-          userBalance={userBalance} // Now passing down the valid variable!
+          userBalance={userBalance}
         />
       )}
     </>
