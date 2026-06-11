@@ -26,6 +26,7 @@ export const legType = defineType({
         list: [
           { title: 'Lifting', value: 'lifting' },
           { title: 'Sports', value: 'sports' },
+          { title: 'Cardio', value: 'cardio' },
         { title: 'Calisthenics', value: 'calisthenics' },
         { title: 'Outdoors', value: 'outdoors' },
         { title: 'Recovery', value: 'recovery' },
