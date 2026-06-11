@@ -51,11 +51,11 @@ export default function SlipReviewOverlay({
       {/* CAPA DE AVATAR (Z-0) */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         <Canvas 
-          camera={{ position: [0, 0, 4], fov: 80 }}
+          camera={{ position: [0, 0, 3], fov: 85 }}
           gl={{ alpha: true, antialias: true }}
           dpr={[1, 2]}
         >
-          <spotLight position={[0, 5, 5]} intensity={30} />
+          <spotLight position={[0, 5, 5]} intensity={65} />
           <Model url="/models/avatar.glb" isDemon={hasDemon} />
         </Canvas>
       </div>
