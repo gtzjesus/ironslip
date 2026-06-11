@@ -1,31 +1,44 @@
 'use client';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 type SoundType = 'add' | 'remove' | 'select' | 'close' | 'open-card' | 'demon' | 'confirm';
 
 export const useSound = () => {
-  // Solo guardamos los audios una vez que se han usado
-  const audioCache = useRef<Record<string, HTMLAudioElement>>({});
+  const audioContext = useRef<AudioContext | null>(null);
+  const audioBuffers = useRef<Record<string, AudioBuffer>>({});
 
-  const playSound = (soundType: SoundType) => {
-    // Si no está en caché, lo creamos y cargamos en ese instante
-    if (!audioCache.current[soundType]) {
+  useEffect(() => {
+    // Inicializar el contexto de audio
+    audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }, []);
+
+  const playSound = async (soundType: SoundType) => {
+    if (!audioContext.current) return;
+
+    // Si no tenemos el buffer, lo cargamos una sola vez
+    if (!audioBuffers.current[soundType]) {
       const fileName = (soundType === 'close' || soundType === 'open-card' || soundType === 'demon' || soundType === 'confirm') 
         ? `${soundType}.mp3` 
         : `${soundType}-slip.mp3`;
-      
-      const audio = new Audio(`/sounds/${fileName}`);
-      audioCache.current[soundType] = audio;
+
+      const response = await fetch(`/sounds/${fileName}`);
+      const arrayBuffer = await response.arrayBuffer();
+      // Decodificamos el audio fuera del hilo principal
+      const audioBuffer = await audioContext.current.decodeAudioData(arrayBuffer);
+      audioBuffers.current[soundType] = audioBuffer;
     }
 
-    const audio = audioCache.current[soundType];
+    // Reproducción ultra ligera
+    const source = audioContext.current.createBufferSource();
+    source.buffer = audioBuffers.current[soundType];
     
-    // Reproducción robusta
-    audio.currentTime = 0;
-    audio.volume = 0.4;
+    // Crear un nodo de ganancia para controlar el volumen sin interferir
+    const gainNode = audioContext.current.createGain();
+    gainNode.gain.value = 0.4;
     
-    // Play es asíncrono, si ya se está reproduciendo, lo resetamos
-    audio.play().catch((err) => console.log("Playback failed:", err));
+    source.connect(gainNode);
+    gainNode.connect(audioContext.current.destination);
+    source.start(0);
   };
 
   return { playSound };
