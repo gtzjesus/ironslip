@@ -45,10 +45,11 @@ export default function SlipReviewOverlay({
     return { multiplier: Math.max(finalMult, 1.01) };
   }, [activeSlip, hasDemon]);
 
-  // Manejo de tipos para evitar errores de TS
+  // Manejo de tipos y validaciones
   const wagerNumber = Number(wager === '' ? 0 : wager);
   const dynamicPayout = Math.floor(wagerNumber * oddsMatrix.multiplier);
   const isInvalid = wager !== '' && (wagerNumber <= 0 || wagerNumber > userBalance);
+  const isParlayValid = activeSlip.length >= 3;
 
   const theme = hasDemon
     ? { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-red/40', titleText: 'text-white', dataCoreBg: 'bg-zinc-900/60 border-t border-iron-red/30', labelColor: 'text-zinc-500', valueColor: 'text-white', accentText: 'text-iron-green', inputBg: 'bg-black/60 border border-zinc-800 text-white', buttonBg: 'bg-iron-red text-black' }
@@ -59,7 +60,7 @@ export default function SlipReviewOverlay({
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0">
       
-      {/* CAPA DE AVATAR (Z-0) */}
+      {/* CAPA DE AVATAR */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         <Canvas 
           camera={{ position: [0, 0, 3], fov: 85 }}
@@ -77,7 +78,7 @@ export default function SlipReviewOverlay({
           <h2 className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter leading-none`}>
             {activeSlip.length}-LEG {hasDemon ? 'DEMON' : 'IRON'} SLIP
           </h2>
-          <button onClick={() => { playSound('close'); onClose(); }} className="absolute top-5 right-5 text-white font-mono text-[12px] uppercase bg-red-600 px-2 py-1 z-[100] shadow-md border border-white/10">
+          <button onClick={() => { playSound('close'); onClose(); }}  className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0 mt-0.5">
             [ X ]
           </button>
         </div>
@@ -86,9 +87,21 @@ export default function SlipReviewOverlay({
           {activeSlip.map((leg: any) => (
             <div key={leg._id} className="flex justify-between items-center p-4 bg-black/40 border border-white/5">
               <span className="font-black italic uppercase">{leg.task}</span>
-              <button onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }}><Trash2 className="w-4 h-4 text-zinc-500" /></button>
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-sm text-iron-volt">+{leg.creditReward} </span>
+                <button onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }}><Trash2 className="w-4 h-4 text-zinc-500" /></button>
+              </div>
             </div>
           ))}
+          
+          {/* AVISO DE PARLAY */}
+          {!isParlayValid && (
+            <div className="p-4 border border-dashed border-zinc-700 text-center">
+              <p className="text-[10px] text-zinc-500 font-mono uppercase">
+                 requires minimum 3 legs. Add {3 - activeSlip.length} more.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className={`p-6 ${theme.dataCoreBg} z-10`}>
@@ -107,20 +120,24 @@ export default function SlipReviewOverlay({
 
           <input 
             type="number" 
-            placeholder=""
+            placeholder="Enter Fee"
             value={wager} 
             onChange={(e) => setWager(e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))} 
             className={`w-full px-4 py-3 font-mono text-xl ${theme.inputBg} outline-none`} 
           />
           
           <button 
-            disabled={wager === '' || isInvalid}
+            disabled={!isParlayValid || wager === '' || isInvalid}
             className={`w-full py-4 mt-2 font-black italic text-2xl uppercase transition-all 
-              ${(wager === '' || isInvalid) 
+              ${(!isParlayValid || wager === '' || isInvalid) 
                 ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
                 : theme.buttonBg}`}
           >
-            {isInvalid ? 'INSUFFICIENT FUNDS' : 'INITIATE SLIP!'}
+            {!isParlayValid 
+              ? `ADD ${3 - activeSlip.length} MORE LEG${3 - activeSlip.length > 1 ? 'S' : ''}`
+              : isInvalid 
+                ? 'INSUFFICIENT FUNDS' 
+                : 'INITIATE SLIP!'}
           </button>
         </div>
       </div>
