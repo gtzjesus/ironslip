@@ -38,17 +38,18 @@ export default function SlipReviewOverlay({
   const { playSound } = useSound();
   const [wager, setWager] = useState<number | ''>('');
 
-  // Lógica de cálculo
   const oddsMatrix = useMemo(() => {
     const compound = activeSlip.reduce((acc: any, leg: any) => acc * (1 + ((leg.creditReward || 0) / 200)), 1);
     const finalMult = compound * (1 + (activeSlip.length * 0.12)) * (hasDemon ? 1.4 : 1.0);
     return { multiplier: Math.max(finalMult, 1.01) };
   }, [activeSlip, hasDemon]);
 
-  // Manejo de tipos y validaciones
   const wagerNumber = Number(wager === '' ? 0 : wager);
   const dynamicPayout = Math.floor(wagerNumber * oddsMatrix.multiplier);
-  const isInvalid = wager !== '' && (wagerNumber <= 0 || wagerNumber > userBalance);
+  
+  // Validación estricta de fondos
+  const isExceedingBalance = wager !== '' && wagerNumber > userBalance;
+  const isInvalid = wager !== '' && (wagerNumber <= 0 || isExceedingBalance);
   const isParlayValid = activeSlip.length >= 3;
 
   const theme = hasDemon
@@ -59,26 +60,19 @@ export default function SlipReviewOverlay({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0">
-      
-      {/* CAPA DE AVATAR */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
-        <Canvas 
-          camera={{ position: [0, 0, 3], fov: 85 }}
-          gl={{ alpha: true, antialias: true }}
-          dpr={[1, 2]}
-        >
+        <Canvas camera={{ position: [0, 0, 3], fov: 85 }} gl={{ alpha: true, antialias: true }} dpr={[1, 2]}>
           <spotLight position={[0, 5, 5]} intensity={65} />
           <Model url="/models/avatar.glb" isDemon={hasDemon} />
         </Canvas>
       </div>
 
-      {/* INTERFAZ */}
       <div className={`w-full h-full max-w-2xl relative z-10 flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle} backdrop-blur-md`}>
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b border-zinc-900/40">
           <h2 className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter leading-none`}>
             {activeSlip.length}-LEG {hasDemon ? 'DEMON' : 'IRON'} SLIP
           </h2>
-          <button onClick={() => { playSound('close'); onClose(); }}  className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0 mt-0.5">
+          <button onClick={() => { playSound('close'); onClose(); }} className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0 mt-0.5">
             [ X ]
           </button>
         </div>
@@ -88,20 +82,11 @@ export default function SlipReviewOverlay({
             <div key={leg._id} className="flex justify-between items-center p-4 bg-black/40 border border-white/5">
               <span className="font-black italic uppercase">{leg.task}</span>
               <div className="flex items-center gap-4">
-                <span className="font-mono text-sm text-iron-volt">+{leg.creditReward} </span>
+                <span className="font-mono text-sm text-iron-volt">+{leg.creditReward}</span>
                 <button onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }}><Trash2 className="w-4 h-4 text-zinc-500" /></button>
               </div>
             </div>
           ))}
-          
-          {/* AVISO DE PARLAY */}
-          {!isParlayValid && (
-            <div className="p-4 border border-dashed border-zinc-700 text-center">
-              <p className="text-[10px] text-zinc-500 font-mono uppercase">
-                 requires minimum 3 legs. Add {3 - activeSlip.length} more.
-              </p>
-            </div>
-          )}
         </div>
 
         <div className={`p-6 ${theme.dataCoreBg} z-10`}>
@@ -113,17 +98,17 @@ export default function SlipReviewOverlay({
              <div className="bg-black/50 p-2 border border-white/10 text-center">
                 <p className="text-[8px] uppercase text-zinc-500 font-mono">To Win</p>
                 <p className={`text-sm font-black italic ${hasDemon ? 'text-iron-red' : 'text-iron-volt'}`}>
-                  {wagerNumber > 0 ? `+${dynamicPayout.toLocaleString()}` : '---'}
+                  {wagerNumber > 0 && !isExceedingBalance ? `+${dynamicPayout.toLocaleString()}` : '---'}
                 </p>
              </div>
           </div>
 
           <input 
             type="number" 
-            placeholder="Enter Fee"
+            placeholder="ENTER WAGER"
             value={wager} 
             onChange={(e) => setWager(e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))} 
-            className={`w-full px-4 py-3 font-mono text-xl ${theme.inputBg} outline-none`} 
+            className={`w-full px-4 py-3 font-mono text-xl ${theme.inputBg} outline-none ${isExceedingBalance ? 'border-red-500' : ''}`} 
           />
           
           <button 
@@ -134,8 +119,8 @@ export default function SlipReviewOverlay({
                 : theme.buttonBg}`}
           >
             {!isParlayValid 
-              ? `ADD ${3 - activeSlip.length} MORE LEG${3 - activeSlip.length > 1 ? 'S' : ''}`
-              : isInvalid 
+              ? `REQUIRES 3+ LEGS` 
+              : isExceedingBalance 
                 ? 'INSUFFICIENT FUNDS' 
                 : 'INITIATE SLIP!'}
           </button>

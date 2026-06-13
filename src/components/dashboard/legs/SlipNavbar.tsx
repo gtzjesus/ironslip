@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState } from 'react';
-import { Zap, AlertTriangle, ChevronsRight, Lock, Skull } from 'lucide-react'; 
+import { useState, useEffect } from 'react';
+import { ChevronsRight, Lock } from 'lucide-react'; 
 import SlipReviewOverlay from './SlipReviewOverlay'; 
 import { useSound } from '@/hooks/useSound';
 
@@ -21,6 +21,13 @@ export default function SlipNavbar({
   const [isExpanded, setIsExpanded] = useState(false);
   const { playSound } = useSound();
 
+  // Reset de seguridad: Si el slip se vacía, forzamos el cierre del overlay
+  useEffect(() => {
+    if (activeSlip.length === 0) {
+      setIsExpanded(false);
+    }
+  }, [activeSlip.length]);
+
   const hasDemon = activeSlip.some(
     (leg) => leg.isDemon || leg.difficulty === 'demon',
   );
@@ -30,7 +37,6 @@ export default function SlipNavbar({
   const MIN_REVIEWS_REQUIRED = 1;
   const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
   const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
-
   const multiplier = 1 + activeSlip.length * 0.1;
 
   const handleExpand = () => {

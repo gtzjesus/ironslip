@@ -72,7 +72,6 @@ export default function LegExpansion({
 
   const handleToggleDemon = () => {
     if (!isInSlip) {
-      // 🔊 Reproduce demon.mp3 al activar, select.mp3 al desactivar
       playSound(isDemonSelected ? 'select' : 'demon');
       setIsDemonSelected(!isDemonSelected);
     }
