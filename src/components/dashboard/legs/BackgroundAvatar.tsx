@@ -12,7 +12,7 @@ function Model({ url, isDemon }: { url: string; isDemon: boolean }) {
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
-    const action = actions['breathingidle'];
+    const action = actions['capoeira'];
     if (action) {
       action.setEffectiveTimeScale(isDemon ? 1.25 : 1.0);
       action.reset().fadeIn(0.5).play();
