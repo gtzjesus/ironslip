@@ -36,7 +36,7 @@ export default function SlipReviewOverlay({
   isOpen, onClose, activeSlip, onRemoveLeg, hasDemon, userBalance,
 }: any) {
   const { playSound } = useSound();
-  const [wager, setWager] = useState<number | ''>(10);
+  const [wager, setWager] = useState<number | ''>('');
 
   // Lógica de cálculo
   const oddsMatrix = useMemo(() => {
@@ -45,7 +45,10 @@ export default function SlipReviewOverlay({
     return { multiplier: Math.max(finalMult, 1.01) };
   }, [activeSlip, hasDemon]);
 
-  const dynamicPayout = Math.floor((Number(wager) || 0) * oddsMatrix.multiplier);
+  // Manejo de tipos para evitar errores de TS
+  const wagerNumber = Number(wager === '' ? 0 : wager);
+  const dynamicPayout = Math.floor(wagerNumber * oddsMatrix.multiplier);
+  const isInvalid = wager !== '' && (wagerNumber <= 0 || wagerNumber > userBalance);
 
   const theme = hasDemon
     ? { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-red/40', titleText: 'text-white', dataCoreBg: 'bg-zinc-900/60 border-t border-iron-red/30', labelColor: 'text-zinc-500', valueColor: 'text-white', accentText: 'text-iron-green', inputBg: 'bg-black/60 border border-zinc-800 text-white', buttonBg: 'bg-iron-red text-black' }
@@ -68,7 +71,7 @@ export default function SlipReviewOverlay({
         </Canvas>
       </div>
 
-      {/* TU INTERFAZ */}
+      {/* INTERFAZ */}
       <div className={`w-full h-full max-w-2xl relative z-10 flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle} backdrop-blur-md`}>
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b border-zinc-900/40">
           <h2 className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter leading-none`}>
@@ -89,7 +92,6 @@ export default function SlipReviewOverlay({
         </div>
 
         <div className={`p-6 ${theme.dataCoreBg} z-10`}>
-          {/* NUEVOS CONTADORES */}
           <div className="grid grid-cols-2 gap-2 mb-3">
              <div className="bg-black/50 p-2 border border-white/10 text-center">
                 <p className="text-[8px] uppercase text-zinc-500 font-mono">Balance</p>
@@ -97,13 +99,28 @@ export default function SlipReviewOverlay({
              </div>
              <div className="bg-black/50 p-2 border border-white/10 text-center">
                 <p className="text-[8px] uppercase text-zinc-500 font-mono">To Win</p>
-                <p className={`text-sm font-black italic ${hasDemon ? 'text-iron-red' : 'text-iron-volt'}`}>+{dynamicPayout.toLocaleString()}</p>
+                <p className={`text-sm font-black italic ${hasDemon ? 'text-iron-red' : 'text-iron-volt'}`}>
+                  {wagerNumber > 0 ? `+${dynamicPayout.toLocaleString()}` : '---'}
+                </p>
              </div>
           </div>
 
-          <input type="number" value={wager} onChange={(e) => setWager(Number(e.target.value))} className={`w-full px-4 py-3 font-mono text-xl ${theme.inputBg}`} />
-          <button className={`w-full py-4 mt-2 font-black italic text-2xl uppercase ${theme.buttonBg}`}>
-            INITIATE SLIP!
+          <input 
+            type="number" 
+            placeholder=""
+            value={wager} 
+            onChange={(e) => setWager(e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))} 
+            className={`w-full px-4 py-3 font-mono text-xl ${theme.inputBg} outline-none`} 
+          />
+          
+          <button 
+            disabled={wager === '' || isInvalid}
+            className={`w-full py-4 mt-2 font-black italic text-2xl uppercase transition-all 
+              ${(wager === '' || isInvalid) 
+                ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
+                : theme.buttonBg}`}
+          >
+            {isInvalid ? 'INSUFFICIENT FUNDS' : 'INITIATE SLIP!'}
           </button>
         </div>
       </div>
