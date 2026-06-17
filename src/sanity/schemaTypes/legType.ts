@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity';
+import { defineField, defineType, defineArrayMember } from 'sanity';
 
 export const legType = defineType({
   name: 'leg',
@@ -17,7 +17,7 @@ export const legType = defineType({
       type: 'string',
       initialValue: 'breathingidle',
     }),
-   defineField({
+    defineField({
       name: 'category',
       title: 'category',
       type: 'string',
@@ -27,53 +27,30 @@ export const legType = defineType({
           { title: 'Lifting', value: 'lifting' },
           { title: 'Sports', value: 'sports' },
           { title: 'Cardio', value: 'cardio' },
-        { title: 'Calisthenics', value: 'calisthenics' },
-        { title: 'Outdoors', value: 'outdoors' },
-        { title: 'Recovery', value: 'recovery' },
+          { title: 'Calisthenics', value: 'calisthenics' },
+          { title: 'Outdoors', value: 'outdoors' },
+          { title: 'Recovery', value: 'recovery' },
         ],
       },
-      validation: (Rule) => Rule.required(),
     }),
+    // AQUÍ ESTÁ EL CAMBIO: Las variantes
     defineField({
-      name: 'regularTarget',
-      title: 'regular target description',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'regularReward',
-      title: 'regular credit reward',
-      type: 'number',
-      initialValue: 100,
-      validation: (Rule) => Rule.required().positive(),
-    }),
-    defineField({
-      name: 'regularAiPrompt',
-      title: 'regular AI prompt',
-      type: 'text',
-      rows: 3,
-      description: 'Instrucciones para la IA en modo normal.',
-    }),
-    defineField({
-      name: 'demonTarget',
-      title: '👹demon target description',
-      type: 'string',
-      description: 'Ej: "1RM @ 2x Bodyweight" o "AMRAP al fallo absoluto"',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'demonReward',
-      title: '👹 demon credit reward',
-      type: 'number',
-      initialValue: 350,
-      validation: (Rule) => Rule.required().positive(),
-    }),
-    defineField({
-      name: 'demonAiPrompt',
-      title: '👹 demon AI prompt',
-      type: 'text',
-      rows: 3,
-      description: 'Instrucciones despiadadas para la IA. Exige ver intensidad máxima.',
+      name: 'variants',
+      title: 'leg variants (max 5)',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            { name: 'name', type: 'string', title: 'variant name (ej: Cima, Fauna)' },
+            { name: 'isDemon', type: 'boolean', title: 'is demon mode?', initialValue: false },
+            { name: 'target', type: 'string', title: 'target description' },
+            { name: 'reward', type: 'number', title: 'credit reward' },
+            { name: 'aiPrompt', type: 'text', title: 'AI prompt', rows: 2 },
+          ],
+        }),
+      ],
+      validation: (Rule) => Rule.max(5).error('Puedes poner máximo 5 variantes.'),
     }),
     defineField({
       name: 'verificationMethod',
