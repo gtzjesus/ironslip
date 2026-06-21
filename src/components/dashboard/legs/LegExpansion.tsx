@@ -254,7 +254,7 @@ export default function LegExpansion({
                     </div>
                     
                     <div className="flex items-center gap-4">
-                      <span className={`text-xs font-mono font-bold transition-colors ${isExpanded || isVariantSelected ? 'text-white' : 'text-zinc-500'}`}>
+                      <span className={`text-xs font-mono font-bold transition-colors ${isExpanded || isVariantSelected ? 'text-iron-green' : 'text-zinc-500'}`}>
                         +{isDemonActive && v.isDemonSupported ? Math.round(v.reward * (v.demonMultiplier || 1.5)) : v.reward} 
                       </span>
                       <span className={`text-[10px] transition-transform duration-200 ${isExpanded ? 'rotate-180 text-iron-volt' : 'text-zinc-600'}`}>
@@ -271,20 +271,11 @@ export default function LegExpansion({
                   >
                     <div className="space-y-3 text-xs">
                       <div>
-                        <span className={theme.dataLabel}>Target Requirement</span>
+                        <span className={theme.dataLabel}>Target </span>
                         <p className="text-zinc-200 font-bold uppercase mt-0.5 tracking-wide text-sm">{v.target}</p>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-800/30">
-                        <div>
-                          <span className={theme.dataLabel}>Verification</span>
-                          <p className="font-bold text-zinc-300 uppercase mt-0.5 tracking-wider">{v.verificationMethod || 'GPS'}</p>
-                        </div>
-                        <div>
-                          <span className={theme.dataLabel}>Base Reward</span>
-                          <p className="font-mono text-zinc-400 font-bold mt-0.5">+{v.reward} Iron Credits</p>
-                        </div>
-                      </div>
+               
 
                       {v.isDemonSupported && (
                         <div 
@@ -316,7 +307,7 @@ export default function LegExpansion({
                             : 'bg-zinc-900 border-zinc-800 text-iron-volt hover:border-iron-volt'
                         }`}
                       >
-                        {isVariantSelected ? '[ - REMOVE VARIANT FROM COMBO ]' : '[ + ACTIVATE VARIANT FOR COMBO ]'}
+                        {isVariantSelected ? 'Remove' : 'Activate'}
                       </button>
 
                     </div>
