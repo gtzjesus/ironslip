@@ -19,11 +19,13 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
     ? (leg.demonReward ?? leg.creditReward ?? 350)
     : (leg.regularReward ?? leg.creditReward ?? 100);
 
-  const isDisabled = !isSignedIn || isAlreadyInSlip;
+  // 🔥 MODIFICADO: Ya no bloqueamos la tarjeta por estar en el slip, solo si no está logueado
+  const isDisabled = !isSignedIn;
 
   const handleCardClick = () => {
     if (!isDisabled) {
-      playSound('open-card' as any); // 🔊 Disparamos el sonido al abrir
+      // Si ya está en el slip, usamos un sonido de "re-apertura" o el clásico open-card para gestionar las variantes
+      playSound('open-card' as any); 
       onClick(leg);
     }
   };
@@ -32,17 +34,18 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
     <button
       onClick={handleCardClick}
       disabled={isDisabled}
-      className={`relative w-full text-left border-[0.5px] p-4 px-2 mb-1 overflow-hidden transition-all ${
+      className={`relative w-full text-left border-[0.5px] p-4 px-2 mb-1 overflow-hidden transition-all duration-300 ${
+        /* 🔥 NUEVO UX: Si está en el Slip, le metemos un glow amarillo volt destructor con bordes vivos */
         isAlreadyInSlip
-          ? 'border-zinc-800 bg-zinc-900/10 opacity-40 cursor-not-allowed'
+          ? 'border-iron-volt bg-iron-volt/[0.03] shadow-[inset_0_0_15px_rgba(163,230,53,0.08),0_0_20px_rgba(163,230,53,0.05)] cursor-pointer hover:bg-iron-volt/[0.06]'
           : isDemon
-          ? 'border-iron-red bg-zinc-950/20 cursor-pointer'
-          : 'bg-zinc-950 border-zinc-800 cursor-pointer'
-      } ${!isSignedIn ? 'cursor-default' : ''}`}
+          ? 'border-iron-red bg-zinc-950/20 cursor-pointer hover:border-white/40'
+          : 'bg-zinc-950 border-zinc-800 cursor-pointer hover:border-zinc-600'
+      } ${!isSignedIn ? 'cursor-default opacity-40' : ''}`}
     >
-      {/* 🦾 BACKGROUND AVATAR HOLOGRÁFICO */}
-      {isSignedIn && !isAlreadyInSlip && (
-        <div className="absolute inset-y-0 right-20 w-24 pointer-events-none z-0 opacity-45 select-none overflow-hidden">
+      {/* 🦾 BACKGROUND AVATAR HOLOGRÁFICO (Ahora también se renderiza si está en el slip para que no muera el arte) */}
+      {isSignedIn && (
+        <div className={`absolute inset-y-0 right-20 w-24 pointer-events-none z-0 select-none overflow-hidden transition-opacity ${isAlreadyInSlip ? 'opacity-60' : 'opacity-45'}`}>
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950 z-20" />
           <div className="w-40 h-40 absolute -bottom-18 -left-2 pointer-events-none z-10">
             <AvatarCanvas 
@@ -58,21 +61,23 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
       <div className="relative z-10 flex justify-between items-center">
         <div className="flex-1 min-w-0 pr-4">
           <p
-            className={`font-mono text-[8px] uppercase tracking-widest ${
+            className={`font-mono text-[8px] uppercase tracking-widest transition-colors ${
               isAlreadyInSlip
-                ? 'text-zinc-600'
+                ? 'text-iron-volt animate-pulse'
                 : isDemon
                 ? 'animate-pulse text-iron-red'
                 : 'text-zinc-500'
             }`}
           >
-            {isAlreadyInSlip ? '🔒' : isDemon ? 'DEMON 👹' : (leg.category || 'LIFTING')}
+            {/* 🔥 Quitamos el candado aburrido y ponemos tags de estatus vivos */}
+            {isAlreadyInSlip ? '⚡ ACTIVE' : isDemon ? 'DEMON 👹' : (leg.category || 'LIFTING')}
           </p>
 
           <h3
-            className={`font-black italic text-xl uppercase tracking-tighter truncate transition-all duration-500 ${
+            className={`font-black italic text-xl uppercase tracking-tighter truncate transition-all duration-300 ${
+              /* 🔥 Quitamos el line-through text-zinc-500 para mantener el texto brillante e informativo */
               isAlreadyInSlip
-                ? 'text-zinc-500 line-through' 
+                ? 'text-white' 
                 : isDemon
                 ? 'text-iron-red'
                 : 'text-white'
@@ -83,10 +88,16 @@ export default function LegCard({ leg, onClick, isSignedIn, isAlreadyInSlip }: L
         </div>
 
         <div className="text-right flex flex-col items-end justify-center shrink-0 min-w-[75px] z-30 bg-transparent">
+          {/* 🔥 MODIFICADO: Muestra los créditos base pero con un indicador premium de que está activo */}
           {isAlreadyInSlip ? (
-            <span className="text-[10px] font-mono uppercase font-bold text-iron-volt tracking-widest bg-iron-volt/10 px-2 py-0.5 border border-iron-volt/20">
-              [ IN SLIP ]
-            </span>
+            <div className="flex flex-col items-end leading-none">
+              <p className="font-black italic text-sm text-iron-volt">
+                +{displayReward}
+              </p>
+              <span className="text-[7px] font-mono uppercase font-black text-iron-volt tracking-wider mt-0.5 bg-iron-volt/10 px-1 py-0.5 border border-iron-volt/30 animate-pulse">
+                [ in play ]
+              </span>
+            </div>
           ) : (
             <p
               className={`font-black italic text-sm transition-all duration-500 ${

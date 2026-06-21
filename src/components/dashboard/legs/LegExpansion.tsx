@@ -8,23 +8,47 @@ interface LegExpansionProps {
   leg: any;
   onClose: () => void;
   onToggleSlip: (leg: any) => void;
-  isInSlip: boolean; // Nota: Ahora maneja si el componente raíz requiere lógica especial
+  isInSlip: boolean; 
+  currentSlipItems: any[]; // ⚡ NUEVA PROP: Recibe el array actual del carrito global
 }
 
 export default function LegExpansion({
   leg,
   onClose,
   onToggleSlip,
+  currentSlipItems = [] // Fallback seguro por si acaso
 }: LegExpansionProps) {
-  // Maneja qué acordeón está abierto visualmente para ver sus detalles
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  // 🔥 NUEVO: Guarda los índices de todas las variantes seleccionadas para el súper parlay
-  const [selectedVariants, setSelectedVariants] = useState<number[]>([]);
-  // Control de Demon Mode por cada variante individual
-  const [demonStates, setDemonStates] = useState<Record<number, boolean>>({});
-  
   const { playSound } = useSound();
   const displayCategory = (leg?.category || 'IRON').toUpperCase();
+
+  // ⚡ HIDRATACIÓN SÚPER INTERACTIVA DE VARIANTES
+  // Buscamos cuáles variantes de este leg en específico ya están registradas dentro del carrito global
+  const [selectedVariants, setSelectedVariants] = useState<number[]>(() => {
+    if (!leg?.variants) return [];
+    return leg.variants
+      .map((v: any, index: number) => {
+        // Replicamos exactamente las dos firmas de IDs mutados posibles para ver si existen en el slip
+        const idBase = `${leg._id}-${v.name}`;
+        const matchBase = currentSlipItems.some(item => item._id === idBase);
+        const matchDemon = currentSlipItems.some(item => item._id === `${idBase}-demon`);
+        return (matchBase || matchDemon) ? index : -1;
+      })
+      .filter((index: number) => index !== -1);
+  });
+
+  // ⚡ HIDRATACIÓN SÚPER INTERACTIVA DEL ESTADO DEMON
+  const [demonStates, setDemonStates] = useState<Record<number, boolean>>(() => {
+    if (!leg?.variants) return {};
+    const initialDemons: Record<number, boolean> = {};
+    leg.variants.forEach((v: any, index: number) => {
+      const matchDemon = currentSlipItems.some(item => item._id === `${leg._id}-${v.name}-demon`);
+      if (matchDemon) {
+        initialDemons[index] = true;
+      }
+    });
+    return initialDemons;
+  });
 
   const theme = {
     modalBg: 'bg-zinc-950',
@@ -42,14 +66,32 @@ export default function LegExpansion({
     playSound('select');
   };
 
-  // 🔥 NUEVO: Alterna la inclusión de una variante específica en el mega combo
+  // 🔥 CONFIGURADO: Ahora, remover desde la variante borra el ítem mutado del carrito global inmediatamente
   const toggleVariantSelection = (index: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // Evita que colapse/expanda el acordeón
+    e.stopPropagation();
     
     const isAlreadySelected = selectedVariants.includes(index);
+    const v = leg?.variants?.[index];
+    if (!v) return;
+
     if (isAlreadySelected) {
+      // 1. Remover visualmente del estado interno
       setSelectedVariants(prev => prev.filter(i => i !== index));
       playSound('remove');
+
+      // 2. Ejecutar remoción directa en el carrito global buscando las dos opciones de ID mutado
+      const isDemonActive = !!demonStates[index];
+      const targetId = `${leg._id}-${v.name}${isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
+      const itemInSlip = currentSlipItems.find(item => item._id === targetId);
+      
+      if (itemInSlip) {
+        onToggleSlip(itemInSlip); // Ejecuta el interruptor global para sacarlo
+      } else {
+        // Respaldo por si cambió de modo demon justo antes de deseleccionar
+        const alternativeId = `${leg._id}-${v.name}${!isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
+        const altItem = currentSlipItems.find(item => item._id === alternativeId);
+        if (altItem) onToggleSlip(altItem);
+      }
     } else {
       setSelectedVariants(prev => [...prev, index]);
       playSound('add');
@@ -58,21 +100,45 @@ export default function LegExpansion({
 
   const toggleDemonMode = (index: number, e: React.MouseEvent) => {
     e.stopPropagation(); 
-    const newState = !demonStates[index];
-    setDemonStates(prev => ({ ...prev, [index]: newState }));
+    const v = leg?.variants?.[index];
+    if (!v) return;
+
+    const oldDemonState = !!demonStates[index];
+    const newDemonState = !oldDemonState;
+    setDemonStates(prev => ({ ...prev, [index]: newDemonState }));
     
-    if (newState) {
+    if (newDemonState) {
       playSound('demon'); 
     } else {
       playSound('select');
     }
+
+    // 🔥 IMPORTANTE CRÍTICO: Si la variante ya estaba seleccionada y en el slip, mutar el demon
+    // requiere actualizar su ID en el tracker global para que no queden fantasmas desincronizados.
+    if (selectedVariants.includes(index)) {
+      const oldId = `${leg._id}-${v.name}${oldDemonState && v.isDemonSupported ? '-demon' : ''}`;
+      const oldItem = currentSlipItems.find(item => item._id === oldId);
+      if (oldItem) onToggleSlip(oldItem); // Remueve la versión vieja
+
+      const baseReward = v.reward || 0;
+      const finalReward = newDemonState && v.isDemonSupported
+        ? Math.round(baseReward * (v.demonMultiplier || 1.5))
+        : baseReward;
+
+      const updatedLeg = {
+        ...leg,
+        _id: `${leg._id}-${v.name}${newDemonState && v.isDemonSupported ? '-demon' : ''}`,
+        task: `${leg.task} (${v.name})${newDemonState && v.isDemonSupported ? ' 😈' : ''}`,
+        creditReward: finalReward,
+        requirementValue: v.target,
+        isDemonMode: newDemonState && v.isDemonSupported
+      };
+      onToggleSlip(updatedLeg); // Agrega la versión nueva con el multiplicador fresco
+    }
   };
 
-  // 🔥 MODIFICADO: Procesa e inyecta todas las variantes seleccionadas al Slip Tracker
+  // 🔥 MODIFICADO: Solo manda al slip las variantes que se acaban de activar y que aún NO estén en él
   const handleActionClick = () => {
-    if (selectedVariants.length === 0) return;
-
-    // Ejecutamos sonido de confirmación final del paquete de variantes
     playSound('confirm');
 
     selectedVariants.forEach((index) => {
@@ -80,22 +146,26 @@ export default function LegExpansion({
       if (!v) return;
 
       const isDemonActive = demonStates[index] && v.isDemonSupported;
+      const calculatedId = `${leg._id}-${v.name}${isDemonActive ? '-demon' : ''}`;
+
+      // Si este elemento específico ya vive en el carrito global, no lo volvemos a empujar
+      const alreadyExists = currentSlipItems.some(item => item._id === calculatedId);
+      if (alreadyExists) return;
+
       const baseReward = v.reward || 0;
       const finalReward = isDemonActive 
         ? Math.round(baseReward * (v.demonMultiplier || 1.5))
         : baseReward;
 
-      // Creamos la mutación individualizada para cada variante elegida
       const mutatedLeg = {
         ...leg,
-        _id: `${leg._id}-${v.name}${isDemonActive ? '-demon' : ''}`,
+        _id: calculatedId,
         task: `${leg.task} (${v.name})${isDemonActive ? ' 😈' : ''}`,
         creditReward: finalReward,
         requirementValue: v.target,
         isDemonMode: isDemonActive
       };
 
-      // Mandamos la leg mutada al carrito global del usuario
       onToggleSlip(mutatedLeg);
     });
 
@@ -106,13 +176,13 @@ export default function LegExpansion({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md p-0">
       <div className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle}`}>
         
-        {/* 🔥 NUEVO: WATERMARK MATRIX BACKGROUND (REPETIDA EN REJILLA Y CON MÁS VISIBILIDAD) */}
-        <div className="text-iron-volt  absolute inset-0 pointer-events-none overflow-hidden z-0 select-none  flex flex-col justify-between p-4 rotate-[-12deg] scale-105">
+        {/* WATERMARK BACKGROUND */}
+        <div className="text-iron-volt absolute inset-0 pointer-events-none overflow-hidden z-0 select-none flex flex-col justify-between p-4 rotate-[-12deg] scale-105">
           {Array.from({ length: 8 }).map((_, rowIndex) => (
             <div key={rowIndex} className="flex justify-between gap-8 whitespace-nowrap" style={{ transform: `translateX(${rowIndex % 2 === 0 ? '20px' : '-20px'})` }}>
               {Array.from({ length: 4 }).map((_, colIndex) => (
                 <span key={colIndex} className={theme.watermark}>
-                  {displayCategory} // 
+                  {displayCategory}
                 </span>
               ))}
             </div>
@@ -123,7 +193,6 @@ export default function LegExpansion({
         <div className="p-5 pt-6 relative z-10 flex justify-between items-start bg-gradient-to-b from-zinc-950 to-transparent">
           <div>
             <h2 className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter`}>{leg.task}</h2>
-            <p className="text-[10px] text-zinc-400 font-mono tracking-widest mt-1">SINGLE REVENUE COMBO ENGINE</p>
           </div>
           <button 
             onClick={() => { playSound('close'); onClose(); }} 
@@ -144,7 +213,7 @@ export default function LegExpansion({
             </div>
           </div>
 
-          {/* VERTICALLY STACKED ACCORDION VARIANTS */}
+          {/* ACCORDION VARIANTS */}
           <div className="space-y-2">
             <span className="text-[10px] font-black tracking-widest text-iron-volt/60 uppercase block mb-1 font-mono">
               [ Build Activity Multi-Slip Parlay ]
@@ -170,7 +239,6 @@ export default function LegExpansion({
                   {/* ACCORDION HEADER */}
                   <div className="p-4 flex justify-between items-center select-none">
                     <div className="flex items-center gap-3">
-                      {/* Checkbox de estado de videojuego */}
                       <div 
                         onClick={(e) => toggleVariantSelection(i, e)}
                         className={`w-4 h-4 border flex items-center justify-center font-mono text-[10px] transition-all ${
@@ -219,7 +287,6 @@ export default function LegExpansion({
                         </div>
                       </div>
 
-                      {/* DEMON MODE INTEGRATION */}
                       {v.isDemonSupported && (
                         <div 
                           onClick={(e) => toggleDemonMode(i, e)}
@@ -241,7 +308,6 @@ export default function LegExpansion({
                         </div>
                       )}
 
-                      {/* QUICK INTERACTION BUTTON INSIDE ACCORDION */}
                       <button
                         type="button"
                         onClick={(e) => toggleVariantSelection(i, e)}
@@ -267,17 +333,12 @@ export default function LegExpansion({
         {/* FOOTER */}
         <div className="p-4 border-t border-zinc-900 z-10 bg-zinc-950/90 backdrop-blur-md">
           <button 
-            disabled={selectedVariants.length === 0}
             onClick={handleActionClick} 
-            className={`w-full py-4 font-black uppercase text-xl transition-all tracking-wider rounded-xs ${
-              selectedVariants.length > 0 
-                ? theme.buttonBg 
-                : 'bg-zinc-900/50 border border-zinc-800/80 text-zinc-600 cursor-not-allowed'
-            }`}
+            className="w-full py-4 font-black uppercase text-xl transition-all tracking-wider rounded-xs bg-iron-volt text-black hover:bg-white"
           >
             {selectedVariants.length > 0 
-              ? `LOCK IN ${selectedVariants.length} SELECTED QUESTS` 
-              : 'SELECT AT LEAST ONE QUEST'}
+              ? `CONFIRM PARLAY COMBO` 
+              : 'CLOSE MATRIX EXPANSION'}
           </button>
         </div>
       </div>

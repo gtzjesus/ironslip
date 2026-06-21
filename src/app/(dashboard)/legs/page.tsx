@@ -194,6 +194,8 @@ export default function LegsPage() {
           onClose={() => setSelectedLeg(null)}
           onToggleSlip={toggleLegInSlip}
           isInSlip={activeSlip.some((item) => item._id.startsWith(selectedLeg._id))}
+          /* ⚡️ AQUÍ ESTABA EL DETALLE CRÍTICO: Inyectamos el estado actual para que el modal recuerde las selecciones anteriores */
+          currentSlipItems={activeSlip}
         />
       )}
     </main>

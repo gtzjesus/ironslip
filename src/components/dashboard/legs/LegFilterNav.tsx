@@ -2,6 +2,8 @@
 'use client';
 
 import { useMemo } from 'react';
+// 🔥 IMPORTAMOS TU HOOK DE SONIDO
+import { useSound } from '@/hooks/useSound';
 
 interface LegFilterNavProps {
   activeCategory: string;
@@ -14,6 +16,8 @@ export default function LegFilterNav({
   onCategoryChange,
   legs,
 }: LegFilterNavProps) {
+  // 🔥 INICIALIZAMOS EL MOTOR DE AUDIO
+  const { playSound } = useSound();
   
   // 🧠 CÁLCULO DINÁMICO: Extrae categorías únicas de tus ejercicios
   const categories = useMemo(() => {
@@ -34,7 +38,12 @@ export default function LegFilterNav({
         return (
           <button
             key={cat.value}
-            onClick={() => onCategoryChange(cat.value)}
+            onClick={() => {
+              if (!isActive) {
+                playSound('open-card');
+              }
+              onCategoryChange(cat.value);
+            }}
             className={`
               flex-shrink-0 px-3 py-2 font-mono text-[10px] uppercase tracking-widest border transition-all duration-200
               ${
