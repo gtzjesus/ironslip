@@ -196,7 +196,7 @@ export default function LegExpansion({
           </div>
           <button 
             onClick={() => { playSound('close'); onClose(); }} 
-            className="text-black bg-iron-volt hover:bg-white px-2 py-1 text-xs font-bold transition-all duration-150 relative z-20"
+            className="text-black bg-iron-red hover:bg-white px-2 py-1 text-xs font-bold transition-all duration-150 relative z-20"
           >
             [ X ]
           </button>
@@ -206,17 +206,16 @@ export default function LegExpansion({
         <div className="flex-1 overflow-y-auto p-5 space-y-4 relative z-10 custom-scrollbar">
           
           {/* AVATAR CANVAS PREVIEW */}
-          <div className="w-full h-44 border border-zinc-900 bg-zinc-950/80 backdrop-blur-sm flex items-center justify-center relative rounded-sm overflow-hidden shadow-inner">
+          <div className="w-full h-54  border-zinc-900 bg-zinc-950/80 backdrop-blur-sm flex items-center justify-center relative  overflow-hidden shadow-inner">
             <AvatarCanvas avatarUrl="/models/avatar.glb" activeAnimation={leg.animationKey || 'breathingidle'} />
-            <div className="absolute bottom-2 right-2 bg-black/75 px-2 py-1 text-[9px] text-zinc-500 font-mono uppercase tracking-widest border border-zinc-800">
-              Live Preview Engine
+            <div className="absolute bottom-2 right-2  px-2 py-1 text-[9px] text-zinc-500 font-mono uppercase tracking-widest  border-zinc-800">
+              demo
             </div>
           </div>
 
           {/* ACCORDION VARIANTS */}
           <div className="space-y-2">
             <span className="text-[10px] font-black tracking-widest text-iron-volt/60 uppercase block mb-1 font-mono">
-              [ Build Activity Multi-Slip Parlay ]
             </span>
             
             {leg.variants?.map((v: any, i: number) => {
@@ -227,7 +226,7 @@ export default function LegExpansion({
               return (
                 <div 
                   key={i}
-                  className={`border transition-all duration-200 cursor-pointer overflow-hidden rounded-sm backdrop-blur-xs ${
+                  className={` transition-all duration-200 cursor-pointer overflow-hidden  backdrop-blur-xs ${
                     isVariantSelected
                       ? 'border-iron-volt bg-zinc-900/90 shadow-[0_0_15px_rgba(163,230,53,0.05)]'
                       : isExpanded 
@@ -256,7 +255,7 @@ export default function LegExpansion({
                     
                     <div className="flex items-center gap-4">
                       <span className={`text-xs font-mono font-bold transition-colors ${isExpanded || isVariantSelected ? 'text-white' : 'text-zinc-500'}`}>
-                        +{isDemonActive && v.isDemonSupported ? Math.round(v.reward * (v.demonMultiplier || 1.5)) : v.reward} CREDITS
+                        +{isDemonActive && v.isDemonSupported ? Math.round(v.reward * (v.demonMultiplier || 1.5)) : v.reward} 
                       </span>
                       <span className={`text-[10px] transition-transform duration-200 ${isExpanded ? 'rotate-180 text-iron-volt' : 'text-zinc-600'}`}>
                         ▼
@@ -290,7 +289,7 @@ export default function LegExpansion({
                       {v.isDemonSupported && (
                         <div 
                           onClick={(e) => toggleDemonMode(i, e)}
-                          className={`mt-3 p-3 flex justify-between items-center border transition-all rounded-xs ${
+                          className={`mt-3 p-3 flex justify-between items-center border transition-all  ${
                             isDemonActive 
                               ? 'bg-red-950/40 border-red-500 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.15)]' 
                               : 'bg-zinc-950 border-zinc-800/80 text-zinc-500 hover:border-zinc-700'
@@ -302,8 +301,8 @@ export default function LegExpansion({
                             </span>
                             <span className="text-[9px] opacity-70">Boost execution difficulty for extreme payouts</span>
                           </div>
-                          <div className={`w-8 h-4 rounded-full p-0.5 transition-colors duration-200 ${isDemonActive ? 'bg-red-600' : 'bg-zinc-800'}`}>
-                            <div className={`bg-white w-3 h-3 rounded-full transition-transform duration-200 ${isDemonActive ? 'translate-x-4' : 'translate-x-0'}`} />
+                          <div className={`w-8 h-4  p-0.5 transition-colors duration-200 ${isDemonActive ? 'bg-red-600' : 'bg-zinc-800'}`}>
+                            <div className={`bg-white w-3 h-3  transition-transform duration-200 ${isDemonActive ? 'translate-x-4' : 'translate-x-0'}`} />
                           </div>
                         </div>
                       )}
@@ -334,11 +333,11 @@ export default function LegExpansion({
         <div className="p-4 border-t border-zinc-900 z-10 bg-zinc-950/90 backdrop-blur-md">
           <button 
             onClick={handleActionClick} 
-            className="w-full py-4 font-black uppercase text-xl transition-all tracking-wider rounded-xs bg-iron-volt text-black hover:bg-white"
+            className="text-black font-black italic text-xl uppercase leading-none w-full py-4 font-black uppercase text-xl transition-all tracking-wider  bg-iron-volt text-black hover:bg-white"
           >
             {selectedVariants.length > 0 
-              ? `CONFIRM PARLAY COMBO` 
-              : 'CLOSE MATRIX EXPANSION'}
+              ? `Add to slip` 
+              : 'back out'}
           </button>
         </div>
       </div>
