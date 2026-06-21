@@ -64,14 +64,25 @@ export default function LegsPage() {
     return legs.filter((leg: any) => leg.category === activeCategory);
   }, [legs, activeCategory]);
 
-  const toggleLegInSlip = (leg: any) => {
-    const exists = activeSlip.find((l) => l._id === leg._id);
-    if (exists) {
-      setActiveSlip(activeSlip.filter((l) => l._id !== leg._id));
-    } else {
-      if (activeSlip.length >= 5) return alert('MAX_CAPACITY: 5_LEGS');
-      setActiveSlip([...activeSlip, leg]);
-    }
+  // 🔥 MODIFICADO: Sistema acumulador funcional preparado para Single Activity Parlays masivos
+  const toggleLegInSlip = (mutatedLeg: any) => {
+    setActiveSlip((prevSlip) => {
+      // Validamos usando el ID mutado único (ej: "id-NombreVariante") para que puedan coexistir en el parlay
+      const exists = prevSlip.some((l) => l._id === mutatedLeg._id);
+      
+      if (exists) {
+        // Si el usuario remueve la variante exacta, la limpiamos del slip
+        return prevSlip.filter((l) => l._id !== mutatedLeg._id);
+      } else {
+        // Alerta de seguridad usando el estado real previo acumulado en el ciclo
+        if (prevSlip.length >= 5) {
+          alert('MAX_CAPACITY: 5_LEGS');
+          return prevSlip;
+        }
+        // Inyectamos la variante al combo de manera exitosa
+        return [...prevSlip, mutatedLeg];
+      }
+    });
   };
 
   const handleClearSlipData = () => {
@@ -144,15 +155,16 @@ export default function LegsPage() {
           </div>
         ) : (
           <div className="grid gap-1 pb-32">
-          {filteredLegs.map((leg: any) => (
-            <LegCard
-              key={leg._id}
-              leg={leg}
-              isSignedIn={!!isSignedIn}
-              onClick={(l) => setSelectedLeg(l)}
-              isAlreadyInSlip={activeSlip.some((item: any) => item._id.includes(leg._id))}
-            />
-          ))}
+            {filteredLegs.map((leg: any) => (
+              <LegCard
+                key={leg._id}
+                leg={leg}
+                isSignedIn={!!isSignedIn}
+                onClick={(l) => setSelectedLeg(l)}
+                /* 🔥 CORRECCIÓN: Comprobamos si al menos una variante de este ID base de Sanity está activa en el slip actual */
+                isAlreadyInSlip={activeSlip.some((item: any) => item._id.startsWith(leg._id))}
+              />
+            ))}
             <div className="mt-8 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
@@ -181,7 +193,7 @@ export default function LegsPage() {
           leg={selectedLeg}
           onClose={() => setSelectedLeg(null)}
           onToggleSlip={toggleLegInSlip}
-       isInSlip={activeSlip.some((item) => item._id.includes(selectedLeg._id))}
+          isInSlip={activeSlip.some((item) => item._id.startsWith(selectedLeg._id))}
         />
       )}
     </main>

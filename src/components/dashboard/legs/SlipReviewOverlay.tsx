@@ -79,11 +79,14 @@ export default function SlipReviewOverlay({
 
         <div className="flex-1 overflow-y-auto p-6 space-y-2 z-10">
           {activeSlip.map((leg: any) => (
+            /* 🔥 CORRECCIÓN CLAVE: Usamos leg._id completo (mutado de forma única por variante) para que React renderice los 3+ distintos */
             <div key={leg._id} className="flex justify-between items-center p-4 bg-black/40 border border-white/5">
-              <span className="font-black italic uppercase">{leg.task}</span>
+              <span className="font-black italic uppercase text-sm tracking-tight">{leg.task}</span>
               <div className="flex items-center gap-4">
                 <span className="font-mono text-sm text-iron-volt">+{leg.creditReward}</span>
-                <button onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }}><Trash2 className="w-4 h-4 text-zinc-500" /></button>
+                <button onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }} className="hover:scale-110 active:scale-90 transition-transform">
+                  <Trash2 className="w-4 h-4 text-zinc-500 hover:text-red-400" />
+                </button>
               </div>
             </div>
           ))}
@@ -114,7 +117,7 @@ export default function SlipReviewOverlay({
           <button 
             disabled={!isParlayValid || wager === '' || isInvalid}
             className={`w-full py-4 mt-2 font-black italic text-2xl uppercase transition-all 
-              ${(!isParlayValid || wager === '' || isInvalid) 
+              {(!isParlayValid || wager === '' || isInvalid) 
                 ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
                 : theme.buttonBg}`}
           >

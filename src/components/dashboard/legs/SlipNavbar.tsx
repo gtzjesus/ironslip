@@ -21,15 +21,16 @@ export default function SlipNavbar({
   const [isExpanded, setIsExpanded] = useState(false);
   const { playSound } = useSound();
 
-  // Reset de seguridad: Si el slip se vacía, forzamos el cierre del overlay
+  // Reset de seguridad: Si el slip se vacía por completo, forzamos el cierre del overlay
   useEffect(() => {
     if (activeSlip.length === 0) {
       setIsExpanded(false);
     }
   }, [activeSlip.length]);
 
+  // 🔥 MEJORADO: Comprueba de forma robusta si alguna variante activa del combo tiene activado el Demon Mode
   const hasDemon = activeSlip.some(
-    (leg) => leg.isDemon || leg.difficulty === 'demon',
+    (leg) => leg.isDemonMode || leg.isDemon || leg.difficulty === 'demon',
   );
 
   if (activeSlip.length === 0) return null;
