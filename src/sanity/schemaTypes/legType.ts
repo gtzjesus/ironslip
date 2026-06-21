@@ -33,7 +33,6 @@ export const legType = defineType({
         ],
       },
     }),
-    // AQUÍ ESTÁ EL CAMBIO: Las variantes
     defineField({
       name: 'variants',
       title: 'leg variants (max 5)',
@@ -42,27 +41,29 @@ export const legType = defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            { name: 'name', type: 'string', title: 'variant name (ej: Cima, Fauna)' },
-            { name: 'isDemon', type: 'boolean', title: 'is demon mode?', initialValue: false },
+            { name: 'name', type: 'string', title: 'variant name' },
             { name: 'target', type: 'string', title: 'target description' },
-            { name: 'reward', type: 'number', title: 'credit reward' },
+            { 
+              name: 'reward', 
+              type: 'number', 
+              title: 'base reward' 
+            },
+            // Aquí movemos la verificación a la variante
+            { 
+              name: 'verificationMethod', 
+              type: 'string', 
+              title: 'verification method',
+              initialValue: 'video',
+              options: { list: [{title: 'video', value: 'video'}, {title: 'photo', value: 'photo'}] }
+            },
             { name: 'aiPrompt', type: 'text', title: 'AI prompt', rows: 2 },
+            // Configuración Demon integrada en la variante
+            { name: 'isDemonSupported', type: 'boolean', title: 'allow demon mode?', initialValue: false },
+            { name: 'demonMultiplier', type: 'number', title: 'demon reward multiplier', initialValue: 1.5, description: 'Ej: 1.5 significa 50% extra' },
           ],
         }),
       ],
-      validation: (Rule) => Rule.max(5).error('Puedes poner máximo 5 variantes.'),
-    }),
-    defineField({
-      name: 'verificationMethod',
-      title: 'verification method',
-      type: 'string',
-      initialValue: 'video',
-      options: {
-        list: [
-          { title: 'video', value: 'video' },
-          { title: 'photo', value: 'photo' },
-        ],
-      },
+      validation: (Rule) => Rule.max(5),
     }),
   ],
 });

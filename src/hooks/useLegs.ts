@@ -8,17 +8,21 @@ export function useLegs() {
   useEffect(() => {
     const fetchLegs = async () => {
       try {
-        // 🔥 QUERY DE GROQ CORREGIDO Y BLINDADO
+        // 🔥 QUERY ACTUALIZADA CON EL NUEVO ESQUEMA
         const query = `*[_type == "leg"] | order(_createdAt desc) {
           _id,
           task,
-          animationKey, // 🟢 ¡INYECCIÓN CRÍTICA! Ahora la data sí viaja a la UI
+          animationKey,
           category,
-          regularTarget,
-          regularReward,
-          demonTarget,
-          demonReward,
-          verificationMethod
+          variants[] {
+            name,
+            target,
+            reward,
+            verificationMethod,
+            aiPrompt,
+            isDemonSupported,
+            demonMultiplier
+          }
         }`;
         
         const data = await client.fetch(query);
