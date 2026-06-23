@@ -22,17 +22,17 @@ export default function LegExpansion({
   const { playSound } = useSound();
   const displayCategory = (leg?.category || 'IRON').toUpperCase();
 
-  // 🔋 OPTIMIZACIÓN DE RENDIMIENTO: Espera a que termine el slam de animación para encender WebGL
+  // 🔋 OPTIMIZACIÓN DE RENDIMIENTO: Espera a que termine la animación para WebGL
   const [is3DReady, setIs3DReady] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIs3DReady(true);
-    }, 150); // Delay milimétrico óptimo para dar paso al renderizado fluido
+    }, 150);
     return () => clearTimeout(timer);
   }, []);
 
-  // ⚡ HIDRATACIÓN SÚPER INTERACTIVA DE VARIANTES
+  // ⚡ HIDRATACIÓN SÚPER INTERACTIVA DE VARIANTES EN BASE AL SLIP GLOBAL
   const [selectedVariants, setSelectedVariants] = useState<number[]>(() => {
     if (!leg?.variants) return [];
     return leg.variants
@@ -83,6 +83,7 @@ export default function LegExpansion({
     playSound('select');
   };
 
+  // 🔥 CONFIGURACIÓN ULTRA-UX: Agrega o remueve del Slip global en tiempo real al hacer clic
   const toggleVariantSelection = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -90,14 +91,18 @@ export default function LegExpansion({
     const v = leg?.variants?.[index];
     if (!v) return;
 
+    const isDemonActive = !!demonStates[index];
+    const calculatedId = `${leg._id}-${v.name}${isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
+
     if (isAlreadySelected) {
+      // 1. Remover visualmente
       setSelectedVariants((prev) => prev.filter((i) => i !== index));
       playSound('remove');
 
-      const isDemonActive = !!demonStates[index];
-      const targetId = `${leg._id}-${v.name}${isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
-      const itemInSlip = currentSlipItems.find((item) => item._id === targetId);
-
+      // 2. Despachar remoción directa e inmediata en el slip tracker global
+      const itemInSlip = currentSlipItems.find(
+        (item) => item._id === calculatedId,
+      );
       if (itemInSlip) {
         onToggleSlip(itemInSlip);
       } else {
@@ -108,8 +113,32 @@ export default function LegExpansion({
         if (altItem) onToggleSlip(altItem);
       }
     } else {
+      // 🚨 Alerta preventiva: Validamos el cap del slip antes de meterlo
+      if (currentSlipItems.length >= 5) {
+        alert('MAX_CAPACITY: 5_LEGS');
+        return;
+      }
+
       setSelectedVariants((prev) => [...prev, index]);
       playSound('add');
+
+      // Calcular recompensa exacta e inyectar al slip de inmediato
+      const baseReward = v.reward || 0;
+      const finalReward =
+        isDemonActive && v.isDemonSupported
+          ? Math.round(baseReward * (v.demonMultiplier || 1.5))
+          : baseReward;
+
+      const mutatedLeg = {
+        ...leg,
+        _id: calculatedId,
+        task: `${leg.task} (${v.name})${isDemonActive && v.isDemonSupported ? ' 😈' : ''}`,
+        creditReward: finalReward,
+        requirementValue: v.target,
+        isDemonMode: isDemonActive && v.isDemonSupported,
+      };
+
+      onToggleSlip(mutatedLeg);
     }
   };
 
@@ -128,10 +157,11 @@ export default function LegExpansion({
       playSound('select');
     }
 
+    // Si ya estaba activo en el slip, actualizamos su payload e ID inmediatamente para evitar fantasmas
     if (selectedVariants.includes(index)) {
       const oldId = `${leg._id}-${v.name}${oldDemonState && v.isDemonSupported ? '-demon' : ''}`;
       const oldItem = currentSlipItems.find((item) => item._id === oldId);
-      if (oldItem) onToggleSlip(oldItem);
+      if (oldItem) onToggleSlip(oldItem); // Limpia versión anterior
 
       const baseReward = v.reward || 0;
       const finalReward =
@@ -147,43 +177,8 @@ export default function LegExpansion({
         requirementValue: v.target,
         isDemonMode: newDemonState && v.isDemonSupported,
       };
-      onToggleSlip(updatedLeg);
+      onToggleSlip(updatedLeg); // Sincroniza nueva versión
     }
-  };
-
-  const handleActionClick = () => {
-    playSound('confirm');
-
-    selectedVariants.forEach((index) => {
-      const v = leg?.variants?.[index];
-      if (!v) return;
-
-      const isDemonActive = demonStates[index] && v.isDemonSupported;
-      const calculatedId = `${leg._id}-${v.name}${isDemonActive ? '-demon' : ''}`;
-
-      const alreadyExists = currentSlipItems.some(
-        (item) => item._id === calculatedId,
-      );
-      if (alreadyExists) return;
-
-      const baseReward = v.reward || 0;
-      const finalReward = isDemonActive
-        ? Math.round(baseReward * (v.demonMultiplier || 1.5))
-        : baseReward;
-
-      const mutatedLeg = {
-        ...leg,
-        _id: calculatedId,
-        task: `${leg.task} (${v.name})${isDemonActive ? ' 😈' : ''}`,
-        creditReward: finalReward,
-        requirementValue: v.target,
-        isDemonMode: isDemonActive,
-      };
-
-      onToggleSlip(mutatedLeg);
-    });
-
-    onClose();
   };
 
   return (
@@ -232,7 +227,7 @@ export default function LegExpansion({
 
         {/* CONTENT AREA */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4 relative z-10 custom-scrollbar">
-          {/* AVATAR CANVAS PREVIEW CON OPTIMIZACIÓN LAZY */}
+          {/* AVATAR CANVAS PREVIEW */}
           <div className="w-full h-54 border-zinc-900 bg-zinc-950/80 backdrop-blur-sm flex items-center justify-center relative overflow-hidden shadow-inner">
             {is3DReady ? (
               <AvatarCanvas
@@ -249,8 +244,6 @@ export default function LegExpansion({
 
           {/* ACCORDION VARIANTS */}
           <div className="space-y-2">
-            <span className="text-[10px] font-black tracking-widest text-iron-volt/60 uppercase block mb-1 font-mono"></span>
-
             {leg.variants?.map((v: any, i: number) => {
               const isExpanded = expandedIndex === i;
               const isDemonActive = !!demonStates[i];
@@ -367,16 +360,6 @@ export default function LegExpansion({
               );
             })}
           </div>
-        </div>
-
-        {/* FOOTER */}
-        <div className="p-4 border-t border-zinc-900 z-10 bg-zinc-950/90 backdrop-blur-md">
-          <button
-            onClick={handleActionClick}
-            className="text-black font-black italic text-xl uppercase leading-none w-full py-4 font-black uppercase text-xl transition-all tracking-wider bg-iron-volt text-black hover:bg-white"
-          >
-            {selectedVariants.length > 0 ? `Add to slip` : 'back out'}
-          </button>
         </div>
       </div>
     </div>
