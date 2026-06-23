@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useEffect } from 'react';
-import { ChevronsRight, Lock } from 'lucide-react'; 
-import SlipReviewOverlay from './SlipReviewOverlay'; 
+import { useState } from 'react';
+import { ChevronsRight, Lock } from 'lucide-react';
+import SlipReviewOverlay from './SlipReviewOverlay';
 import { useSound } from '@/hooks/useSound';
 
 interface SlipNavbarProps {
@@ -21,19 +21,16 @@ export default function SlipNavbar({
   const [isExpanded, setIsExpanded] = useState(false);
   const { playSound } = useSound();
 
-  // Reset de seguridad: Si el slip se vacía por completo, forzamos el cierre del overlay
-  useEffect(() => {
-    if (activeSlip.length === 0) {
-      setIsExpanded(false);
-    }
-  }, [activeSlip.length]);
+  // Si no hay elementos en el slip, el componente no dibuja nada y no dispara efectos innecesarios
+  if (activeSlip.length === 0) return null;
 
-  // 🔥 MEJORADO: Comprueba de forma robusta si alguna variante activa del combo tiene activado el Demon Mode
+  // 🔥 SOLUCIÓN AL ERROR: Derivamos de forma segura si el overlay debe mostrarse.
+  // Si por alguna razón el slip se vacía externamente, evitamos mostrar el overlay de inmediato.
+  const isCurrentlyExpanded = isExpanded && activeSlip.length > 0;
+
   const hasDemon = activeSlip.some(
     (leg) => leg.isDemonMode || leg.isDemon || leg.difficulty === 'demon',
   );
-
-  if (activeSlip.length === 0) return null;
 
   const MIN_REVIEWS_REQUIRED = 1;
   const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
@@ -49,16 +46,18 @@ export default function SlipNavbar({
 
   return (
     <>
-      {!isExpanded && (
+      {!isCurrentlyExpanded && (
         <div className="fixed bottom-[64px] left-0 w-full z-[90] px-2 flex justify-center pointer-events-none animate-videogame-slam">
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
               onClick={handleExpand}
               className={`relative overflow-hidden border p-3.5 flex items-center justify-between transition-all duration-300 ${
-                isEligibleToExpand ? 'cursor-pointer active:scale-[0.98]' : 'cursor-not-allowed'
+                isEligibleToExpand
+                  ? 'cursor-pointer active:scale-[0.98]'
+                  : 'cursor-not-allowed'
               } ${
-                hasDemon 
-                  ? 'border-iron-red bg-iron-red shadow-lg shadow-black/80' 
+                hasDemon
+                  ? 'border-iron-red bg-iron-red shadow-lg shadow-black/80'
                   : 'bg-iron-volt border-iron-volt/40 shadow-lg shadow-black/80'
               }`}
             >
@@ -79,14 +78,14 @@ export default function SlipNavbar({
                   <p className="text-sm font-black uppercase tracking-tight italic leading-none text-black">
                     {hasDemon ? 'LOCK IN demon' : 'LOCK IN SLIP'}
                   </p>
-                </div>  
-                
-                <div 
+                </div>
+
+                <div
                   className={`p-2 transition-all duration-300 flex items-center justify-center border overflow-hidden w-9 h-9 flex-shrink-0 ${
-                    isEligibleToExpand 
-                      ? hasDemon 
-                        ? 'bg-zinc-900 border-iron-red/50 text-iron-red' 
-                        : 'bg-zinc-900 border-iron-volt text-iron-volt' 
+                    isEligibleToExpand
+                      ? hasDemon
+                        ? 'bg-zinc-900 border-iron-red/50 text-iron-red'
+                        : 'bg-zinc-900 border-iron-volt text-iron-volt'
                       : hasDemon
                         ? 'bg-zinc-900 border-zinc-800 text-zinc-600'
                         : 'bg-zinc-950 border-zinc-900 text-zinc-700'
@@ -99,7 +98,9 @@ export default function SlipNavbar({
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
                       <Lock className="w-2.5 h-2.5 mb-0.5 text-zinc-600" />
-                      <span className="text-[8px] font-mono font-black text-black">{legsNeeded}</span>
+                      <span className="text-[8px] font-mono font-black text-black">
+                        {legsNeeded}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -109,9 +110,9 @@ export default function SlipNavbar({
         </div>
       )}
 
-      {isExpanded && (
+      {isCurrentlyExpanded && (
         <SlipReviewOverlay
-          isOpen={isExpanded}
+          isOpen={isCurrentlyExpanded}
           onClose={() => setIsExpanded(false)}
           activeSlip={activeSlip}
           onRemoveLeg={onRemoveLeg}
