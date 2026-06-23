@@ -221,7 +221,7 @@ export default function LegExpansion({
             </h2>
           </div>
           <button
-            onClick={handleSafeClose}
+            onPointerDown={handleSafeClose} // 🔥 Cambiado de onClick a onPointerDown
             className="text-black bg-iron-red hover:bg-white px-2 py-1 text-xs font-bold transition-all duration-150 relative z-20"
           >
             [ X ]

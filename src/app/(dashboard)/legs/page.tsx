@@ -192,7 +192,13 @@ export default function LegsPage() {
       {selectedLeg && (
         <LegExpansion
           leg={selectedLeg}
-          onClose={() => setSelectedLeg(null)}
+          onClose={() => {
+            // 🔥 SOLUCIÓN DEFINITIVA: Retrasamos el desmontaje 10ms
+            // para que el click físico muera en el modal y no traspase al fondo.
+            setTimeout(() => {
+              setSelectedLeg(null);
+            }, 10);
+          }}
           onToggleSlip={toggleLegInSlip}
           isInSlip={activeSlipIds.has(selectedLeg._id)}
           currentSlipItems={activeSlip}
