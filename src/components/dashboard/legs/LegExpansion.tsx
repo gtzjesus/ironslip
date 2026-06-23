@@ -95,11 +95,9 @@ export default function LegExpansion({
     const calculatedId = `${leg._id}-${v.name}${isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
 
     if (isAlreadySelected) {
-      // 1. Remover visualmente
       setSelectedVariants((prev) => prev.filter((i) => i !== index));
       playSound('remove');
 
-      // 2. Despachar remoción directa e inmediata en el slip tracker global
       const itemInSlip = currentSlipItems.find(
         (item) => item._id === calculatedId,
       );
@@ -113,7 +111,6 @@ export default function LegExpansion({
         if (altItem) onToggleSlip(altItem);
       }
     } else {
-      // 🚨 Alerta preventiva: Validamos el cap del slip antes de meterlo
       if (currentSlipItems.length >= 5) {
         alert('MAX_CAPACITY: 5_LEGS');
         return;
@@ -122,7 +119,6 @@ export default function LegExpansion({
       setSelectedVariants((prev) => [...prev, index]);
       playSound('add');
 
-      // Calcular recompensa exacta e inyectar al slip de inmediato
       const baseReward = v.reward || 0;
       const finalReward =
         isDemonActive && v.isDemonSupported
@@ -157,11 +153,10 @@ export default function LegExpansion({
       playSound('select');
     }
 
-    // Si ya estaba activo en el slip, actualizamos su payload e ID inmediatamente para evitar fantasmas
     if (selectedVariants.includes(index)) {
       const oldId = `${leg._id}-${v.name}${oldDemonState && v.isDemonSupported ? '-demon' : ''}`;
       const oldItem = currentSlipItems.find((item) => item._id === oldId);
-      if (oldItem) onToggleSlip(oldItem); // Limpia versión anterior
+      if (oldItem) onToggleSlip(oldItem);
 
       const baseReward = v.reward || 0;
       const finalReward =
@@ -177,12 +172,23 @@ export default function LegExpansion({
         requirementValue: v.target,
         isDemonMode: newDemonState && v.isDemonSupported,
       };
-      onToggleSlip(updatedLeg); // Sincroniza nueva versión
+      onToggleSlip(updatedLeg);
     }
   };
 
+  // 🔥 MANEJADOR DE CIERRE SEGURO: Frena en seco cualquier propagación al layout de atrás
+  const handleSafeClose = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    playSound('close');
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md p-0">
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md p-0"
+    >
       <div
         className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle}`}
       >
@@ -215,10 +221,7 @@ export default function LegExpansion({
             </h2>
           </div>
           <button
-            onClick={() => {
-              playSound('close');
-              onClose();
-            }}
+            onClick={handleSafeClose}
             className="text-black bg-iron-red hover:bg-white px-2 py-1 text-xs font-bold transition-all duration-150 relative z-20"
           >
             [ X ]
