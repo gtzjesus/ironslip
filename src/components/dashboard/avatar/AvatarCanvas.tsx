@@ -3,7 +3,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
@@ -13,31 +13,53 @@ interface AvatarCanvasProps {
   isDemon?: boolean;
 }
 
-function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation: string; isDemon: boolean }) {
+function Model({
+  url,
+  activeAnimation,
+  isDemon,
+}: {
+  url: string;
+  activeAnimation: string;
+  isDemon: boolean;
+}) {
   const group = useRef<THREE.Group>(null);
   const previousAnimation = useRef<string>('');
-  
+
   const { scene, animations } = useGLTF(url);
-  const clone = SkeletonUtils.clone(scene);
+  const clonedScene = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
-    console.log(`🤖 Model [${url}] cargado. Animaciones en memoria:`, Object.keys(actions));
-  }, [actions, url]);
+    // ⚡️ OPTIMIZACIÓN DE MATERIALES: Forzamos a que Three.js use shaders más simples
+    clonedScene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;
+
+        // Si el material es muy complejo, reducimos su costo de renderizado
+        if (mesh.material) {
+          const mat = mesh.material as any;
+          mat.roughness = Math.max(mat.roughness, 0.7); // Menos reflejos = más rápido
+          mat.metalness = Math.min(mat.metalness, 0.3);
+        }
+      }
+    });
+  }, [clonedScene]);
 
   useEffect(() => {
     const currentAction = actions[activeAnimation];
     if (currentAction) {
-      if (previousAnimation.current && previousAnimation.current !== activeAnimation) {
-        actions[previousAnimation.current]?.fadeOut(0.3);
+      if (
+        previousAnimation.current &&
+        previousAnimation.current !== activeAnimation
+      ) {
+        actions[previousAnimation.current]?.fadeOut(0.2);
       }
-      
-      // 👹 Si es modo demonio, la animación corre 25% más rápido (frenética)
+
       currentAction.setEffectiveTimeScale(isDemon ? 1.25 : 1.0);
-      currentAction.reset().fadeIn(0.3).play();
+      currentAction.reset().fadeIn(0.2).play();
       previousAnimation.current = activeAnimation;
-    } else {
-      console.warn(`⚠️ La animación "${activeAnimation}" no se encuentra en este modelo GLB.`);
     }
 
     return () => {
@@ -46,65 +68,79 @@ function Model({ url, activeAnimation, isDemon }: { url: string; activeAnimation
   }, [actions, activeAnimation, isDemon]);
 
   return (
-    // 💥 TRUCO MAESTRO: Rotamos el contenedor del modelo en el eje Y (0.5 radianes es aprox 30 grados)
-    // Esto hace que aparezca rotado por defecto hacia la derecha/diagonal de entrada.
     <group ref={group} dispose={null} rotation={[0, -0.75, 0]}>
-      <primitive 
-        object={clone} 
-        scale={1.95}           
-        // Mantiene el offset hacia la izquierda de la pantalla
-        position={[-0.6, -3.9, 0]} 
-      />
+      <primitive object={clonedScene} scale={1.95} position={[-0.6, -3.9, 0]} />
     </group>
   );
 }
 
-export default function AvatarCanvas({ 
-  avatarUrl, 
-  activeAnimation, 
-  isDemon = false
+export default function AvatarCanvas({
+  avatarUrl,
+  activeAnimation,
+  isDemon = false,
 }: AvatarCanvasProps) {
   return (
     <div className="w-full h-full relative overflow-hidden z-0 flex items-center justify-center bg-transparent">
       <Suspense fallback={null}>
-        <Canvas 
+        <Canvas
           className="w-full h-full"
-          // Cámara limpia frontal original
           camera={{ position: [0, 0, 6.5], fov: 42 }}
-          gl={{ preserveDrawingBuffer: true }}
+          // 📊 EL SECOTO PARA TELÉFONOS VIEJOS:
+          dpr={1} // ⚡️ Forzamos resolución 1:1 estándar. Cero pixeles extra de pantallas Retina.
+          gl={{
+            preserveDrawingBuffer: false,
+            powerPreference: 'high-performance',
+            antialias: false, // ❌ Apagado para ahorrar el 30% de GPU
+            precision: 'mediump', // 📉 Baja la precisión matemática de los shaders para mejorar FPS
+            alpha: true,
+          }}
         >
-          {/* ILUMINACIÓN GLOBAL */}
+          {/* Bajamos la cantidad de luces. Menos luces = menos cálculos por pixel */}
           <ambientLight intensity={isDemon ? 0.4 : 0.8} />
-          
-          {/* ⚡️ MODO STANDARD: ENERGÍA IRON VOLT (#F1C232) */}
+
           {!isDemon && (
             <>
-              <directionalLight position={[0, 5, 5]} intensity={1.5} />
-              <pointLight position={[3, -1, 2]} intensity={8} color="#F1C232" distance={7} decay={1.2} />
-              <directionalLight position={[-4, 2, -2]} intensity={0.8} color="#fffebb" />
+              <directionalLight position={[0, 5, 5]} intensity={1.0} />
+              <pointLight
+                position={[3, -1, 2]}
+                intensity={4}
+                color="#F1C232"
+                distance={4}
+                decay={2}
+              />
             </>
           )}
 
-          {/* 👹 MODO DEMON: FURIA CARMESÍ DESDE EL INFIERNO */}
           {isDemon && (
             <>
-              <pointLight position={[0, -3, 2]} intensity={12} color="#ef4444" distance={8} decay={1.5} />
-              <directionalLight position={[3, 5, 2]} intensity={2} color="#ff8888" />
-              <directionalLight position={[-3, -1, -2]} intensity={1.5} color="#450a0a" />
+              <pointLight
+                position={[0, -3, 2]}
+                intensity={6}
+                color="#ef4444"
+                distance={4}
+                decay={2}
+              />
+              <directionalLight
+                position={[3, 5, 2]}
+                intensity={1.0}
+                color="#ff8888"
+              />
             </>
           )}
 
-          <Model url={avatarUrl} activeAnimation={activeAnimation} isDemon={isDemon} />
+          <Model
+            url={avatarUrl}
+            activeAnimation={activeAnimation}
+            isDemon={isDemon}
+          />
 
-          <OrbitControls 
+          <OrbitControls
             enableZoom={false}
             enablePan={false}
-            // El pivote de rotación sigue al mono desplazado a la izquierda
             target={[-0.6, 0, 0]}
-            // Mantenemos tus candados frontales exactos para el mouse/touch
-            minAzimuthAngle={-Math.PI / 4} 
+            minAzimuthAngle={-Math.PI / 4}
             maxAzimuthAngle={Math.PI / 4}
-            minPolarAngle={1.2} 
+            minPolarAngle={1.2}
             maxPolarAngle={1.8}
           />
         </Canvas>

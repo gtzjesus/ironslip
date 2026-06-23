@@ -1,18 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-// ◄ OPTIMIZED: Framer Motion imports are completely stripped out to save bundle size and memory overhead
-import { SlidersHorizontal, ChevronUp } from 'lucide-react'; 
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { SlidersHorizontal, ChevronUp } from 'lucide-react';
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
 import LegsHeader from '@/components/dashboard/legs/Legsheader';
 import LegCard from '@/components/dashboard/legs/LegCard';
 import LegExpansion from '@/components/dashboard/legs/LegExpansion';
 import LegFilterNav from '@/components/dashboard/legs/LegFilterNav';
-import SlipNavbar from '@/components/dashboard/legs/SlipNavbar'; 
+import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
 
-// 🔥 IMPORTAMOS TU MOTOR FINANCIERO REAL
 import { getUserBalance } from '@/actions/supabase/slips';
 
 export default function LegsPage() {
@@ -21,18 +19,31 @@ export default function LegsPage() {
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [activeSlip, setActiveSlip] = useState<any[]>([]);
-
-  // 🧠 EL BALANCE EMPIEZA EN 0 Y SE LLENA CON DATA REAL DE SUPABASE
   const [userBalance, setUserBalance] = useState<number>(0);
 
-  // 🔥 SINCRONIZACIÓN BANCARIA EN VIVO
+  // 🧠 SOLUCIÓN AL ERROR: Inicialización perezosa (Lazy State).
+  // Lee de localStorage antes del primer render, evitando renders en cascada.
+  const [activeSlip, setActiveSlip] = useState<any[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedDraft = localStorage.getItem('iron_slip_draft');
+      if (savedDraft) {
+        try {
+          return JSON.parse(savedDraft);
+        } catch (error) {
+          console.error('Failed parsing slip draft initialization:', error);
+        }
+      }
+    }
+    return [];
+  });
+
+  // Sincronización bancaria en vivo
   useEffect(() => {
     async function syncWallet() {
       if (isLoaded && isSignedIn) {
         const res = await getUserBalance();
         if (res.success) {
-          setUserBalance(res.credits); // ⚡️ Inyección de tus créditos reales de la base de datos
+          setUserBalance(res.credits);
         } else {
           console.error('Failed to sync live wallet credits:', res.error);
         }
@@ -41,70 +52,62 @@ export default function LegsPage() {
     syncWallet();
   }, [isLoaded, isSignedIn]);
 
-  // Manejo de borradores locales en localStorage
-  useEffect(() => {
-    const savedDraft = localStorage.getItem('iron_slip_draft');
-    if (savedDraft) {
-      try {
-        setActiveSlip(JSON.parse(savedDraft));
-      } catch (error) {
-        console.error('Failed parsing slip draft:', error);
-      }
-    }
-  }, []);
-
+  // Sincronizar cambios del slip hacia localStorage (Único efecto de almacenamiento activo)
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('iron_slip_draft', JSON.stringify(activeSlip));
     }
   }, [activeSlip, isLoaded]);
 
+  // Filtrado de Legs en memoria
   const filteredLegs = useMemo(() => {
     if (activeCategory === 'all') return legs;
     return legs.filter((leg: any) => leg.category === activeCategory);
   }, [legs, activeCategory]);
 
-  // 🔥 MODIFICADO: Sistema acumulador funcional preparado para Single Activity Parlays masivos
-  const toggleLegInSlip = (mutatedLeg: any) => {
+  // Búsqueda ultrarrápida O(1) de elementos activos en el slip
+  const activeSlipIds = useMemo(() => {
+    return new Set(activeSlip.map((item: any) => item._id.split('-')[0]));
+  }, [activeSlip]);
+
+  // Modificador del slip congelado en caché para evitar re-renders innecesarios
+  const toggleLegInSlip = useCallback((mutatedLeg: any) => {
     setActiveSlip((prevSlip) => {
-      // Validamos usando el ID mutado único (ej: "id-NombreVariante") para que puedan coexistir en el parlay
       const exists = prevSlip.some((l) => l._id === mutatedLeg._id);
-      
+
       if (exists) {
-        // Si el usuario remueve la variante exacta, la limpiamos del slip
         return prevSlip.filter((l) => l._id !== mutatedLeg._id);
       } else {
-        // Alerta de seguridad usando el estado real previo acumulado en el ciclo
         if (prevSlip.length >= 5) {
           alert('MAX_CAPACITY: 5_LEGS');
           return prevSlip;
         }
-        // Inyectamos la variante al combo de manera exitosa
         return [...prevSlip, mutatedLeg];
       }
     });
-  };
+  }, []);
 
-  const handleClearSlipData = () => {
+  const handleClearSlipData = useCallback(() => {
     setActiveSlip([]);
     localStorage.removeItem('iron_slip_draft');
-  };
+  }, []);
+
+  const handleRemoveLeg = useCallback((id: string) => {
+    setActiveSlip((prev) => prev.filter((l) => l._id !== id));
+  }, []);
 
   const isFilteringActive = activeCategory !== 'all';
 
   return (
     <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 relative">
-      {/* 📱 SAFARI TINT FORCE: Case 1 */}
       <meta name="theme-color" content="#000000" />
-      
-      {/* 1. MASTER STACKED NAVIGATION CELL BAR PACK */}
+
+      {/* HEADER & FILTROS */}
       <div className="flex-shrink-0 p-4 pb-0 flex flex-col">
         <div className="w-full">
-          {/* ⚡️ LE PASAMOS EL BALANCE TOTALMENTE DINÁMICO AL HEADER */}
           <LegsHeader userBalance={userBalance} />
         </div>
 
-        {/* ROW BRAVO: Second Navbar Sub-Dock */}
         {isLoaded && isSignedIn && (
           <div className="flex flex-col justify-between items-center w-full">
             <div className="flex justify-between items-center">
@@ -125,7 +128,9 @@ export default function LegsPage() {
                   </>
                 ) : (
                   <>
-                    <span>{isFilteringActive ? 'filters active' : 'show filters'}</span>
+                    <span>
+                      {isFilteringActive ? 'filters active' : 'show filters'}
+                    </span>
                     <SlidersHorizontal className="w-2.5 h-2.5" />
                   </>
                 )}
@@ -145,7 +150,7 @@ export default function LegsPage() {
         )}
       </div>
 
-      {/* 2. CORE SCROLLABLE MATRIX CARD AREA */}
+      {/* CONTENEDOR PRINCIPAL SCROLLABLE */}
       <div className="flex-1 mt-3 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
         {loading || !isLoaded ? (
           <div className="flex items-center justify-center py-20">
@@ -160,9 +165,8 @@ export default function LegsPage() {
                 key={leg._id}
                 leg={leg}
                 isSignedIn={!!isSignedIn}
-                onClick={(l) => setSelectedLeg(l)}
-                /* 🔥 CORRECCIÓN: Comprobamos si al menos una variante de este ID base de Sanity está activa en el slip actual */
-                isAlreadyInSlip={activeSlip.some((item: any) => item._id.startsWith(leg._id))}
+                onClick={setSelectedLeg}
+                isAlreadyInSlip={activeSlipIds.has(leg._id)}
               />
             ))}
             <div className="mt-8 flex flex-col items-center opacity-20">
@@ -171,30 +175,26 @@ export default function LegsPage() {
                 End_of_transmission
               </p>
             </div>
-
             <div className="h-40 w-full flex-shrink-0" aria-hidden="true" />
           </div>
         )}
       </div>
 
-      {/* SOLID STATIC MINIMALIST FOOTER FIXED COMMAND CAP */}
+      {/* FOOTER NAV COMANDOS */}
       <SlipNavbar
         activeSlip={activeSlip}
-        onRemoveLeg={(id) =>
-          setActiveSlip((prev) => prev.filter((l) => l._id !== id))
-        }
-        clearSlipData={handleClearSlipData} 
+        onRemoveLeg={handleRemoveLeg}
+        clearSlipData={handleClearSlipData}
         userBalance={userBalance}
       />
 
-      {/* DETAILED EXPANSION WINDOW MODAL SCREEN */}
+      {/* MODAL DETALLE DE PIERNA */}
       {selectedLeg && (
         <LegExpansion
           leg={selectedLeg}
           onClose={() => setSelectedLeg(null)}
           onToggleSlip={toggleLegInSlip}
-          isInSlip={activeSlip.some((item) => item._id.startsWith(selectedLeg._id))}
-          /* ⚡️ AQUÍ ESTABA EL DETALLE CRÍTICO: Inyectamos el estado actual para que el modal recuerde las selecciones anteriores */
+          isInSlip={activeSlipIds.has(selectedLeg._id)}
           currentSlipItems={activeSlip}
         />
       )}

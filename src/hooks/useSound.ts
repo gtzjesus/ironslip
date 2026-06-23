@@ -1,57 +1,72 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useRef, useEffect } from 'react';
 
-type SoundType = 'add' | 'remove' | 'select' | 'close' | 'open-card' | 'demon' | 'confirm';
-/* shadow-copy de tu useSound blindado */
-export const useSound = () => {
-  const audioContext = useRef<AudioContext | null>(null);
-  const audioBuffers = useRef<Record<string, AudioBuffer>>({});
+type SoundType =
+  | 'add'
+  | 'remove'
+  | 'select'
+  | 'close'
+  | 'open-card'
+  | 'demon'
+  | 'confirm';
 
+// 🔒 INSTANCIA ÚNICA GLOBAL: Fuera del hook para que no se duplique en memoria jamás
+let globalAudioContext: AudioContext | null = null;
+const globalAudioBuffers: Record<string, AudioBuffer> = {};
+
+export const useSound = () => {
   useEffect(() => {
-    audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    // Solo se inicializa una vez en todo el ciclo de vida de la app
+    if (!globalAudioContext && typeof window !== 'undefined') {
+      globalAudioContext = new (
+        window.AudioContext || (window as any).webkitAudioContext
+      )();
+    }
   }, []);
 
   const playSound = async (soundType: SoundType) => {
-    if (!audioContext.current) return;
+    if (!globalAudioContext) return;
 
-    // Rescatar el contexto si el navegador lo suspendió por políticas de autoplay
-    if (audioContext.current.state === 'suspended') {
-      await audioContext.current.resume();
+    if (globalAudioContext.state === 'suspended') {
+      await globalAudioContext.resume();
     }
 
-    if (!audioBuffers.current[soundType]) {
-      const fileName = (soundType === 'close' || soundType === 'open-card' || soundType === 'demon' || soundType === 'confirm') 
-        ? `${soundType}.mp3` 
+    // Si el sonido no está en caché, lo descargamos (Lazy Load)
+    if (!globalAudioBuffers[soundType]) {
+      const fileName = ['close', 'open-card', 'demon', 'confirm'].includes(
+        soundType,
+      )
+        ? `${soundType}.mp3`
         : `${soundType}-slip.mp3`;
 
       try {
-        const response = await fetch(`/sounds/${fileName}`);
-        
-        // Si el archivo no existe (404), detenemos la ejecución antes de romper el decoder
-        if (!response.ok) {
-          console.warn(`⚠️ Sound file not found: /sounds/${fileName}`);
-          return;
-        }
+        const response = await fetch(`/sounds/${fileName}`, {
+          cache: 'force-cache',
+        }); // ⚡️ Fuerza la caché del navegador
+        if (!response.ok) return;
 
         const arrayBuffer = await response.arrayBuffer();
-        const audioBuffer = await audioContext.current.decodeAudioData(arrayBuffer);
-        audioBuffers.current[soundType] = audioBuffer;
+        // Usamos la sintaxis moderna basada en promesas para decodificar más rápido
+        const audioBuffer =
+          await globalAudioContext.decodeAudioData(arrayBuffer);
+        globalAudioBuffers[soundType] = audioBuffer;
       } catch (error) {
         console.error(`❌ Error decoding audio for ${soundType}:`, error);
-        return; // Salida limpia sin romper el runtime de la UI
+        return;
       }
     }
 
-    // Ejecución segura del nodo de audio
-    if (audioBuffers.current[soundType]) {
-      const source = audioContext.current.createBufferSource();
-      source.buffer = audioBuffers.current[soundType];
-      
-      const gainNode = audioContext.current.createGain();
-      gainNode.gain.value = 0.4;
-      
+    // Reproducción limpia
+    if (globalAudioBuffers[soundType]) {
+      const source = globalAudioContext.createBufferSource();
+      source.buffer = globalAudioBuffers[soundType];
+
+      const gainNode = globalAudioContext.createGain();
+      gainNode.gain.value = 0.25; // 🔋 Bajamos levemente el volumen para evitar distorsión en bocinas de papa
+
       source.connect(gainNode);
-      gainNode.connect(audioContext.current.destination);
+      gainNode.connect(globalAudioContext.destination);
       source.start(0);
     }
   };
