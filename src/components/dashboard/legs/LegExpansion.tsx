@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useSound } from '@/hooks/useSound';
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
+import BottomNav from '@/components/common/BottomNav';
 
 interface LegExpansionProps {
   leg: any;
@@ -39,8 +40,7 @@ export default function LegExpansion({
     return () => clearTimeout(timer);
   }, []);
 
-  // 🧠 SOLUCIÓN DEFINITIVA: Derivar estados directamente en cada render usando useMemo.
-  // Esto elimina el useEffect problemático y previene renders en cascada.
+  // 🧠 ESTADOS DERIVADOS EN RENDER: Sin useEffects problemáticos
   const { selectedVariants, demonStates } = useMemo(() => {
     if (!leg?.variants) return { selectedVariants: [], demonStates: {} };
 
@@ -84,7 +84,6 @@ export default function LegExpansion({
     playSound('select');
   };
 
-  // 🔥 CONFIGURACIÓN ULTRA-UX: Envía mutaciones al gestor de estado global (Slip) directamente
   const toggleVariantSelection = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -149,7 +148,6 @@ export default function LegExpansion({
       playSound('select');
     }
 
-    // Si ya está seleccionado, reemplazamos el item existente en el slip con la nueva modalidad
     if (selectedVariants.includes(index)) {
       const oldId = `${leg._id}-${v.name}${currentDemonState && v.isDemonSupported ? '-demon' : ''}`;
       const oldItem = currentSlipItems.find((item) => item._id === oldId);
@@ -171,7 +169,6 @@ export default function LegExpansion({
       };
       onToggleSlip(updatedLeg);
     } else {
-      // Si no está seleccionado en el slip, simulamos el comportamiento enviando el item directamente activado con demon mode
       if (currentSlipItems.length >= 5) {
         alert('MAX_CAPACITY: 5_LEGS');
         return;
@@ -245,7 +242,7 @@ export default function LegExpansion({
         </div>
 
         {/* CONTENT AREA */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4 relative z-10 custom-scrollbar pb-32">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 relative z-10 custom-scrollbar pb-48">
           {/* AVATAR CANVAS PREVIEW */}
           <div className="w-full h-54 border-zinc-900 bg-zinc-950/80 backdrop-blur-sm flex items-center justify-center relative overflow-hidden shadow-inner">
             {is3DReady ? (
@@ -381,8 +378,8 @@ export default function LegExpansion({
           </div>
         </div>
 
-        {/* BOTTOM FIXED SLIP NAVBAR */}
-        <div className="absolute bottom-4 left-0 w-full z-[99999]">
+        {/* 🔥 SLIP NAVBAR (Elevado para dejar espacio a la BottomNav) */}
+        <div className="absolute bottom-[64px] left-0 w-full z-[90]">
           <SlipNavbar
             activeSlip={currentSlipItems}
             onRemoveLeg={onRemoveLeg}
@@ -390,6 +387,9 @@ export default function LegExpansion({
             userBalance={userBalance}
           />
         </div>
+
+        {/* 🔥 BOTTOM NAV (Fijado en la base de la pantalla táctil) */}
+        <BottomNav />
       </div>
     </div>
   );
