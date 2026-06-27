@@ -189,12 +189,11 @@ export default function LegsPage() {
       />
 
       {/* MODAL DETALLE DE PIERNA */}
+      {/* MODAL DETALLE DE PIERNA */}
       {selectedLeg && (
         <LegExpansion
           leg={selectedLeg}
           onClose={() => {
-            // 🔥 SOLUCIÓN DEFINITIVA: Retrasamos el desmontaje 10ms
-            // para que el click físico muera en el modal y no traspase al fondo.
             setTimeout(() => {
               setSelectedLeg(null);
             }, 10);
@@ -202,6 +201,9 @@ export default function LegsPage() {
           onToggleSlip={toggleLegInSlip}
           isInSlip={activeSlipIds.has(selectedLeg._id)}
           currentSlipItems={activeSlip}
+          userBalance={userBalance}
+          onRemoveLeg={handleRemoveLeg}
+          clearSlipData={handleClearSlipData}
         />
       )}
     </main>

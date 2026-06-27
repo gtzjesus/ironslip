@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSound } from '@/hooks/useSound';
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
+import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
 
 interface LegExpansionProps {
   leg: any;
@@ -10,6 +11,9 @@ interface LegExpansionProps {
   onToggleSlip: (leg: any) => void;
   isInSlip: boolean;
   currentSlipItems: any[];
+  userBalance: number;
+  onRemoveLeg: (id: string) => void;
+  clearSlipData: () => void;
 }
 
 export default function LegExpansion({
@@ -17,6 +21,9 @@ export default function LegExpansion({
   onClose,
   onToggleSlip,
   currentSlipItems = [],
+  userBalance,
+  onRemoveLeg,
+  clearSlipData,
 }: LegExpansionProps) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const { playSound } = useSound();
@@ -32,37 +39,31 @@ export default function LegExpansion({
     return () => clearTimeout(timer);
   }, []);
 
-  // ⚡ HIDRATACIÓN SÚPER INTERACTIVA DE VARIANTES EN BASE AL SLIP GLOBAL
-  const [selectedVariants, setSelectedVariants] = useState<number[]>(() => {
-    if (!leg?.variants) return [];
-    return leg.variants
-      .map((v: any, index: number) => {
-        const idBase = `${leg._id}-${v.name}`;
-        const matchBase = currentSlipItems.some((item) => item._id === idBase);
-        const matchDemon = currentSlipItems.some(
-          (item) => item._id === `${idBase}-demon`,
-        );
-        return matchBase || matchDemon ? index : -1;
-      })
-      .filter((index: number) => index !== -1);
-  });
+  // 🧠 SOLUCIÓN DEFINITIVA: Derivar estados directamente en cada render usando useMemo.
+  // Esto elimina el useEffect problemático y previene renders en cascada.
+  const { selectedVariants, demonStates } = useMemo(() => {
+    if (!leg?.variants) return { selectedVariants: [], demonStates: {} };
 
-  // ⚡ HIDRATACIÓN SÚPER INTERACTIVA DEL ESTADO DEMON
-  const [demonStates, setDemonStates] = useState<Record<number, boolean>>(
-    () => {
-      if (!leg?.variants) return {};
-      const initialDemons: Record<number, boolean> = {};
-      leg.variants.forEach((v: any, index: number) => {
-        const matchDemon = currentSlipItems.some(
-          (item) => item._id === `${leg._id}-${v.name}-demon`,
-        );
-        if (matchDemon) {
-          initialDemons[index] = true;
-        }
-      });
-      return initialDemons;
-    },
-  );
+    const selected: number[] = [];
+    const demons: Record<number, boolean> = {};
+
+    leg.variants.forEach((v: any, index: number) => {
+      const idBase = `${leg._id}-${v.name}`;
+      const matchBase = currentSlipItems.some((item) => item._id === idBase);
+      const matchDemon = currentSlipItems.some(
+        (item) => item._id === `${idBase}-demon`,
+      );
+
+      if (matchBase || matchDemon) {
+        selected.push(index);
+      }
+      if (matchDemon) {
+        demons[index] = true;
+      }
+    });
+
+    return { selectedVariants: selected, demonStates: demons };
+  }, [currentSlipItems, leg]);
 
   const theme = {
     modalBg: 'bg-zinc-950',
@@ -83,21 +84,19 @@ export default function LegExpansion({
     playSound('select');
   };
 
-  // 🔥 CONFIGURACIÓN ULTRA-UX: Agrega o remueve del Slip global en tiempo real al hacer clic
+  // 🔥 CONFIGURACIÓN ULTRA-UX: Envía mutaciones al gestor de estado global (Slip) directamente
   const toggleVariantSelection = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
 
-    const isAlreadySelected = selectedVariants.includes(index);
     const v = leg?.variants?.[index];
     if (!v) return;
 
+    const isAlreadySelected = selectedVariants.includes(index);
     const isDemonActive = !!demonStates[index];
     const calculatedId = `${leg._id}-${v.name}${isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
 
     if (isAlreadySelected) {
-      setSelectedVariants((prev) => prev.filter((i) => i !== index));
       playSound('remove');
-
       const itemInSlip = currentSlipItems.find(
         (item) => item._id === calculatedId,
       );
@@ -116,9 +115,7 @@ export default function LegExpansion({
         return;
       }
 
-      setSelectedVariants((prev) => [...prev, index]);
       playSound('add');
-
       const baseReward = v.reward || 0;
       const finalReward =
         isDemonActive && v.isDemonSupported
@@ -143,40 +140,59 @@ export default function LegExpansion({
     const v = leg?.variants?.[index];
     if (!v) return;
 
-    const oldDemonState = !!demonStates[index];
-    const newDemonState = !oldDemonState;
-    setDemonStates((prev) => ({ ...prev, [index]: newDemonState }));
+    const currentDemonState = !!demonStates[index];
+    const nextDemonState = !currentDemonState;
 
-    if (newDemonState) {
+    if (nextDemonState) {
       playSound('demon');
     } else {
       playSound('select');
     }
 
+    // Si ya está seleccionado, reemplazamos el item existente en el slip con la nueva modalidad
     if (selectedVariants.includes(index)) {
-      const oldId = `${leg._id}-${v.name}${oldDemonState && v.isDemonSupported ? '-demon' : ''}`;
+      const oldId = `${leg._id}-${v.name}${currentDemonState && v.isDemonSupported ? '-demon' : ''}`;
       const oldItem = currentSlipItems.find((item) => item._id === oldId);
       if (oldItem) onToggleSlip(oldItem);
 
       const baseReward = v.reward || 0;
       const finalReward =
-        newDemonState && v.isDemonSupported
+        nextDemonState && v.isDemonSupported
           ? Math.round(baseReward * (v.demonMultiplier || 1.5))
           : baseReward;
 
       const updatedLeg = {
         ...leg,
-        _id: `${leg._id}-${v.name}${newDemonState && v.isDemonSupported ? '-demon' : ''}`,
-        task: `${leg.task} (${v.name})${newDemonState && v.isDemonSupported ? ' 😈' : ''}`,
+        _id: `${leg._id}-${v.name}${nextDemonState && v.isDemonSupported ? '-demon' : ''}`,
+        task: `${leg.task} (${v.name})${nextDemonState && v.isDemonSupported ? ' 😈' : ''}`,
         creditReward: finalReward,
         requirementValue: v.target,
-        isDemonMode: newDemonState && v.isDemonSupported,
+        isDemonMode: nextDemonState && v.isDemonSupported,
       };
       onToggleSlip(updatedLeg);
+    } else {
+      // Si no está seleccionado en el slip, simulamos el comportamiento enviando el item directamente activado con demon mode
+      if (currentSlipItems.length >= 5) {
+        alert('MAX_CAPACITY: 5_LEGS');
+        return;
+      }
+      const baseReward = v.reward || 0;
+      const finalReward =
+        nextDemonState && v.isDemonSupported
+          ? Math.round(baseReward * (v.demonMultiplier || 1.5))
+          : baseReward;
+
+      onToggleSlip({
+        ...leg,
+        _id: `${leg._id}-${v.name}${nextDemonState && v.isDemonSupported ? '-demon' : ''}`,
+        task: `${leg.task} (${v.name})${nextDemonState && v.isDemonSupported ? ' 😈' : ''}`,
+        creditReward: finalReward,
+        requirementValue: v.target,
+        isDemonMode: nextDemonState && v.isDemonSupported,
+      });
     }
   };
 
-  // 🔥 MANEJADOR DE CIERRE SEGURO: Frena en seco cualquier propagación al layout de atrás
   const handleSafeClose = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -221,7 +237,7 @@ export default function LegExpansion({
             </h2>
           </div>
           <button
-            onPointerDown={handleSafeClose} // 🔥 Cambiado de onClick a onPointerDown
+            onPointerDown={handleSafeClose}
             className="text-black bg-iron-red hover:bg-white px-2 py-1 text-xs font-bold transition-all duration-150 relative z-20"
           >
             [ X ]
@@ -229,7 +245,7 @@ export default function LegExpansion({
         </div>
 
         {/* CONTENT AREA */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4 relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 relative z-10 custom-scrollbar pb-32">
           {/* AVATAR CANVAS PREVIEW */}
           <div className="w-full h-54 border-zinc-900 bg-zinc-950/80 backdrop-blur-sm flex items-center justify-center relative overflow-hidden shadow-inner">
             {is3DReady ? (
@@ -363,6 +379,16 @@ export default function LegExpansion({
               );
             })}
           </div>
+        </div>
+
+        {/* BOTTOM FIXED SLIP NAVBAR */}
+        <div className="absolute bottom-4 left-0 w-full z-[99999]">
+          <SlipNavbar
+            activeSlip={currentSlipItems}
+            onRemoveLeg={onRemoveLeg}
+            clearSlipData={clearSlipData}
+            userBalance={userBalance}
+          />
         </div>
       </div>
     </div>
