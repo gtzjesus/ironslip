@@ -24,7 +24,7 @@ export default function LegsHeader({ userBalance }: LegsHeaderProps) {
         <p
           className={`${accentColor} mb-2 font-mono text-[10px] tracking-[0.3em] font-black italic uppercase`}
         >
-          {isSignedIn ? 'build your slip with' : 'OFFLINE'}
+          {isSignedIn ? '' : 'OFFLINE'}
         </p>
 
         <div className="flex items-baseline gap-2">

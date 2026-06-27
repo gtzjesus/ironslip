@@ -63,7 +63,7 @@ export const useSound = () => {
       source.buffer = globalAudioBuffers[soundType];
 
       const gainNode = globalAudioContext.createGain();
-      gainNode.gain.value = 0.25; // 🔋 Bajamos levemente el volumen para evitar distorsión en bocinas de papa
+      gainNode.gain.value = 0.25;
 
       source.connect(gainNode);
       gainNode.connect(globalAudioContext.destination);
