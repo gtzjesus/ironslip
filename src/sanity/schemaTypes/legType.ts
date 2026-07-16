@@ -5,37 +5,11 @@ export const legType = defineType({
   title: 'iron legs',
   type: 'document',
   fields: [
-    defineField({
-      name: 'task',
-      title: 'task name',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'animationKey',
-      title: 'animation key',
-      type: 'string',
-      initialValue: 'breathingidle',
-    }),
-    defineField({
-      name: 'category',
-      title: 'category',
-      type: 'string',
-      initialValue: 'lifting',
-      options: {
-        list: [
-          { title: 'Lifting', value: 'lifting' },
-          { title: 'Sports', value: 'sports' },
-          { title: 'Cardio', value: 'cardio' },
-          { title: 'Calisthenics', value: 'calisthenics' },
-          { title: 'Outdoors', value: 'outdoors' },
-          { title: 'Recovery', value: 'recovery' },
-        ],
-      },
-    }),
+    defineField({ name: 'task', title: 'task name', type: 'string', validation: (Rule) => Rule.required() }),
+    defineField({ name: 'category', title: 'category', type: 'string', options: { list: ['lifting', 'sports', 'cardio', 'calisthenics', 'outdoors', 'recovery'] } }),
     defineField({
       name: 'variants',
-      title: 'leg variants (max 5)',
+      title: 'leg variants',
       type: 'array',
       of: [
         defineArrayMember({
@@ -44,22 +18,14 @@ export const legType = defineType({
             { name: 'name', type: 'string', title: 'variant name' },
             { name: 'target', type: 'string', title: 'target description' },
             { 
-              name: 'reward', 
+              name: 'probabilityWeight', 
               type: 'number', 
-              title: 'base reward' 
+              title: 'base probability weight (0.1 to 3.0)',
+              validation: Rule => Rule.required().min(0.1).max(3.0)
             },
-            // Aquí movemos la verificación a la variante
-            { 
-              name: 'verificationMethod', 
-              type: 'string', 
-              title: 'verification method',
-              initialValue: 'video',
-              options: { list: [{title: 'video', value: 'video'}, {title: 'photo', value: 'photo'}] }
-            },
-            { name: 'aiPrompt', type: 'text', title: 'AI prompt', rows: 2 },
-            // Configuración Demon integrada en la variante
-            { name: 'isDemonSupported', type: 'boolean', title: 'allow demon mode?', initialValue: false },
-            { name: 'demonMultiplier', type: 'number', title: 'demon reward multiplier', initialValue: 1.5, description: 'Ej: 1.5 significa 50% extra' },
+            { name: 'isDemonSupported', type: 'boolean', initialValue: false },
+            { name: 'verificationMethod', type: 'string', initialValue: 'video', options: { list: ['video', 'photo'] } },
+            { name: 'aiPrompt', type: 'text', rows: 2 },
           ],
         }),
       ],

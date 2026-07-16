@@ -17,29 +17,29 @@ export function useLegs() {
 
     let isMounted = true;
 
-    const fetchLegs = async () => {
-      try {
-        const query = `*[_type == "leg"] | order(_createdAt desc) {
-          _id,
-          task,
-          animationKey,
-          category,
-          variants[] {
-            name,
-            target,
-            reward,
-            verificationMethod,
-            isDemonSupported,
-            demonMultiplier
-          }
-        }`;
+const fetchLegs = async () => {
+  try {
+    const query = `*[_type == "leg"] | order(_createdAt desc) {
+      _id,
+      task,
+      category,
+      animationKey,  
+      variants[] {
+        name,
+        target,
+        probabilityWeight,
+        isDemonSupported,
+        verificationMethod,
+        reward,        
+        demonMultiplier 
+      }
+    }`;
 
-        const data = await client.fetch(query);
-
-        if (isMounted) {
-          cachedLegs = data; // Guardamos en la caché global
-          setLegs(data);
-        }
+    const data = await client.fetch(query);
+    if (isMounted) {
+      cachedLegs = data;
+      setLegs(data);
+    }
       } catch (error) {
         console.error('❌ Error fetching legs from Sanity:', error);
       } finally {
