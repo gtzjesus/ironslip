@@ -60,7 +60,7 @@ function LegCardComponent({
     >
       {/* 🦾 BACKGROUND AVATAR */}
       {isSignedIn && (
-        <div className="absolute inset-y-0 right-20 w-24 pointer-events-none z-0 opacity-45">
+        <div className="absolute inset-y-0 right-7 w-24 pointer-events-none z-0 opacity-45">
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950 z-20" />
           <div className="w-40 h-40 absolute -bottom-18 -left-2 z-10">
             {isVisible && (
@@ -76,7 +76,7 @@ function LegCardComponent({
 
       {/* CONTENIDO PRINCIPAL */}
       <div className="relative z-10 flex justify-between items-center">
-        <div className="flex-1 min-w-0 pr-4">
+        <div className="flex-1 min-w-0 ">
           <p className={`font-mono text-[8px] uppercase tracking-widest ${
             isAlreadyInSlip ? 'text-iron-volt' : isDemonActive ? 'text-iron-red' : 'text-zinc-500'
           }`}>
