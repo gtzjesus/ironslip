@@ -6,6 +6,7 @@ export const legType = defineType({
   type: 'document',
   fields: [
     defineField({ name: 'task', title: 'task name', type: 'string', validation: (Rule) => Rule.required() }),
+    defineField({ name: 'animationKey', title: 'avatar animation key', type: 'string', validation: (Rule) => Rule.required() }),
     defineField({ name: 'category', title: 'category', type: 'string', options: { list: ['lifting', 'sports', 'cardio', 'calisthenics', 'outdoors', 'recovery'] } }),
     defineField({
       name: 'variants',
@@ -23,6 +24,8 @@ export const legType = defineType({
               title: 'base probability weight (0.1 to 3.0)',
               validation: Rule => Rule.required().min(0.1).max(3.0)
             },
+            { name: 'reward', type: 'number', title: 'base reward' },
+            { name: 'demonMultiplier', type: 'number', title: 'demon reward multiplier', initialValue: 1.5 },
             { name: 'isDemonSupported', type: 'boolean', initialValue: false },
             { name: 'verificationMethod', type: 'string', initialValue: 'video', options: { list: ['video', 'photo'] } },
             { name: 'aiPrompt', type: 'text', rows: 2 },
