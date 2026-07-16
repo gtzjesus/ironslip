@@ -35,8 +35,13 @@ function Model({ url, isDemon }: { url: string; isDemon: boolean }) {
 export default function SlipReviewOverlay({
   isOpen, onClose, activeSlip, onRemoveLeg, hasDemon, userBalance,
 }: any) {
+  const [mounted, setMounted] = useState(false);
   const { playSound } = useSound();
   const [wager, setWager] = useState<number | ''>('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const oddsMatrix = useMemo(() => {
     const compound = activeSlip.reduce((acc: any, leg: any) => acc * (1 + ((leg.creditReward || 0) / 200)), 1);
@@ -47,7 +52,6 @@ export default function SlipReviewOverlay({
   const wagerNumber = Number(wager === '' ? 0 : wager);
   const dynamicPayout = Math.floor(wagerNumber * oddsMatrix.multiplier);
   
-  // Validación estricta de fondos
   const isExceedingBalance = wager !== '' && wagerNumber > userBalance;
   const isInvalid = wager !== '' && (wagerNumber <= 0 || isExceedingBalance);
   const isParlayValid = activeSlip.length >= 3;
@@ -56,7 +60,7 @@ export default function SlipReviewOverlay({
     ? { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-red/40', titleText: 'text-white', dataCoreBg: 'bg-zinc-900/60 border-t border-iron-red/30', labelColor: 'text-zinc-500', valueColor: 'text-white', accentText: 'text-iron-green', inputBg: 'bg-black/60 border border-zinc-800 text-white', buttonBg: 'bg-iron-red text-black' }
     : { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-volt/30', titleText: 'text-iron-volt', dataCoreBg: 'bg-zinc-950/60 border-t border-iron-volt/20', labelColor: 'text-zinc-400', valueColor: 'text-iron-volt', accentText: 'text-iron-green', inputBg: 'bg-black border border-iron-volt/30 text-iron-volt', buttonBg: 'bg-iron-volt text-black' };
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0">
@@ -77,19 +81,39 @@ export default function SlipReviewOverlay({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-2 z-10">
-          {activeSlip.map((leg: any) => (
-            /* 🔥 CORRECCIÓN CLAVE: Usamos leg._id completo (mutado de forma única por variante) para que React renderice los 3+ distintos */
-            <div key={leg._id} className="flex justify-between items-center p-4 bg-black/40 border border-white/5">
-              <span className="font-black italic uppercase text-sm tracking-tight">{leg.task}</span>
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-sm text-iron-volt">+{leg.creditReward}</span>
-                <button onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }} className="hover:scale-110 active:scale-90 transition-transform">
-                  <Trash2 className="w-4 h-4 text-zinc-500 hover:text-red-400" />
-                </button>
+        <div className="flex-1 overflow-y-auto p-6 space-y-1 z-10">
+          {activeSlip.map((leg: any) => {
+            const description = leg.target || (leg.variants && leg.variants[0]?.target);
+            
+            return (
+              <div key={leg._id} className="relative w-full text-left border-[0.5px] border-white/10 p-4 bg-black/40 flex justify-between items-center transition-all hover:border-white/20">
+                <div className="flex flex-col">
+                  <span className="font-mono text-[8px] uppercase text-zinc-500 tracking-widest">
+                    {leg.category || 'LIFTING'}
+                  </span>
+                  <span className="font-black italic uppercase text-lg tracking-tight">
+                    {leg.task}
+                  </span>
+                  {description && (
+                    <span className="font-mono text-[9px] text-zinc-400 mt-1 opacity-80 italic max-w-[80%] leading-tight">
+                      {description}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-sm text-iron-volt font-bold">
+                    +{leg.creditReward}
+                  </span>
+                  <button 
+                    onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }} 
+                    className="hover:scale-110 active:scale-90 transition-transform"
+                  >
+                    <Trash2 className="w-4-h-4 text-zinc-500 hover:text-red-400" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className={`p-6 ${theme.dataCoreBg} z-10`}>
@@ -116,10 +140,9 @@ export default function SlipReviewOverlay({
           
           <button 
             disabled={!isParlayValid || wager === '' || isInvalid}
-            className={`w-full py-4 mt-2 font-black italic text-2xl uppercase transition-all 
-              {(!isParlayValid || wager === '' || isInvalid) 
-                ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
-                : theme.buttonBg}`}
+            className={`w-full py-4 mt-2 font-black italic text-2xl uppercase transition-all ${(!isParlayValid || wager === '' || isInvalid) 
+              ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
+              : theme.buttonBg}`}
           >
             {!isParlayValid 
               ? `REQUIRES 3+ LEGS` 

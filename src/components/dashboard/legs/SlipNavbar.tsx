@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronsRight, Lock } from 'lucide-react';
 import SlipReviewOverlay from './SlipReviewOverlay';
 import { useSound } from '@/hooks/useSound';
@@ -19,13 +19,16 @@ export default function SlipNavbar({
   userBalance,
 }: SlipNavbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { playSound } = useSound();
 
-  // Si no hay elementos en el slip, el componente no dibuja nada y no dispara efectos innecesarios
-  if (activeSlip.length === 0) return null;
+  // Aseguramos que el componente solo se renderice en el cliente
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // 🔥 SOLUCIÓN AL ERROR: Derivamos de forma segura si el overlay debe mostrarse.
-  // Si por alguna razón el slip se vacía externamente, evitamos mostrar el overlay de inmediato.
+  if (!mounted || activeSlip.length === 0) return null;
+
   const isCurrentlyExpanded = isExpanded && activeSlip.length > 0;
 
   const hasDemon = activeSlip.some(
