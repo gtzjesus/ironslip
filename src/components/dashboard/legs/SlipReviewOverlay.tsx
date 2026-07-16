@@ -33,7 +33,7 @@ function Model({ url, isDemon }: { url: string; isDemon: boolean }) {
 
 // --- OVERLAY PRINCIPAL ---
 export default function SlipReviewOverlay({
-  isOpen, onClose, activeSlip, onRemoveLeg, hasDemon, userBalance,
+  isOpen, onClose, activeSlip, onRemoveLeg, hasDemon, userBalance, clearSlipData,
 }: any) {
   const [mounted, setMounted] = useState(false);
   const { playSound } = useSound();
@@ -57,8 +57,8 @@ export default function SlipReviewOverlay({
   const isParlayValid = activeSlip.length >= 3;
 
   const theme = hasDemon
-    ? { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-red/40', titleText: 'text-white', dataCoreBg: 'bg-zinc-900/60 border-t border-iron-red/30', labelColor: 'text-zinc-500', valueColor: 'text-white', accentText: 'text-iron-green', inputBg: 'bg-black/60 border border-zinc-800 text-white', buttonBg: 'bg-iron-red text-black' }
-    : { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-volt/30', titleText: 'text-iron-volt', dataCoreBg: 'bg-zinc-950/60 border-t border-iron-volt/20', labelColor: 'text-zinc-400', valueColor: 'text-iron-volt', accentText: 'text-iron-green', inputBg: 'bg-black border border-iron-volt/30 text-iron-volt', buttonBg: 'bg-iron-volt text-black' };
+    ? { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-red/40', titleText: 'text-white', dataCoreBg: 'bg-zinc-900/80 border-t-2 border-iron-red/50', labelColor: 'text-zinc-500', valueColor: 'text-white', accentText: 'text-iron-green', inputBg: 'bg-black/60 border border-zinc-800 text-white', buttonBg: 'bg-iron-red text-black' }
+    : { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-volt/30', titleText: 'text-iron-volt', dataCoreBg: 'bg-zinc-900/80 border-t-2 border-iron-volt/40', labelColor: 'text-zinc-400', valueColor: 'text-iron-volt', accentText: 'text-iron-green', inputBg: 'bg-black border border-iron-volt/30 text-iron-volt', buttonBg: 'bg-iron-volt text-black' };
 
   if (!mounted || !isOpen) return null;
 
@@ -82,47 +82,67 @@ export default function SlipReviewOverlay({
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-1 z-10">
-          {activeSlip.map((leg: any) => {
-            const description = leg.target || (leg.variants && leg.variants[0]?.target);
-            
-            return (
-              <div key={leg._id} className="relative w-full text-left border-[0.5px] border-white/10 p-4 bg-black/40 flex justify-between items-center transition-all hover:border-white/20">
-                <div className="flex flex-col">
-                  <span className="font-mono text-[8px] uppercase text-zinc-500 tracking-widest">
-                    {leg.category || 'LIFTING'}
-                  </span>
-                  <span className="font-black italic uppercase text-lg tracking-tight">
-                    {leg.task}
-                  </span>
-                  {description && (
-                    <span className="font-mono text-[9px] text-zinc-400 mt-1 opacity-80 italic max-w-[80%] leading-tight">
-                      {description}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="font-mono text-sm text-iron-volt font-bold">
-                    +{leg.creditReward}
-                  </span>
-                  <button 
-                    onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }} 
-                    className="hover:scale-110 active:scale-90 transition-transform"
-                  >
-                    <Trash2 className="w-4-h-4 text-zinc-500 hover:text-red-400" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+      {activeSlip.map((leg: any) => {
+  const description = leg.target || (leg.variants && leg.variants[0]?.target);
+  
+  return (
+    <div 
+      key={leg._id} 
+      className="relative w-full bg-black/80 border border-zinc-800 p-3 group overflow-hidden transition-all hover:border-iron-volt/50"
+    >
+      {/* Indicador de estado (Esquina superior izquierda) */}
+      <div className="absolute top-0 left-0 w-8 h-1 bg-zinc-700 group-hover:bg-iron-volt transition-colors" />
+      
+      <div className="flex justify-between items-start">
+        {/* Contenido Izquierda */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-black tracking-[0.2em] text-zinc-400 bg-zinc-900 px-1">
+              {leg.category || 'EXECUTION'}
+            </span>
+          </div>
+          
+          <h3 className="font-black italic text-LG uppercase tracking-tighter text-white leading-[0.9]">
+            {leg.task}
+          </h3>
+          
+          {description && (
+            <p className="font-mono text-[8px] uppercase text-iron-volt/70 tracking-widest leading-none mt-1">
+              {description}
+            </p>
+          )}
         </div>
 
-        <div className={`p-6 ${theme.dataCoreBg} z-10`}>
-          <div className="grid grid-cols-2 gap-2 mb-3">
-             <div className="bg-black/50 p-2 border border-white/10 text-center">
+        {/* Bloque Derecha - Acción */}
+        <div className="flex flex-col items-end justify-between self-stretch">
+          <button 
+            onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }} 
+            className="text-[8px] font-bold text-zinc-600 hover:text-red-500 transition-colors uppercase"
+          >
+            [ ABORT ]
+          </button>
+          
+          <div className="text-[14px] font-black text-iron-volt mt-2">
+            +{leg.creditReward}
+          </div>
+        </div>
+      </div>
+
+      {/* Esquina decorativa (Bottom-right) */}
+      <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-zinc-700 group-hover:border-iron-volt transition-colors" />
+    </div>
+  );
+})}
+        </div>
+
+        {/* Data Core reforzado */}
+        <div className={`p-6 ${theme.dataCoreBg} z-10 shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.5)]`}>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+             <div className="bg-black/60 p-2 border border-white/5 text-center">
                 <p className="text-[8px] uppercase text-zinc-500 font-mono">Balance</p>
                 <p className="text-sm font-black italic">{userBalance.toLocaleString()}</p>
              </div>
-             <div className="bg-black/50 p-2 border border-white/10 text-center">
+             <div className="bg-black/60 p-2 border border-white/5 text-center">
                 <p className="text-[8px] uppercase text-zinc-500 font-mono">To Win</p>
                 <p className={`text-sm font-black italic ${hasDemon ? 'text-iron-red' : 'text-iron-volt'}`}>
                   {wagerNumber > 0 && !isExceedingBalance ? `+${dynamicPayout.toLocaleString()}` : '---'}
@@ -135,12 +155,12 @@ export default function SlipReviewOverlay({
             placeholder="ENTER WAGER"
             value={wager} 
             onChange={(e) => setWager(e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))} 
-            className={`w-full px-4 py-3 font-mono text-xl ${theme.inputBg} outline-none ${isExceedingBalance ? 'border-red-500' : ''}`} 
+            className={`w-full px-4 py-3 mb-2 font-mono text-lg ${theme.inputBg} outline-none border-2 ${isExceedingBalance ? 'border-red-500' : 'border-transparent focus:border-zinc-700'}`} 
           />
           
           <button 
             disabled={!isParlayValid || wager === '' || isInvalid}
-            className={`w-full py-4 mt-2 font-black italic text-2xl uppercase transition-all ${(!isParlayValid || wager === '' || isInvalid) 
+            className={`w-full py-4 font-black italic text-2xl uppercase transition-all ${(!isParlayValid || wager === '' || isInvalid) 
               ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
               : theme.buttonBg}`}
           >
