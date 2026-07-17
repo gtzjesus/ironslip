@@ -49,7 +49,7 @@ function LegCardComponent({
       ref={cardRef}
       onClick={handleCardClick}
       disabled={isDisabled}
-      className={`relative w-full text-left border-[0.5px] p-4 px-3 mb-1 overflow-hidden transition-all duration-300 ${
+      className={`relative w-full text-left border-[0.5px] p-3 px-3 mb-1 overflow-hidden transition-all duration-300 ${
         isAlreadyInSlip
           ? 'border-iron-volt bg-iron-volt/[0.03] shadow-[inset_0_0_15px_rgba(163,230,53,0.08),0_0_20px_rgba(163,230,53,0.05)]'
           : isDemonActive

@@ -5,132 +5,55 @@ import { useSound } from '@/hooks/useSound';
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
 import BottomNav from '@/components/common/BottomNav';
-
-interface LegExpansionProps {
-  leg: any;
-  onClose: () => void;
-  onToggleSlip: (leg: any) => void;
-  isInSlip: boolean;
-  currentSlipItems: any[];
-  userBalance: number;
-  onRemoveLeg: (id: string) => void;
-  clearSlipData: () => void;
-}
+import VariantItem from './VariantItem';
 
 export default function LegExpansion({
-  leg,
-  onClose,
-  onToggleSlip,
-  currentSlipItems = [],
-  userBalance,
-  onRemoveLeg,
-  clearSlipData,
-}: LegExpansionProps) {
+  leg, onClose, onToggleSlip, currentSlipItems, userBalance, onRemoveLeg, clearSlipData,
+}: any) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const { playSound } = useSound();
   const displayCategory = (leg?.category || 'IRON').toUpperCase();
-
-  // 🔋 OPTIMIZACIÓN DE RENDIMIENTO: Espera a que termine la animación para WebGL
   const [is3DReady, setIs3DReady] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIs3DReady(true);
-    }, 150);
+    const timer = setTimeout(() => setIs3DReady(true), 150);
     return () => clearTimeout(timer);
   }, []);
 
-  // 🧠 ESTADOS DERIVADOS EN RENDER: Sin useEffects problemáticos
   const { selectedVariants, demonStates } = useMemo(() => {
     if (!leg?.variants) return { selectedVariants: [], demonStates: {} };
-
     const selected: number[] = [];
     const demons: Record<number, boolean> = {};
-
     leg.variants.forEach((v: any, index: number) => {
       const idBase = `${leg._id}-${v.name}`;
-      const matchBase = currentSlipItems.some((item) => item._id === idBase);
-      const matchDemon = currentSlipItems.some(
-        (item) => item._id === `${idBase}-demon`,
-      );
-
-      if (matchBase || matchDemon) {
+      if (currentSlipItems.some((item: any) => item._id === idBase || item._id === `${idBase}-demon`)) {
         selected.push(index);
       }
-      if (matchDemon) {
+      if (currentSlipItems.some((item: any) => item._id === `${idBase}-demon`)) {
         demons[index] = true;
       }
     });
-
     return { selectedVariants: selected, demonStates: demons };
   }, [currentSlipItems, leg]);
 
-  const theme = {
-    modalBg: 'bg-zinc-950',
-    borderStyle:
-      'border-x-[0.5px] border-iron-volt/30 shadow-[0_0_80px_rgba(163,230,53,0.08)]',
-    titleText: 'text-iron-volt',
-    watermark:
-      'text-iron-volt/[0.015] font-black italic text-4xl tracking-tighter select-none uppercase font-mono',
-    dataCoreBg:
-      'bg-zinc-900/40 backdrop-blur-md border-[0.5px] border-zinc-800/40',
-    dataLabel: 'text-zinc-500 text-xs tracking-wider uppercase',
-    accentText: 'text-iron-volt font-bold',
-    buttonBg: 'bg-iron-volt text-black font-bold hover:bg-white',
-  };
-
-  const handleVariantAccordionClick = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-    playSound('select');
-  };
-
+  // --- LÓGICA RECUPERADA ---
   const toggleVariantSelection = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
-
     const v = leg?.variants?.[index];
     if (!v) return;
-
     const isAlreadySelected = selectedVariants.includes(index);
     const isDemonActive = !!demonStates[index];
     const calculatedId = `${leg._id}-${v.name}${isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
 
     if (isAlreadySelected) {
       playSound('remove');
-      const itemInSlip = currentSlipItems.find(
-        (item) => item._id === calculatedId,
-      );
-      if (itemInSlip) {
-        onToggleSlip(itemInSlip);
-      } else {
-        const alternativeId = `${leg._id}-${v.name}${!isDemonActive && v.isDemonSupported ? '-demon' : ''}`;
-        const altItem = currentSlipItems.find(
-          (item) => item._id === alternativeId,
-        );
-        if (altItem) onToggleSlip(altItem);
-      }
+      const itemInSlip = currentSlipItems.find((item: any) => item._id === calculatedId);
+      if (itemInSlip) onToggleSlip(itemInSlip);
     } else {
-      if (currentSlipItems.length >= 5) {
-        alert('MAX_CAPACITY: 5_LEGS');
-        return;
-      }
-
+      if (currentSlipItems.length >= 5) { alert('MAX_CAPACITY: 5_LEGS'); return; }
       playSound('add');
-      const baseReward = v.reward || 0;
-      const finalReward =
-        isDemonActive && v.isDemonSupported
-          ? Math.round(baseReward * (v.demonMultiplier || 1.5))
-          : baseReward;
-
-      const mutatedLeg = {
-        ...leg,
-        _id: calculatedId,
-        task: `${leg.task} (${v.name})${isDemonActive && v.isDemonSupported ? ' 😈' : ''}`,
-        creditReward: finalReward,
-        requirementValue: v.target,
-        isDemonMode: isDemonActive && v.isDemonSupported,
-      };
-
-      onToggleSlip(mutatedLeg);
+      const finalReward = isDemonActive && v.isDemonSupported ? Math.round(v.reward * (v.demonMultiplier || 1.5)) : v.reward;
+      onToggleSlip({ ...leg, _id: calculatedId, task: `${leg.task} (${v.name})${isDemonActive ? ' 😈' : ''}`, creditReward: finalReward, isDemonMode: isDemonActive });
     }
   };
 
@@ -138,257 +61,57 @@ export default function LegExpansion({
     e.stopPropagation();
     const v = leg?.variants?.[index];
     if (!v) return;
+    const nextDemonState = !demonStates[index];
+    playSound(nextDemonState ? 'demon' : 'select');
+    
+    // Si ya estaba en slip, lo removemos para actualizarlo con el nuevo modo
+    const oldId = `${leg._id}-${v.name}${demonStates[index] ? '-demon' : ''}`;
+    const oldItem = currentSlipItems.find((item: any) => item._id === oldId);
+    if (oldItem) onToggleSlip(oldItem);
 
-    const currentDemonState = !!demonStates[index];
-    const nextDemonState = !currentDemonState;
-
-    if (nextDemonState) {
-      playSound('demon');
-    } else {
-      playSound('select');
-    }
-
-    if (selectedVariants.includes(index)) {
-      const oldId = `${leg._id}-${v.name}${currentDemonState && v.isDemonSupported ? '-demon' : ''}`;
-      const oldItem = currentSlipItems.find((item) => item._id === oldId);
-      if (oldItem) onToggleSlip(oldItem);
-
-      const baseReward = v.reward || 0;
-      const finalReward =
-        nextDemonState && v.isDemonSupported
-          ? Math.round(baseReward * (v.demonMultiplier || 1.5))
-          : baseReward;
-
-      const updatedLeg = {
-        ...leg,
-        _id: `${leg._id}-${v.name}${nextDemonState && v.isDemonSupported ? '-demon' : ''}`,
-        task: `${leg.task} (${v.name})${nextDemonState && v.isDemonSupported ? ' 😈' : ''}`,
-        creditReward: finalReward,
-        requirementValue: v.target,
-        isDemonMode: nextDemonState && v.isDemonSupported,
-      };
-      onToggleSlip(updatedLeg);
-    } else {
-      if (currentSlipItems.length >= 5) {
-        alert('MAX_CAPACITY: 5_LEGS');
-        return;
-      }
-      const baseReward = v.reward || 0;
-      const finalReward =
-        nextDemonState && v.isDemonSupported
-          ? Math.round(baseReward * (v.demonMultiplier || 1.5))
-          : baseReward;
-
-      onToggleSlip({
-        ...leg,
-        _id: `${leg._id}-${v.name}${nextDemonState && v.isDemonSupported ? '-demon' : ''}`,
-        task: `${leg.task} (${v.name})${nextDemonState && v.isDemonSupported ? ' 😈' : ''}`,
-        creditReward: finalReward,
-        requirementValue: v.target,
-        isDemonMode: nextDemonState && v.isDemonSupported,
-      });
-    }
-  };
-
-  const handleSafeClose = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    playSound('close');
-    onClose();
+    const finalReward = nextDemonState ? Math.round(v.reward * (v.demonMultiplier || 1.5)) : v.reward;
+    onToggleSlip({ ...leg, _id: `${leg._id}-${v.name}${nextDemonState ? '-demon' : ''}`, task: `${leg.task} (${v.name})${nextDemonState ? ' 😈' : ''}`, creditReward: finalReward, isDemonMode: nextDemonState });
   };
 
   return (
-    <div
-      onClick={(e) => e.stopPropagation()}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md p-0"
-    >
-      <div
-        className={`w-full h-full max-w-2xl relative flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle}`}
-      >
-        {/* WATERMARK BACKGROUND */}
-        <div className="text-iron-volt absolute inset-0 pointer-events-none overflow-hidden z-0 select-none flex flex-col justify-between p-4 rotate-[-12deg] scale-105">
-          {Array.from({ length: 8 }).map((_, rowIndex) => (
-            <div
-              key={rowIndex}
-              className="flex justify-between gap-8 whitespace-nowrap"
-              style={{
-                transform: `translateX(${rowIndex % 2 === 0 ? '20px' : '-20px'})`,
-              }}
-            >
-              {Array.from({ length: 4 }).map((_, colIndex) => (
-                <span key={colIndex} className={theme.watermark}>
-                  {displayCategory}
-                </span>
-              ))}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md" onClick={onClose}>
+      <div className="w-full h-full max-w-2xl relative bg-zinc-950 border-x border-iron-volt/30 flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+        
+        {/* WATERMARK */}
+        <div className="text-iron-volt absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden rotate-[-12deg] scale-105 select-none">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="flex gap-8 text-4xl font-black italic uppercase whitespace-nowrap">
+              {Array.from({ length: 6 }).map((_, j) => <span key={j}>{displayCategory}</span>)}
             </div>
           ))}
         </div>
 
-        {/* HEADER */}
-        <div className="p-5 pt-6 relative z-10 flex justify-between items-start bg-gradient-to-b from-zinc-950 to-transparent">
-          <div>
-            <h2
-              className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter`}
-            >
-              {leg.task}
-            </h2>
-          </div>
-          <button
-            onPointerDown={handleSafeClose}
-            className="text-black bg-iron-red hover:bg-white px-2 py-1 text-xs font-bold transition-all duration-150 relative z-20"
-          >
-            [ X ]
-          </button>
+        {/* HEADER Y CONTENT */}
+        <div className="p-5 relative z-10 flex justify-between items-center border-b border-zinc-800">
+            <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter">{leg.task}</h2>
+            <button onClick={onClose} className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold hover:bg-white uppercase">[ Close ]</button>
         </div>
 
-        {/* CONTENT AREA */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4 relative z-10 custom-scrollbar pb-48">
-          {/* AVATAR CANVAS PREVIEW */}
-          <div className="w-full h-54 border-zinc-900 bg-zinc-950/80 backdrop-blur-sm flex items-center justify-center relative overflow-hidden shadow-inner">
-            {is3DReady ? (
-              <AvatarCanvas
-                avatarUrl="/models/avatar.glb"
-                activeAnimation={leg.animationKey || 'breathingidle'}
-              />
-            ) : (
-              <div className="w-full h-full bg-transparent" />
-            )}
-            <div className="absolute bottom-2 right-2 px-2 py-1 text-[9px] text-zinc-500 font-mono uppercase tracking-widest border-zinc-800">
-              demo
-            </div>
+        <div className="flex-1 relative z-10 overflow-y-auto p-5 custom-scrollbar pb-48">
+          <div className="w-full h-48 bg-zinc-900/40 mb-4 border border-zinc-800 flex items-center justify-center">
+            {is3DReady && <AvatarCanvas avatarUrl="/models/avatar.glb" activeAnimation={leg.animationKey || 'breathingidle'} />}
           </div>
 
-          {/* ACCORDION VARIANTS */}
           <div className="space-y-2">
-            {leg.variants?.map((v: any, i: number) => {
-              const isExpanded = expandedIndex === i;
-              const isDemonActive = !!demonStates[i];
-              const isVariantSelected = selectedVariants.includes(i);
-
-              return (
-                <div
-                  key={i}
-                  className={`transition-all duration-200 cursor-pointer overflow-hidden backdrop-blur-xs ${
-                    isVariantSelected
-                      ? 'border-iron-volt bg-zinc-900/90 shadow-[0_0_15px_rgba(163,230,53,0.05)]'
-                      : isExpanded
-                        ? 'bg-zinc-900/60 border-zinc-700'
-                        : 'bg-zinc-900/30 border-zinc-900/80 hover:border-zinc-800 hover:bg-zinc-900/60'
-                  }`}
-                  onClick={() => handleVariantAccordionClick(i)}
-                >
-                  {/* ACCORDION HEADER */}
-                  <div className="p-4 flex justify-between items-center select-none">
-                    <div className="flex items-center gap-3">
-                      <div
-                        onClick={(e) => toggleVariantSelection(i, e)}
-                        className={`w-4 h-4 border flex items-center justify-center font-mono text-[10px] transition-all ${
-                          isVariantSelected
-                            ? 'bg-iron-volt text-black border-iron-volt font-black shadow-[0_0_8px_#a3e635]'
-                            : 'border-zinc-700 bg-black/40 text-transparent hover:border-zinc-500'
-                        }`}
-                      >
-                        ✓
-                      </div>
-                      <span
-                        className={`font-black uppercase tracking-tight text-sm transition-colors ${isExpanded || isVariantSelected ? 'text-iron-volt' : 'text-zinc-300'}`}
-                      >
-                        {v.name}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <span
-                        className={`text-xs font-mono font-bold transition-colors ${isExpanded || isVariantSelected ? 'text-iron-green' : 'text-zinc-500'}`}
-                      >
-                        +
-                        {isDemonActive && v.isDemonSupported
-                          ? Math.round(v.reward * (v.demonMultiplier || 1.5))
-                          : v.reward}
-                      </span>
-                      <span
-                        className={`text-[10px] transition-transform duration-200 ${isExpanded ? 'rotate-180 text-iron-volt' : 'text-zinc-600'}`}
-                      >
-                        ▼
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* ACCORDION DROP DOWN BODY */}
-                  <div
-                    className={`transition-all duration-300 ease-in-out ${
-                      isExpanded
-                        ? 'max-h-[340px] border-t border-zinc-800/50 p-4 bg-black/50'
-                        : 'max-h-0 opacity-0 pointer-events-none'
-                    }`}
-                  >
-                    <div className="space-y-3 text-xs">
-                      <div>
-                        <span className={theme.dataLabel}>Target </span>
-                        <p className="text-zinc-200 font-bold uppercase mt-0.5 tracking-wide text-sm">
-                          {v.target}
-                        </p>
-                      </div>
-
-                      {v.isDemonSupported && (
-                        <div
-                          onClick={(e) => toggleDemonMode(i, e)}
-                          className={`mt-3 p-3 flex justify-between items-center border transition-all  ${
-                            isDemonActive
-                              ? 'bg-red-950/40 border-red-500 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.15)]'
-                              : 'bg-zinc-950 border-zinc-800/80 text-zinc-500 hover:border-zinc-700'
-                          }`}
-                        >
-                          <div className="flex flex-col">
-                            <span
-                              className={`font-black italic text-[11px] tracking-wider flex items-center gap-1 ${isDemonActive ? 'text-red-500 animate-pulse' : ''}`}
-                            >
-                              😈 DEMON MODE ({v.demonMultiplier || 1.5}x)
-                            </span>
-                            <span className="text-[9px] opacity-70">
-                              Boost execution difficulty for extreme payouts
-                            </span>
-                          </div>
-                          <div
-                            className={`w-8 h-4 p-0.5 transition-colors duration-200 ${isDemonActive ? 'bg-red-600' : 'bg-zinc-800'}`}
-                          >
-                            <div
-                              className={`bg-white w-3 h-3 transition-transform duration-200 ${isDemonActive ? 'translate-x-4' : 'translate-x-0'}`}
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={(e) => toggleVariantSelection(i, e)}
-                        className={`w-full py-2.5 mt-2 font-mono tracking-wider border text-[11px] font-black uppercase transition-all duration-150 ${
-                          isVariantSelected
-                            ? 'bg-red-950/20 border-red-900/60 text-red-400 hover:bg-red-900/30'
-                            : 'bg-zinc-900 border-zinc-800 text-iron-volt hover:border-iron-volt'
-                        }`}
-                      >
-                        {isVariantSelected ? 'Remove' : 'Activate'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {leg.variants?.map((v: any, i: number) => (
+              <VariantItem 
+                key={i} v={v} index={i} 
+                isExpanded={expandedIndex === i}
+                isSelected={selectedVariants.includes(i)}
+                isDemon={!!demonStates[i]}
+                onToggleAccordion={() => { setExpandedIndex(expandedIndex === i ? null : i); playSound('select'); }}
+                onToggleSelection={(e: any) => toggleVariantSelection(i, e)}
+                onToggleDemon={(e: any) => toggleDemonMode(i, e)}
+              />
+            ))}
           </div>
         </div>
-
-        {/* 🔥 SLIP NAVBAR (Elevado para dejar espacio a la BottomNav) */}
-        <div className="absolute bottom-[64px] left-0 w-full z-[90]">
-          <SlipNavbar
-            activeSlip={currentSlipItems}
-            onRemoveLeg={onRemoveLeg}
-            clearSlipData={clearSlipData}
-            userBalance={userBalance}
-          />
-        </div>
-
-        {/* 🔥 BOTTOM NAV (Fijado en la base de la pantalla táctil) */}
+        <div className="absolute bottom-[64px] left-0 w-full z-[90]"><SlipNavbar activeSlip={currentSlipItems} onRemoveLeg={onRemoveLeg} clearSlipData={clearSlipData} userBalance={userBalance} /></div>
         <BottomNav />
       </div>
     </div>
