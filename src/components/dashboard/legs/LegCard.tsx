@@ -49,7 +49,7 @@ function LegCardComponent({
       ref={cardRef}
       onClick={handleCardClick}
       disabled={isDisabled}
-      className={`relative w-full text-left border-[0.5px] p-2 px-2 mb-1 overflow-hidden transition-all duration-300 ${
+      className={`relative w-full text-left border-[0.5px] p-4 px-3 mb-1 overflow-hidden transition-all duration-300 ${
         isAlreadyInSlip
           ? 'border-iron-volt bg-iron-volt/[0.03] shadow-[inset_0_0_15px_rgba(163,230,53,0.08),0_0_20px_rgba(163,230,53,0.05)]'
           : isDemonActive
@@ -75,13 +75,13 @@ function LegCardComponent({
       {/* CONTENIDO PRINCIPAL */}
       <div className="relative z-10 flex justify-between items-center">
         <div className="flex-1 min-w-0 ">
-          {/* CATEGORY BADGE */}
-          <div className={`inline-block mb-1.5 px-1.5 py-0.25  font-mono text-[7px] uppercase tracking-widest font-bold shadow-[0_0_8px_rgba(250,204,21,0.3)] ${
+          {/* CATEGORY BADGE - Gris Industrial */}
+          <div className={`inline-block mb-1.5 px-2 py-0.5  font-mono text-[7px] uppercase tracking-widest font-bold  ${
             isAlreadyInSlip 
-              ? 'bg-iron-volt text-black' 
+              ? 'bg-zinc-700 text-white border-zinc-600' 
               : isDemonActive 
-                ? 'bg-iron-red text-white' 
-                : 'bg-yellow-400 text-black'
+                ? 'bg-iron-red text-white border-red-900' 
+                : 'bg-zinc-800 text-zinc-400 border-zinc-700'
           }`}>
             {isAlreadyInSlip ? 'ACTIVE' : isDemonActive ? 'DEMON' : leg.category || 'EXECUTION'}
           </div>
@@ -93,6 +93,7 @@ function LegCardComponent({
           </h3>
         </div>
 
+        {/* Espacio reservado para acciones o estados adicionales */}
         {!isSignedIn && (
           <div className="text-right">
             <p className="text-[6px] font-mono uppercase text-iron-red">[ LOCKED ]</p>
