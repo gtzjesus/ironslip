@@ -21,7 +21,6 @@ function LegCardComponent({
 }: LegProps) {
   const { playSound } = useSound();
   
-  // Determinamos el modo Demon basándonos en la configuración global y el soporte del leg
   const isDemonActive = hasDemon && leg.variants?.some((v: any) => v.isDemonSupported);
 
   const [isVisible, setIsVisible] = useState(false);
@@ -50,7 +49,7 @@ function LegCardComponent({
       ref={cardRef}
       onClick={handleCardClick}
       disabled={isDisabled}
-      className={`relative w-full text-left border-[0.5px] p-4 px-3 mb-1 overflow-hidden transition-all duration-300 ${
+      className={`relative w-full text-left border-[0.5px] p-2 px-2 mb-1 overflow-hidden transition-all duration-300 ${
         isAlreadyInSlip
           ? 'border-iron-volt bg-iron-volt/[0.03] shadow-[inset_0_0_15px_rgba(163,230,53,0.08),0_0_20px_rgba(163,230,53,0.05)]'
           : isDemonActive
@@ -58,11 +57,9 @@ function LegCardComponent({
             : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
     >
-{/* 🦾 BACKGROUND AVATAR */}
+      {/* 🦾 BACKGROUND AVATAR */}
       {isSignedIn && (
         <div className="absolute inset-y-0 right-0 w-full pointer-events-none z-0 opacity-45">
-          {/* Quitamos el div del gradiente z-20 que creaba la línea */}
-          
           <div className="w-40 h-40 absolute -bottom-16 -right-5 z-10">
             {isVisible && (
               <AvatarCanvas
@@ -78,11 +75,16 @@ function LegCardComponent({
       {/* CONTENIDO PRINCIPAL */}
       <div className="relative z-10 flex justify-between items-center">
         <div className="flex-1 min-w-0 ">
-          <p className={`font-mono text-[8px] uppercase tracking-widest ${
-            isAlreadyInSlip ? 'text-iron-volt' : isDemonActive ? 'text-iron-red' : 'text-zinc-500'
+          {/* CATEGORY BADGE */}
+          <div className={`inline-block mb-1.5 px-1.5 py-0.25  font-mono text-[7px] uppercase tracking-widest font-bold shadow-[0_0_8px_rgba(250,204,21,0.3)] ${
+            isAlreadyInSlip 
+              ? 'bg-iron-volt text-black' 
+              : isDemonActive 
+                ? 'bg-iron-red text-white' 
+                : 'bg-yellow-400 text-black'
           }`}>
-            {isAlreadyInSlip ? '⚡ ACTIVE' : isDemonActive ? 'DEMON 👹' : leg.category || 'EXECUTION'}
-          </p>
+            {isAlreadyInSlip ? 'ACTIVE' : isDemonActive ? 'DEMON' : leg.category || 'EXECUTION'}
+          </div>
 
           <h3 className={`font-black italic text-xl uppercase tracking-tighter truncate ${
             isAlreadyInSlip ? 'text-white' : isDemonActive ? 'text-iron-red' : 'text-white'
@@ -91,7 +93,6 @@ function LegCardComponent({
           </h3>
         </div>
 
-        {/* Espacio reservado para acciones o estados adicionales */}
         {!isSignedIn && (
           <div className="text-right">
             <p className="text-[6px] font-mono uppercase text-iron-red">[ LOCKED ]</p>
