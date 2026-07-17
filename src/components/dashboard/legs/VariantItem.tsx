@@ -25,10 +25,10 @@ export default function VariantItem({
   const isDemonLeg = isDemon || v.isDemonSupported === true;
 
   return (
-    <div className={`transition-none border-[0.5px] overflow-hidden ${
+    <div className={`transition-none border-[0.25px] overflow-hidden ${
       isDemonLeg 
-        ? 'border-red-400 ' 
-        : isSelected ? 'border-iron-volt bg-zinc-900/90' : 'border-zinc-900/80 bg-zinc-900/30'
+        ? 'border-red-400 bg-zinc-900/80 ' 
+        : isSelected ? 'border-iron-volt bg-zinc-900/80' : 'border-zinc-900/80 bg-zinc-900/80'
     }`}>
       {/* CABECERA */}
       <div 
@@ -48,7 +48,7 @@ export default function VariantItem({
 
       {/* CUERPO */}
       {isExpanded && (
-        <div className="border-t border-zinc-800/50 p-4 bg-black/40 space-y-3">
+        <div className="  p-2 bg-black/40 space-y-3">
           <div>
             <span className="text-zinc-500 text-xs uppercase tracking-wider">Target </span>
             <p className="text-zinc-200 font-bold uppercase text-sm">{v.target}</p>

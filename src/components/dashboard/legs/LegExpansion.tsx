@@ -56,26 +56,26 @@ export default function LegExpansion({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md" onClick={onClose}>
-      <div className="w-full h-full max-w-2xl relative bg-zinc-950 border-x border-iron-volt/30 flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+      <div className="w-full h-full max-w-2xl relative bg-zinc-950  flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
         
         {/* WATERMARK */}
         <div className="text-iron-volt absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden rotate-[-12deg] scale-125 select-none">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="flex gap-8 text-8xl font-black italic uppercase whitespace-nowrap">
+            <div key={i} className="flex gap-8 text-7xl font-black italic uppercase whitespace-nowrap">
               {Array.from({ length: 6 }).map((_, j) => <span key={j}>{displayCategory}</span>)}
             </div>
           ))}
         </div>
 
         {/* HEADER */}
-        <div className="p-5 relative z-10 flex justify-between items-center border-b border-zinc-800">
+        <div className="p-5 relative z-10 flex justify-between items-center ">
           <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter">{leg.task}</h2>
           <button onClick={onClose} className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold  uppercase">[ x ]</button>
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 relative z-10 overflow-y-auto p-5 custom-scrollbar pb-48">
-          <div className="w-full h-48 bg-zinc-900/40 mb-4 border border-zinc-800 flex items-center justify-center">
+        <div className="flex-1 relative z-10 overflow-y-auto p-3 custom-scrollbar pb-48">
+          <div className="w-full h-68  mb-4  flex items-center justify-center">
             {is3DReady && <AvatarCanvas avatarUrl="/models/avatar.glb" activeAnimation={leg.animationKey || 'breathingidle'} />}
           </div>
 
