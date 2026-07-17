@@ -27,9 +27,9 @@ export default function LegsHeader({ userBalance }: LegsHeaderProps) {
           {isSignedIn ? '' : 'OFFLINE'}
         </p>
 
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-1">
           <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none text-white">
-            Iron Legs
+            Iron 
           </h2>
           <span className="text-zinc-600 font-mono text-[10px] italic uppercase">
             _
@@ -39,7 +39,7 @@ export default function LegsHeader({ userBalance }: LegsHeaderProps) {
 
       {/* BALANCE SECTION REAL */}
       <div className="text-right flex flex-col items-end">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Zap
             className={`w-3 h-3 ${isSignedIn ? 'text-[#c4a000] fill-[#c4a000]' : 'text-zinc-800'}`}
           />

@@ -58,11 +58,12 @@ function LegCardComponent({
             : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
     >
-      {/* 🦾 BACKGROUND AVATAR */}
+{/* 🦾 BACKGROUND AVATAR */}
       {isSignedIn && (
-        <div className="absolute inset-y-0 right-7 w-24 pointer-events-none z-0 opacity-45">
-          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950 z-20" />
-          <div className="w-40 h-40 absolute -bottom-18 -left-2 z-10">
+        <div className="absolute inset-y-0 right-0 w-full pointer-events-none z-0 opacity-45">
+          {/* Quitamos el div del gradiente z-20 que creaba la línea */}
+          
+          <div className="w-40 h-40 absolute -bottom-16 -right-5 z-10">
             {isVisible && (
               <AvatarCanvas
                 avatarUrl="/models/avatar.glb"

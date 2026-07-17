@@ -102,50 +102,21 @@ export default function LegsPage() {
     <main className="h-screen w-full overflow-hidden flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 relative">
       <meta name="theme-color" content="#000000" />
 
-      {/* HEADER & FILTROS */}
-      <div className="flex-shrink-0 p-4 pb-0 flex flex-col">
+   {/* HEADER & FILTROS (Compacto y permanente) */}
+      <div className="flex-shrink-0 p-2 pb-0 flex flex-col">
         <div className="w-full">
           <LegsHeader userBalance={userBalance} />
         </div>
 
         {isLoaded && isSignedIn && (
-          <div className="flex flex-col justify-between items-center w-full">
-            <div className="flex justify-between items-center">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.2em] px-2.5 py-1 rounded border transition-all duration-200 active:scale-95 ${
-                  showFilters
-                    ? 'bg-zinc-900 border-zinc-800 text-white'
-                    : isFilteringActive
-                      ? 'border-iron-volt/50 text-iron-volt shadow-[0_0_10px_rgba(163,230,53,0.1)] bg-zinc-950'
-                      : 'border-zinc-900 text-zinc-500 hover:text-zinc-400 bg-transparent'
-                }`}
-              >
-                {showFilters ? (
-                  <>
-                    <span>hide filters</span>
-                    <ChevronUp className="w-3 h-3" />
-                  </>
-                ) : (
-                  <>
-                    <span>
-                      {isFilteringActive ? 'filters active' : 'show filters'}
-                    </span>
-                    <SlidersHorizontal className="w-2.5 h-2.5" />
-                  </>
-                )}
-              </button>
+          <div className="w-full border-b border-zinc-900">
+            <div className="overflow-x-auto overflow-y-hidden scrollbar-hide">
+              <LegFilterNav
+                activeCategory={activeCategory}
+                onCategoryChange={setActiveCategory}
+                legs={legs}
+              />
             </div>
-
-            {showFilters && (
-              <div className="w-full overflow-x-auto overflow-y-hidden">
-                <LegFilterNav
-                  activeCategory={activeCategory}
-                  onCategoryChange={setActiveCategory}
-                  legs={legs}
-                />
-              </div>
-            )}
           </div>
         )}
       </div>
