@@ -25,9 +25,9 @@ export default function VariantItem({
   const isDemonLeg = isDemon || v.isDemonSupported === true;
 
   return (
-    <div className={`transition-none border-[0.25px] overflow-hidden ${
+    <div className={`transition-none  overflow-hidden ${
       isDemonLeg 
-        ? 'border-red-400 bg-zinc-900/80 ' 
+        ? ' bg-zinc-900/80 ' 
         : isSelected ? 'border-iron-volt bg-zinc-900/80' : 'border-zinc-900/80 bg-zinc-900/80'
     }`}>
       {/* CABECERA */}
@@ -38,9 +38,9 @@ export default function VariantItem({
         <div className="flex items-center gap-3">
          
           <span className={`font-black uppercase tracking-tight text-sm ${
-            isDemonLeg ? 'text-red-500' : isSelected ? 'text-iron-volt' : 'text-zinc-300'
+            isDemonLeg ? 'text-red-500' : isSelected ? '' : 'text-zinc-300'
           }`}>
-            {v.name} {isDemonLeg && ' 😈'}
+            {v.name} {isDemonLeg && ' '}
           </span>
         </div>
         <span className="text-[10px] text-zinc-600">{isExpanded ? '▲' : '▼'}</span>
@@ -49,16 +49,16 @@ export default function VariantItem({
       {/* CUERPO */}
       {isExpanded && (
         <div className="  p-2 bg-black/40 space-y-3">
-          <div>
-            <span className="text-zinc-500 text-xs uppercase tracking-wider">Target </span>
-            <p className="text-zinc-200 font-bold uppercase text-sm">{v.target}</p>
+          <div className="flex justify-center">
+            <p className="text-zinc-200 font-bold uppercase text-sm ">{v.target}</p>
           </div>
 
           <button
             onClick={onToggleSelection}
-            className={`w-full py-2.5 font-mono text-[11px] font-black uppercase border ${
+            className={`w-full py-2.5 font-mono text-[11px] font-black uppercase  ${
               isDemonLeg 
-                ? 'bg-red-600 border-red-600 text-black hover:bg-red-500'
+              ? 'bg-red-950/20 border-red-900/60 text-red-400' 
+                
                 : isSelected 
                   ? 'bg-red-950/20 border-red-900/60 text-red-400' 
                   : 'bg-zinc-900 border-zinc-800 text-iron-volt'

@@ -32,13 +32,27 @@ export default function SlipNavbar({
   const isCurrentlyExpanded = isExpanded && activeSlip.length > 0;
 
   const hasDemon = activeSlip.some(
-    (leg) => leg.isDemonMode || leg.isDemon || leg.difficulty === 'demon',
+    (leg) => leg.isDemonMode || leg.isDemon || leg.difficulty === 'demon' || leg._id?.includes('-demon'),
   );
+
+  // CÁLCULO DE ODDS DINÁMICOS
+  // Si la variante tiene probabilityWeight, lo usamos; si no, caemos en un valor base de 1.5 por leg.
+  // Si es demon, multiplicamos por su demonMultiplier (por defecto 1.5 o el que traiga el schema).
+  const totalOdds = activeSlip.reduce((acc, item) => {
+    const baseWeight = item.probabilityWeight || 1.5;
+    const isItemDemon = item.isDemonMode || item.isDemon || item._id?.includes('-demon');
+    const demonMult = item.demonMultiplier || 1.5;
+    
+    const legOdd = isItemDemon ? baseWeight * demonMult : baseWeight;
+    return acc * legOdd;
+  }, 1.0);
+
+  // Formateamos los odds finales (ej. x2.45, x12.80, etc.)
+  const dynamicMultiplier = totalOdds < 1 ? 1.0 : totalOdds;
 
   const MIN_REVIEWS_REQUIRED = 1;
   const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
   const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
-  const multiplier = 1 + activeSlip.length * 0.1;
 
   const handleExpand = () => {
     if (isEligibleToExpand) {
@@ -76,7 +90,7 @@ export default function SlipNavbar({
               <div className="relative z-10 flex items-center gap-4">
                 <div className="flex flex-col justify-center items-end text-right leading-none">
                   <p className="text-[8px] font-mono uppercase tracking-widest text-black mb-1">
-                    win up to x{multiplier.toFixed(2)}
+                    win up to x{dynamicMultiplier.toFixed(2)}
                   </p>
                   <p className="text-sm font-black uppercase tracking-tight italic leading-none text-black">
                     {hasDemon ? 'LOCK IN demon' : 'LOCK IN SLIP'}

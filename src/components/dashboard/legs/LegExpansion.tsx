@@ -50,7 +50,7 @@ export default function LegExpansion({
       if (itemInSlip) onToggleSlip(itemInSlip);
     } else {
       playSound('add');
-      onToggleSlip({ ...leg, _id: calculatedId, task: `${leg.task} (${v.name})${isDemonActive ? ' 😈' : ''}`, creditReward: v.reward, isDemonMode: isDemonActive });
+      onToggleSlip({ ...leg, _id: calculatedId, task: `${leg.task} (${v.name})${isDemonActive ? ' ' : ''}`, creditReward: v.reward, isDemonMode: isDemonActive });
     }
   };
 
