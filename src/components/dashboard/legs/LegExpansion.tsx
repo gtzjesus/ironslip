@@ -24,12 +24,17 @@ export default function LegExpansion({
     if (!leg?.variants) return { selectedVariants: [], demonStates: {} };
     const selected: number[] = [];
     const demons: Record<number, boolean> = {};
+    
     leg.variants.forEach((v: any, index: number) => {
+      // Determinamos si es demonio por schema (v.isDemonSupported) o si ya venía marcado con -demon
+      const isDemonVariant = v.isDemonSupported === true;
       const idBase = `${leg._id}-${v.name}`;
-      if (currentSlipItems.some((item: any) => item._id === idBase || item._id === `${idBase}-demon`)) {
+      const targetId = isDemonVariant ? `${idBase}-demon` : idBase;
+
+      if (currentSlipItems.some((item: any) => item._id === idBase || item._id === `${idBase}-demon` || item._id === targetId)) {
         selected.push(index);
       }
-      if (currentSlipItems.some((item: any) => item._id === `${idBase}-demon`)) {
+      if (isDemonVariant || currentSlipItems.some((item: any) => item._id === `${idBase}-demon`)) {
         demons[index] = true;
       }
     });
@@ -40,23 +45,34 @@ export default function LegExpansion({
     e.stopPropagation();
     const v = leg?.variants?.[index];
     if (!v) return;
+    
     const isAlreadySelected = selectedVariants.includes(index);
-    const isDemonActive = !!demonStates[index];
-    const calculatedId = `${leg._id}-${v.name}${isDemonActive ? '-demon' : ''}`;
+    const isDemonLeg = v.isDemonSupported === true || !!demonStates[index];
+    const calculatedId = `${leg._id}-${v.name}${isDemonLeg ? '-demon' : ''}`;
 
     if (isAlreadySelected) {
       playSound('remove');
-      const itemInSlip = currentSlipItems.find((item: any) => item._id === calculatedId);
+      const itemInSlip = currentSlipItems.find((item: any) => item._id === calculatedId || item._id === `${leg._id}-${v.name}`);
       if (itemInSlip) onToggleSlip(itemInSlip);
     } else {
       playSound('add');
-      onToggleSlip({ ...leg, _id: calculatedId, task: `${leg.task} (${v.name})${isDemonActive ? ' ' : ''}`, creditReward: v.reward, isDemonMode: isDemonActive });
+      // AQUÍ ESTÁ LA CLAVE: Inyectamos los flags de demon y probability weights directamente al objeto del slip
+      onToggleSlip({ 
+        ...leg, 
+        _id: calculatedId, 
+        task: `${leg.task} (${v.name})${isDemonLeg ? ' 😈' : ''}`, 
+        creditReward: v.reward, 
+        probabilityWeight: v.probabilityWeight || 1.5,
+        demonMultiplier: v.demonMultiplier || 1.5,
+        isDemonSupported: isDemonLeg,
+        isDemonMode: isDemonLeg 
+      });
     }
   };
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md" onClick={onClose}>
-      <div className="w-full h-full max-w-2xl relative bg-zinc-950  flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+      <div className="w-full h-full max-w-2xl relative bg-zinc-950 flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
         
         {/* WATERMARK */}
         <div className="text-iron-volt absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden rotate-[-12deg] scale-125 select-none">
@@ -70,12 +86,12 @@ export default function LegExpansion({
         {/* HEADER */}
         <div className="p-5 relative z-10 flex justify-between items-center ">
           <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter">{leg.task}</h2>
-          <button onClick={onClose} className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold  uppercase">[ x ]</button>
+          <button onClick={onClose} className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold uppercase">[ x ]</button>
         </div>
 
         {/* CONTENT */}
         <div className="flex-1 relative z-10 overflow-y-auto p-3 custom-scrollbar pb-48">
-          <div className="w-full h-68  mb-4  flex items-center justify-center">
+          <div className="w-full h-68 mb-4 flex items-center justify-center">
             {is3DReady && <AvatarCanvas avatarUrl="/models/avatar.glb" activeAnimation={leg.animationKey || 'breathingidle'} />}
           </div>
 

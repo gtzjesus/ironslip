@@ -81,10 +81,10 @@ export default function SlipReviewOverlay({
 
       <div className={`w-full h-full max-w-2xl relative z-10 flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle} backdrop-blur-md`}>
         <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b border-zinc-900/40">
-          <h2 className={`${theme.titleText} font-black italic text-3xl uppercase tracking-tighter leading-none`}>
+          <h2 className={`${theme.titleText} text-2xl font-black italic uppercase tracking-tighter leading-none text-white`}>
             {activeSlip.length}-LEG {hasDemon ? 'DEMON' : 'IRON'} SLIP
           </h2>
-          <button onClick={() => { playSound('close'); onClose(); }} className="text-black font-mono text-[11px] uppercase tracking-[0.2em] bg-iron-red px-2 py-1 shadow-md active:scale-90 transition-all border border-white/10 shrink-0 mt-0.5">
+          <button onClick={() => { playSound('close'); onClose(); }} className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold  uppercase">
             [ X ]
           </button>
         </div>

@@ -22,7 +22,6 @@ export default function SlipNavbar({
   const [mounted, setMounted] = useState(false);
   const { playSound } = useSound();
 
-  // Aseguramos que el componente solo se renderice en el cliente
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -31,23 +30,20 @@ export default function SlipNavbar({
 
   const isCurrentlyExpanded = isExpanded && activeSlip.length > 0;
 
+  // Detección estricta de Demon en cualquier variante agregada al slip
   const hasDemon = activeSlip.some(
-    (leg) => leg.isDemonMode || leg.isDemon || leg.difficulty === 'demon' || leg._id?.includes('-demon'),
+    (leg) => leg.isDemonMode || leg.isDemon || leg.difficulty === 'demon' || leg._id?.includes('-demon') || leg.isDemonSupported === true,
   );
 
-  // CÁLCULO DE ODDS DINÁMICOS
-  // Si la variante tiene probabilityWeight, lo usamos; si no, caemos en un valor base de 1.5 por leg.
-  // Si es demon, multiplicamos por su demonMultiplier (por defecto 1.5 o el que traiga el schema).
   const totalOdds = activeSlip.reduce((acc, item) => {
     const baseWeight = item.probabilityWeight || 1.5;
-    const isItemDemon = item.isDemonMode || item.isDemon || item._id?.includes('-demon');
+    const isItemDemon = item.isDemonMode || item.isDemon || item._id?.includes('-demon') || item.isDemonSupported === true;
     const demonMult = item.demonMultiplier || 1.5;
     
     const legOdd = isItemDemon ? baseWeight * demonMult : baseWeight;
     return acc * legOdd;
   }, 1.0);
 
-  // Formateamos los odds finales (ej. x2.45, x12.80, etc.)
   const dynamicMultiplier = totalOdds < 1 ? 1.0 : totalOdds;
 
   const MIN_REVIEWS_REQUIRED = 1;
@@ -68,32 +64,43 @@ export default function SlipNavbar({
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
               onClick={handleExpand}
-              className={`relative overflow-hidden border p-3.5 flex items-center justify-between transition-all duration-300 ${
+              className={`relative overflow-hidden border p-3.5 flex items-center justify-between transition-all duration-300 bg-zinc-950 ${
                 isEligibleToExpand
                   ? 'cursor-pointer active:scale-[0.98]'
                   : 'cursor-not-allowed'
               } ${
                 hasDemon
-                  ? 'border-iron-red bg-iron-red shadow-lg shadow-black/80'
-                  : 'bg-iron-volt border-iron-volt/40 shadow-lg shadow-black/80'
+                  ? 'border-red-600 shadow-[0_0_25px_rgba(220,38,38,0.35)]'
+                  : 'border-iron-volt/60 shadow-[0_0_20px_rgba(0,255,102,0.15)]'
               }`}
             >
+              {/* PATRÓN DE RAYAS DIAGONALES SUTILES */}
+              <div 
+                className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                  backgroundImage: 'repeating-linear-gradient(45deg, #fff, #fff 2px, transparent 2px, transparent 8px)'
+                }}
+              />
+
+              {/* LÍNEA DE ACENTO SUPERIOR (ROJO SI ES DEMON, VERDE SI ES NORMAL) */}
+              <div className={`absolute top-0 left-0 right-0 h-[2px] ${hasDemon ? 'bg-red-600' : 'bg-iron-volt'}`} />
+
               <div className="relative z-10 flex flex-col justify-center items-start leading-none">
-                <p className="text-[9px] font-mono uppercase tracking-[0.15em] mb-1 text-black">
-                  {hasDemon ? 'DEMON slip' : 'IRON slip'}
+                <p className={`text-[9px] font-mono uppercase tracking-[0.15em] mb-1.5 ${hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt'}`}>
+                  {hasDemon ? '■ DEMON SLIP 😈' : '■ IRON SLIP'}
                 </p>
-                <p className="text-sm font-black uppercase tracking-tight italic leading-none text-black">
+                <p className="text-sm font-black uppercase tracking-tight italic leading-none text-zinc-100">
                   {activeSlip.length} / 5 LEGS
                 </p>
               </div>
 
               <div className="relative z-10 flex items-center gap-4">
                 <div className="flex flex-col justify-center items-end text-right leading-none">
-                  <p className="text-[8px] font-mono uppercase tracking-widest text-black mb-1">
-                    win up to x{dynamicMultiplier.toFixed(2)}
+                  <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-400 mb-1.5">
+                    WIN UP TO <span className={hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt font-bold'}>x{dynamicMultiplier.toFixed(2)}</span>
                   </p>
-                  <p className="text-sm font-black uppercase tracking-tight italic leading-none text-black">
-                    {hasDemon ? 'LOCK IN demon' : 'LOCK IN SLIP'}
+                  <p className="text-sm font-black uppercase tracking-tight italic leading-none text-zinc-100">
+                    {hasDemon ? 'LOCK IN DEMON' : 'LOCK IN SLIP'}
                   </p>
                 </div>
 
@@ -101,11 +108,9 @@ export default function SlipNavbar({
                   className={`p-2 transition-all duration-300 flex items-center justify-center border overflow-hidden w-9 h-9 flex-shrink-0 ${
                     isEligibleToExpand
                       ? hasDemon
-                        ? 'bg-zinc-900 border-iron-red/50 text-iron-red'
+                        ? 'bg-red-950/60 border-red-600 text-red-500'
                         : 'bg-zinc-900 border-iron-volt text-iron-volt'
-                      : hasDemon
-                        ? 'bg-zinc-900 border-zinc-800 text-zinc-600'
-                        : 'bg-zinc-950 border-zinc-900 text-zinc-700'
+                      : 'bg-zinc-900 border-zinc-800 text-zinc-600'
                   }`}
                 >
                   {isEligibleToExpand ? (
@@ -115,7 +120,7 @@ export default function SlipNavbar({
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
                       <Lock className="w-2.5 h-2.5 mb-0.5 text-zinc-600" />
-                      <span className="text-[8px] font-mono font-black text-black">
+                      <span className="text-[8px] font-mono font-black text-zinc-500">
                         {legsNeeded}
                       </span>
                     </div>
