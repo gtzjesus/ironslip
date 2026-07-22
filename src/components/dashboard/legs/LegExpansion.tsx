@@ -83,15 +83,23 @@ export default function LegExpansion({
           ))}
         </div>
 
-        {/* HEADER */}
+{/* HEADER */}
         <div className="p-5 relative z-10 flex justify-between items-center ">
           <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter">{leg.task}</h2>
-          <button onClick={onClose} className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold uppercase">[ x ]</button>
+          <button 
+            onClick={() => { 
+              playSound('close'); 
+              setTimeout(() => onClose(), 100); 
+            }} 
+            className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold uppercase"
+          >
+            [ x ]
+          </button>
         </div>
 
         {/* CONTENT */}
         <div className="flex-1 relative z-10 overflow-y-auto p-3 custom-scrollbar pb-48">
-          <div className="w-full h-68 mb-4 flex items-center justify-center">
+          <div className="w-full h-58 mb-4 flex items-center justify-center">
             {is3DReady && <AvatarCanvas avatarUrl="/models/avatar.glb" activeAnimation={leg.animationKey || 'breathingidle'} />}
           </div>
 
