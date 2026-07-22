@@ -21,12 +21,21 @@ export const legType = defineType({
             { 
               name: 'probabilityWeight', 
               type: 'number', 
-              title: 'base probability weight (0.1 to 3.0)',
-              validation: Rule => Rule.required().min(0.1).max(3.0)
+              title: 'Base Odd / Payout Multiplier (e.g., 1.5x)',
+              description: 'El multiplicador base que otorga esta variante en el slip normal.',
+              validation: Rule => Rule.required().min(1.0).max(10.0),
+              initialValue: 1.5
             },
-            { name: 'reward', type: 'number', title: 'base reward' },
-            { name: 'demonMultiplier', type: 'number', title: 'demon reward multiplier', initialValue: 1.5 },
-            { name: 'isDemonSupported', type: 'boolean', initialValue: false },
+            { name: 'reward', type: 'number', title: 'base credit reward' },
+            { 
+              name: 'demonMultiplier', 
+              type: 'number', 
+              title: 'Demon Mode Multiplier (e.g., 2.0x)',
+              description: 'Multiplicador extra que se aplica cuando se activa el modo demonio en esta variante.',
+              initialValue: 2.0,
+              validation: Rule => Rule.required().min(1.0).max(10.0)
+            },
+            { name: 'isDemonSupported', type: 'boolean', title: 'Supports Demon Mode?', initialValue: false },
             { name: 'verificationMethod', type: 'string', initialValue: 'video', options: { list: ['video', 'photo'] } },
             { name: 'aiPrompt', type: 'text', rows: 2 },
           ],

@@ -30,7 +30,6 @@ export default function SlipNavbar({
 
   const isCurrentlyExpanded = isExpanded && activeSlip.length > 0;
 
-  // Detección estricta de Demon en cualquier variante agregada al slip
   const hasDemon = activeSlip.some(
     (leg) => leg.isDemonMode || leg.isDemon || leg.difficulty === 'demon' || leg._id?.includes('-demon') || leg.isDemonSupported === true,
   );
@@ -82,12 +81,12 @@ export default function SlipNavbar({
                 }}
               />
 
-              {/* LÍNEA DE ACENTO SUPERIOR (ROJO SI ES DEMON, VERDE SI ES NORMAL) */}
+              {/* LÍNEA DE ACENTO SUPERIOR */}
               <div className={`absolute top-0 left-0 right-0 h-[2px] ${hasDemon ? 'bg-red-600' : 'bg-iron-volt'}`} />
 
               <div className="relative z-10 flex flex-col justify-center items-start leading-none">
                 <p className={`text-[9px] font-mono uppercase tracking-[0.15em] mb-1.5 ${hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt'}`}>
-                  {hasDemon ? '■ DEMON SLIP 😈' : '■ IRON SLIP'}
+                  {hasDemon ? ' DEMON SLIP 😈' : 'IRON SLIP'}
                 </p>
                 <p className="text-sm font-black uppercase tracking-tight italic leading-none text-zinc-100">
                   {activeSlip.length} / 5 LEGS
@@ -105,7 +104,7 @@ export default function SlipNavbar({
                 </div>
 
                 <div
-                  className={`p-2 transition-all duration-300 flex items-center justify-center border overflow-hidden w-9 h-9 flex-shrink-0 ${
+                  className={`p-2 transition-all duration-300 flex items-center justify-center overflow-hidden w-9 h-9 flex-shrink-0 border ${
                     isEligibleToExpand
                       ? hasDemon
                         ? 'bg-red-950/60 border-red-600 text-red-500'
@@ -115,7 +114,8 @@ export default function SlipNavbar({
                 >
                   {isEligibleToExpand ? (
                     <div className="w-5 h-5 flex items-center justify-center">
-                      <ChevronsRight className="w-5 h-5" />
+                      {/* ANIMACIÓN DE MOVIMIENTO DE IZQUIERDA A DERECHA TIPO VIDEOJUEGO */}
+                      <ChevronsRight className="w-5 h-5 animate-[bounce_1s_infinite] translate-x-0.1" />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
