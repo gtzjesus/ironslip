@@ -2,6 +2,7 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import { useSound } from '@/hooks/useSound';
+import { Zap } from 'lucide-react';
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
 import BottomNav from '@/components/common/BottomNav';
@@ -26,7 +27,6 @@ export default function LegExpansion({
     const demons: Record<number, boolean> = {};
     
     leg.variants.forEach((v: any, index: number) => {
-      // Determinamos si es demonio por schema (v.isDemonSupported) o si ya venía marcado con -demon
       const isDemonVariant = v.isDemonSupported === true;
       const idBase = `${leg._id}-${v.name}`;
       const targetId = isDemonVariant ? `${idBase}-demon` : idBase;
@@ -56,7 +56,6 @@ export default function LegExpansion({
       if (itemInSlip) onToggleSlip(itemInSlip);
     } else {
       playSound('add');
-      // AQUÍ ESTÁ LA CLAVE: Inyectamos los flags de demon y probability weights directamente al objeto del slip
       onToggleSlip({ 
         ...leg, 
         _id: calculatedId, 
@@ -83,9 +82,16 @@ export default function LegExpansion({
           ))}
         </div>
 
-{/* HEADER */}
+        {/* HEADER */}
         <div className="p-5 relative z-10 flex justify-between items-center ">
-          <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter">{leg.task}</h2>
+          <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter flex items-center gap-2">
+            {leg.task}
+            {leg.variants?.some((v: any) => v.isDemonSupported) ? (
+              <span className="text-red-500 animate-pulse text-lg not-italic select-none" title="DEMON VARIANT AVAILABLE">😈</span>
+            ) : (
+              <Zap className="w-5 h-5 text-[#c4a000] fill-[#c4a000] inline-block select-none" />
+            )}
+          </h2>
           <button 
             onClick={() => { 
               playSound('close'); 
@@ -104,18 +110,29 @@ export default function LegExpansion({
           </div>
 
           <div className="space-y-2">
-            {leg.variants?.map((v: any, i: number) => (
-              <VariantItem 
-                key={i} 
-                v={v} 
-                index={i} 
-                isExpanded={expandedIndex === i}
-                isSelected={selectedVariants.includes(i)}
-                isDemon={!!demonStates[i]}
-                onToggleAccordion={() => { setExpandedIndex(expandedIndex === i ? null : i); playSound('select'); }}
-                onToggleSelection={(e: any) => toggleVariantSelection(i, e)}
-              />
-            ))}
+            {leg.variants?.map((v: any, i: number) => {
+              const isDemon = !!demonStates[i];
+              return (
+                <div key={i} className="relative">
+                  <VariantItem 
+                    v={v} 
+                    index={i} 
+                    isExpanded={expandedIndex === i}
+                    isSelected={selectedVariants.includes(i)}
+                    isDemon={isDemon}
+                    onToggleAccordion={() => { setExpandedIndex(expandedIndex === i ? null : i); playSound('select'); }}
+                    onToggleSelection={(e: any) => toggleVariantSelection(i, e)}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 pointer-events-none flex items-center">
+                    {isDemon ? (
+                      <span className="text-[14px] animate-bounce select-none">😈</span>
+                    ) : (
+                      <Zap className="w-3.5 h-3.5 text-[#c4a000] fill-[#c4a000] select-none" />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

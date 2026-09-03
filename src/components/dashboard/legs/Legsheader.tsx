@@ -29,7 +29,7 @@ export default function LegsHeader({ userBalance }: LegsHeaderProps) {
 
         <div className="flex items-baseline gap-1">
           <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none text-white">
-            Iron 
+            Iron legs 
           </h2>
           <span className="text-zinc-600 font-mono text-[10px] italic uppercase">
             _
