@@ -57,9 +57,19 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
   const statusColor = isSignedIn ? 'text-iron-volt' : 'text-iron-red';
 
   return (
-    <section className="flex flex-col h-[380px] sm:h-[700px] w-full relative bg-black">
+    <section 
+      className="flex flex-col h-full w-full relative p-4"
+      style={{
+        backgroundColor: '#0d0b09',
+        backgroundImage: `
+          linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px)
+        `,
+        backgroundSize: '64px 64px',
+      }}
+    >
       {/* HEADER */}
-      <div className="flex justify-between items-end mb-5 px-1">
+      <div className="flex justify-between items-end mb-4 px-1 flex-shrink-0">
         <div>
           <h3
             className={`text-[10px] font-mono ${statusColor} uppercase tracking-[0.2em] flex items-center gap-2`}
@@ -71,16 +81,16 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
         <Terminal className="w-3 h-3 text-zinc-700" />
       </div>
 
-      <div className="relative flex-grow overflow-hidden">
+      <div className="relative flex-grow overflow-hidden flex flex-col">
         {/* FEED LIST - NO ANIMATIONS */}
         <div
-          className={`flex-grow h-full overflow-y-auto overflow-x-hidden space-y-2 pr-2 
-                   ${!isSignedIn ? 'blur-md grayscale opacity-30 select-none pointer-events-none' : 'opacity-100'}`}
+          className={`flex-grow h-full overflow-y-auto overflow-x-hidden space-y-2 pr-2 scrollbar-hide
+                    ${!isSignedIn ? 'blur-md grayscale opacity-30 select-none pointer-events-none' : 'opacity-100'}`}
         >
           {FEED_DATA.map((item) => (
             <div
               key={item.id}
-              className={`relative p-3 bg-zinc-900/40 border-l-2 ${
+              className={`relative p-3 bg-zinc-950/60 backdrop-blur-sm border-l-2 ${
                 item.highlight
                   ? isSignedIn
                     ? 'border-iron-volt'
@@ -111,10 +121,10 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
 
         {/* STATIC LOCK OVERLAY */}
         {!isSignedIn && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/20">
-            <div className="bg-black border border-iron-red/30 p-4 backdrop-blur-md flex flex-col items-center gap-3">
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px]">
+            <div className="bg-zinc-950 border border-iron-red/30 p-4 shadow-[0_0_20px_rgba(255,0,60,0.15)] flex flex-col items-center gap-3">
               <LockIcon className="w-4 h-4 text-iron-red" />
-              <p className="text-[7px] font-mono text-iron-red/50 uppercase tracking-[0.2em]">
+              <p className="text-[7px] font-mono text-iron-red/60 uppercase tracking-[0.2em]">
                 authentication_needed
               </p>
             </div>

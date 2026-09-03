@@ -5,13 +5,29 @@ import { SignUpButton } from '@clerk/nextjs';
 import Link from 'next/link';
 
 export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
-  // 1. We define the inner content so we don't repeat code
   const ButtonContent = (
     <motion.div
-      /* ADDED OPACITY MODIFIERS: bg-iron-volt/90 and bg-iron-red/90 */
-      className={`${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'} p-3 rounded-sm flex flex-col justify-between group cursor-pointer transition-all duration-200 min-h-[100px]  shadow-lg`}
+
+      whileTap={{ scale: 0.99 }}
+      className={`relative p-3 flex flex-col justify-between group cursor-pointer transition-all duration-200 min-h-[100px] overflow-hidden ${
+        isSignedIn 
+          ? 'bg-zinc-950 border-2 border-iron-volt shadow-[0_0_25px_rgba(241,194,50,0.35)] hover:shadow-[0_0_35px_rgba(241,194,50,0.5)]' 
+          : 'bg-zinc-950 border-2 border-iron-red shadow-[0_0_25px_rgba(255,0,60,0.35)]'
+      }`}
+      style={{
+        clipPath: 'polygon(0 0, 100% 0, 96% 100%, 0% 100%)',
+      }}
     >
-      <h3 className="text-black font-black italic text-xl uppercase leading-none">
+      <div 
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(45deg, #fff, #fff 2px, transparent 2px, transparent 8px)'
+        }}
+      />
+
+      <div className={`absolute top-0 left-0 right-0 h-[2px] ${isSignedIn ? 'bg-iron-volt' : 'bg-iron-red'}`} />
+
+      <h3 className={`font-black italic text-xl uppercase leading-none relative z-10 ${isSignedIn ? 'text-iron-volt' : 'text-iron-red'}`}>
         {isSignedIn ? (
           <>
             build new <br /> iron Slip
@@ -22,9 +38,9 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
           </>
         )}
       </h3>
-      <div className="flex justify-end text-black">
+      <div className={` flex justify-end relative z-10 ${isSignedIn ? 'text-iron-volt' : 'text-iron-red'}`}>
         {isSignedIn ? (
-          <span className="text-xl font-black italic">→</span>
+          <span className="text-xl font-black italic pr-4">→</span>
         ) : (
           <Lock className="w-4 h-4 opacity-70 animate-pulse" />
         )}
@@ -32,7 +48,6 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
     </motion.div>
   );
 
-  // 2. If signed in, wrap in Link to navigate to /legs
   if (isSignedIn) {
     return (
       <Link href="/legs" className="block no-underline">
@@ -41,7 +56,6 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
     );
   }
 
-  // 3. If NOT signed in, wrap it in the SignUpButton with dynamic absolute redirect
   return (
     <SignUpButton 
       mode="modal" 
