@@ -9,7 +9,7 @@ import { useUser, useClerk } from '@clerk/nextjs';
 
 export default function IronHero() {
   const { isSignedIn } = useUser();
-  const { openSignIn } = useClerk();
+  const { openSignUp, openSignIn } = useClerk(); // <-- Agregamos openSignUp aquí
   const [isReady, setIsReady] = useState(false);
 
   // FAIL-SAFE: If Rive takes too long, open the curtain anyway after 3.5s
@@ -31,8 +31,9 @@ export default function IronHero() {
     }),
   });
 
-  const handleSignInClick = () => {
-    openSignIn({
+  // Si quieres que el botón abra el flujo general de registro (que incluye opción de cambiar a Sign In):
+  const handleAuthClick = () => {
+    openSignUp({
       fallbackRedirectUrl: '/home',
       forceRedirectUrl: '/home',
     });
@@ -143,7 +144,7 @@ export default function IronHero() {
                 </Link>
               ) : (
                 <button
-                  onClick={handleSignInClick}
+                  onClick={handleAuthClick}
                   className="group relative p-4 bg-zinc-950 border border-iron-volt/50 text-iron-volt text-[12px] font-mono uppercase tracking-[0.2em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt hover:text-black active:scale-95 shadow-[0_0_20px_rgba(255,211,0,0.2)] flex items-center justify-center cursor-pointer w-full"
                 >
                   <div className="absolute inset-0 -z-10 bg-iron-volt blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
