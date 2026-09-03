@@ -32,7 +32,7 @@ export default function LegFilterNav({
   }, [legs]);
 
   return (
-    <div className="mx-2 flex overflow-x-auto gap-2  scrollbar-hide no-scrollbar ">
+    <div className="mx-0.5 flex overflow-x-auto gap-1  scrollbar-hide no-scrollbar ">
       {categories.map((cat) => {
         const isActive = activeCategory === cat.value;
         return (

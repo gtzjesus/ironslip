@@ -63,15 +63,22 @@ export default function SlipNavbar({
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
               onClick={handleExpand}
-              className={`relative overflow-hidden  p-3.5 flex items-center justify-between transition-all duration-300 bg-zinc-950 ${
+              className={`relative overflow-hidden p-3.5 flex items-center justify-between transition-all duration-300 bg-zinc-950 border-[0.5px] ${
                 isEligibleToExpand
                   ? 'cursor-pointer active:scale-[0.98]'
                   : 'cursor-not-allowed'
               } ${
                 hasDemon
-                  ? ' shadow-[0_0_25px_rgba(220,38,38,0.35)]'
-                  : 'border-iron-volt/60 shadow-[0_0_20px_rgba(0,255,102,0.15)]'
+                  ? 'border-red-600/40 shadow-[0_0_25px_rgba(220,38,38,0.35)]'
+                  : 'border-iron-volt/30 shadow-[0_0_20px_rgba(255,211,0,0.12)]'
               }`}
+              style={{
+                backgroundImage: `
+                  linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px)
+                `,
+                backgroundSize: '64px 64px',
+              }}
             >
               {/* PATRÓN DE RAYAS DIAGONALES SUTILES */}
               <div 
@@ -104,18 +111,17 @@ export default function SlipNavbar({
                 </div>
 
                 <div
-                  className={`p-2 transition-all duration-300 flex items-center justify-center overflow-hidden w-9 h-9 flex-shrink-0  ${
+                  className={`p-2 transition-all duration-300 flex items-center justify-center overflow-hidden w-9 h-9 flex-shrink-0 border-[0.5px] ${
                     isEligibleToExpand
                       ? hasDemon
-                        ? 'bg-red-950/60  text-red-500'
-                        : 'bg-zinc-900 border-iron-volt text-iron-volt'
+                        ? 'bg-red-950/60 border-red-600/50 text-red-500'
+                        : 'bg-zinc-900 border-iron-volt/40 text-iron-volt'
                       : 'bg-zinc-900 border-zinc-800 text-zinc-600'
                   }`}
                 >
                   {isEligibleToExpand ? (
                     <div className="w-5 h-5 flex items-center justify-center">
-                      {/* ANIMACIÓN DE MOVIMIENTO DE IZQUIERDA A DERECHA TIPO VIDEOJUEGO */}
-                      <ChevronsRight className="w-5 h-5 animate-[bounce_1s_infinite] translate-x-.5" />
+                      <ChevronsRight className="w-5 h-5 animate-[bounce_1s_infinite] translate-x-[2px]" />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
