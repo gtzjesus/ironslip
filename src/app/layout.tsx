@@ -41,7 +41,7 @@ export default function RootLayout({
         elements: {
           card: 'bg-[#F1C232] border-4 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] animate-arcade-slide',
           modalContent: 'p-0 bg-transparent shadow-none',
-          modalBackdrop: 'backdrop-blur-sm bg-yellow-500/20',
+          modalBackdrop: 'backdrop-blur-sm bg-black/60',
           footer: 'hidden',
           'clerk-branding': 'hidden',
           headerTitle: 'text-black font-black italic uppercase tracking-tighter text-3xl',
@@ -59,9 +59,9 @@ export default function RootLayout({
         },
       }}
     >
-      <html lang="en" className="bg-[#121212]">
+      <html lang="en">
         <head>
-          <meta name="theme-color" content="#121212" />
+          <meta name="theme-color" content="#0d0b09" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <style dangerouslySetInnerHTML={{ __html: `
@@ -80,7 +80,17 @@ export default function RootLayout({
             }
           `}} />
         </head>
-        <body className="bg-[#121212] text-white antialiased selection:bg-iron-volt selection:text-black">
+        <body 
+          className="text-white antialiased selection:bg-iron-volt selection:text-black min-h-screen"
+          style={{
+            backgroundColor: '#0d0b09', // Fondo café oscuro / carbón industrial
+            backgroundImage: `
+              linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
+            `,
+            backgroundSize: '32px 32px',
+          }}
+        >
           {children}
         </body>
       </html>

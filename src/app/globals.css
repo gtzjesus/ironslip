@@ -1,25 +1,15 @@
 @import 'tailwindcss';
 
 :root {
-  /* 🔄 FIXED: Root canvas defaults directly to deep matte black to save your eyes */
-  --background: #121212;
+  --background: #0d0b09;
   --foreground: #ededed;
   
-  /* Brand Colors */
   --iron-volt: #F1C232;
   --iron-volt-glow: rgba(255, 211, 0, 0.3);
   --iron-red: #ff003c;
   --iron-green: #00ff41;
   --iron-gray: #18181b;
-  --iron-black: #121212;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Hard lockdown on dark mode style across devices */
-    --background: #121212; 
-    --foreground: #ededed;
-  }
+  --iron-black: #0d0b09;
 }
 
 @theme inline {
@@ -28,13 +18,10 @@
   --color-iron-volt: var(--iron-volt);
   --color-iron-red: var(--iron-red);
   --color-iron-green: var(--iron-green);
+  --color-iron-black: var(--iron-black);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@theme inline {
-  --color-iron-black: var(--iron-black);
 }
 
 @layer utilities {
@@ -53,25 +40,16 @@ body {
   overflow: hidden;
   position: fixed;
   width: 100%;
-  background: var(--background);
+  /* CUADROS GRANDES Y LÍNEAS SUTILES PARA TODA LA APP */
+  background-color: #0d0b09;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
-
-@layer utilities {
-  @keyframes scan {
-    0% {
-      transform: translateY(-100%);
-    }
-    100% {
-      transform: translateY(600%);
-    }
-  }
-}
-
-/* ==========================================================================
-   ARCADE HARD METALLIC SLAM MOTIONS
-   ========================================================================== */
 
 @keyframes videoGameSlam {
   0% {
@@ -79,45 +57,34 @@ body {
     opacity: 0;
   }
   55% {
-    /* Hard overshoot past the target destination to create the impact impact */
     transform: translateX(4vw) scaleX(0.95) skewX(2deg);
     opacity: 1;
   }
   75% {
-    /* Snapping bounce back slightly left */
     transform: translateX(-1.5vw) scaleX(1.02) skewX(-1deg);
   }
   90% {
-    /* Minor micro-settle adjustment */
     transform: translateX(0.5vw) scaleX(0.99);
   }
   100% {
-    /* Solid concrete lock */
     transform: translateX(0) scaleX(1) skewX(0);
     opacity: 1;
   }
 }
 
 .animate-videogame-slam {
-  /* Utilizing a violent, top-loaded tracking curve to force the hyper-speed initial entry */
   animation: videoGameSlam 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   transform-origin: left center;
   will-change: transform, opacity;
 }
 
-/* 3. APPLYING BOTH TO THE CLERK MODAL */
 .cl-modalContent {
-  animation:
-    forgeSlam 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards,
-    forgePulse 3s ease-in-out infinite 0.6s !important;
-
   border: 4px solid #F1C232 !important;
-  background-color: #121212 !important; /* FIXED: Auth content aligns with background */
+  background-color: #121212 !important;
   border-radius: 0px !important;
   position: relative;
 }
 
-/* 4. SCANLINE OVERLAY */
 .cl-modalContent::before {
   content: ' ';
   position: absolute;
@@ -131,20 +98,8 @@ body {
   pointer-events: none;
 }
 
-/* Add this at the absolute bottom of your globals.css */
-html {
-  /* Forces Safari to render colors using the standard device sRGB space without washing out */
-  color-profile: sRGB;
-  -webkit-font-smoothing: antialiased;
-  
-  /* 🔄 FIXED: Prevents iOS Safari from exposing gold borders during overscroll bounces */
-  background-color: #121212 !important; 
-}
-
-/* Fixes the phone notch background consistency */
 @supports (-webkit-touch-callout: none) {
   html, body {
-    /* Ensures the safe area inset properties match the background solid value exactly */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
