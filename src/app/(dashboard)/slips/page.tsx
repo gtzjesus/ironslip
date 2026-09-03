@@ -1,26 +1,42 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { slipStorage, LocalUserSlip } from '@/lib/slipStorage';
 
 export default function SlipsPage() {
+  const { isLoaded, isSignedIn } = useUser();
   const [activeContracts, setActiveContracts] = useState<LocalUserSlip[]>([]);
 
   useEffect(() => {
-    // Read the committed entries from memory on load
-    setActiveContracts(slipStorage.getSlips());
-  }, []);
+    if (isLoaded && isSignedIn) {
+      // Read the committed entries from memory on load if authenticated
+      setActiveContracts(slipStorage.getSlips());
+    }
+  }, [isLoaded, isSignedIn]);
+
+  if (!isLoaded) return null;
 
   return (
-    <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 px-4 py-8">
-        {/* 📱 SAFARI TINT FORCE: Case 1 */}
-        <meta name="theme-color" content="#000000" />
+    <main className="min-h-screen w-full overflow-y-auto flex flex-col bg-black max-w-2xl mx-auto border-x border-zinc-900 px-4 py-8 pb-32">
+      {/* 📱 SAFARI TINT FORCE */}
+      <meta name="theme-color" content="#000000" />
+      
       {/* HUD Header Terminal */}
       <div className="mb-8 border-b border-zinc-800 pb-4">
         <p className="font-mono text-[10px] text-zinc-500 tracking-[0.4em] uppercase">SYSTEM_MANIFEST</p>
         <h1 className="text-3xl font-black italic text-white uppercase tracking-tight">ACTIVE_CONTRACTS</h1>
       </div>
 
-      {activeContracts.length === 0 ? (
+      {!isSignedIn ? (
+        <div className="flex-1 flex flex-col items-center justify-center py-32 border-2 border-dashed border-zinc-900 rounded-3xl text-center px-4">
+          <p className="text-iron-red font-mono text-xs uppercase tracking-widest mb-2 font-bold">ACCESS_RESTRICTED</p>
+          <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-wider mb-6">Authenticate to access contract telemetry and active slips.</p>
+          <a href="/sign-in" className="text-xs bg-zinc-900 text-iron-volt border border-zinc-800 font-mono uppercase px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all font-bold">
+            Authenticate Core
+          </a>
+        </div>
+      ) : activeContracts.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center py-32 border-2 border-dashed border-zinc-900 rounded-3xl">
           <p className="text-zinc-600 font-mono text-xs uppercase tracking-widest mb-4">NO_ACTIVE_SLIPS_FOUND</p>
           <a href="/legs" className="text-xs bg-zinc-900 text-iron-volt border border-zinc-800 font-mono uppercase px-4 py-2 rounded-xl hover:bg-white hover:text-black transition-all">

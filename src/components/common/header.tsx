@@ -8,7 +8,6 @@ import Image from 'next/image';
 
 const navItems = [
   { name: 'Home', href: '/' },
-  { name: 'Join', href: '/join' },
 ];
 
 const Header = () => {

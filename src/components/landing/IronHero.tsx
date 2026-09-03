@@ -4,17 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRive, Layout, Fit, Alignment } from '@rive-app/react-canvas';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useUser, SignUpButton } from '@clerk/nextjs';
 
 export default function IronHero() {
+  const { isSignedIn } = useUser();
   const [isReady, setIsReady] = useState(false);
-
-  const glitchVariants = {
-    hover: {
-      x: [0, -2, 2, -1, 1, 0],
-      y: [0, 1, -1, 2, -2, 0],
-      transition: { duration: 0.2, repeat: Infinity },
-    },
-  };
 
   // FAIL-SAFE: If Rive takes too long, open the curtain anyway after 3.5s
   useEffect(() => {
@@ -28,7 +22,7 @@ export default function IronHero() {
     src: '/avatar/avatar-walking.riv',
     stateMachines: 'State Machine 1',
     autoplay: true,
-    onLoad: () => setIsReady(true), // Trigger when asset is loaded
+    onLoad: () => setIsReady(true),
     layout: new Layout({
       fit: Fit.Cover,
       alignment: Alignment.Center,
@@ -68,11 +62,11 @@ export default function IronHero() {
         )}
       </AnimatePresence>
 
-      {/* 2. CINEMATIC OVERLAYS (Always on top) */}
+      {/* 2. CINEMATIC OVERLAYS */}
       <div className="absolute inset-0 z-50 pointer-events-none opacity-20 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       <div className="absolute inset-0 z-40 pointer-events-none bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)]" />
 
-      {/* 3. MAIN CONTENT (Fades in once ready) */}
+      {/* 3. MAIN CONTENT */}
       <div
         className={`h-full w-full transition-opacity duration-1000 ${isReady ? 'opacity-100' : 'opacity-0'}`}
       >
@@ -80,8 +74,6 @@ export default function IronHero() {
         <div className="top-[27%] absolute inset-0 flex justify-center z-20 select-none md:justify-start md:pl-20 md:top-[15%]">
           <h1 className="text-[12.5vw] font-black italic tracking-tighter leading-none text-white uppercase blur-[0px] md:text-[8vw]">
             ironslip
-            {/* Aesthetic Line
-            <div className="mt-4 h-[1px] w-24 bg-gradient-to-r from-transparent via-iron-volt to-transparent md:via-transparent md:from-iron-volt" /> */}
           </h1>
         </div>
 
@@ -113,7 +105,7 @@ export default function IronHero() {
               </p>
             </div>
 
-            {/* Bottom HUD Section - Adjusted to be more central */}
+            {/* Bottom HUD Section */}
             <div className="flex flex-col pt-[50%]  justify-center gap-6 flex-grow md:items-end md:pb-0 md:justify-center">
               <div className="flex flex-col items-center text-center md:items-end md:text-right">
                 <p className="text-[17px] text-lg font-black uppercase italic tracking-tighter transition-colors">
@@ -129,17 +121,27 @@ export default function IronHero() {
                 </p>
               </div>
 
-              {/* ACTION BUTTON */}
-              <Link
-                href="/home"
-                className="group relative p-3 bg-white text-iron-black text-[12px] font-mono uppercase tracking-[0.1em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-md flex items-center justify-center"
-              >
-                {/* Custom Glow Layer */}
-                <div className="absolute inset-0 -z-10 bg-iron-volt blur-md opacity-95 animate-pulse group-hover:opacity-80 transition-opacity " />
-                <span className="text-lg font-black uppercase italic tracking-tighter transition-colors">
-                  Start the grind
-                </span>
-              </Link>
+              {/* ACTION BUTTON (CONDITIONAL: LINK OR CLERK MODAL) */}
+              {isSignedIn ? (
+                <Link
+                  href="/home"
+                  className="group relative p-3 bg-white text-black text-[12px] font-mono uppercase tracking-[0.1em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-md flex items-center justify-center no-underline"
+                >
+                  <div className="absolute inset-0 -z-10 bg-iron-volt blur-md opacity-95 animate-pulse group-hover:opacity-80 transition-opacity " />
+                  <span className="text-lg font-black uppercase italic tracking-tighter transition-colors text-black">
+                    Start the grind
+                  </span>
+                </Link>
+              ) : (
+                <SignUpButton mode="modal" forceRedirectUrl="/home">
+                  <button className="group relative p-3 bg-white text-black text-[12px] font-mono uppercase tracking-[0.1em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt active:scale-95 shadow-md flex items-center justify-center cursor-pointer w-full">
+                    <div className="absolute inset-0 -z-10 bg-iron-volt blur-md opacity-95 animate-pulse group-hover:opacity-80 transition-opacity " />
+                    <span className="text-lg font-black uppercase italic tracking-tighter transition-colors text-black">
+                      Start the grind
+                    </span>
+                  </button>
+                </SignUpButton>
+              )}
             </div>
           </div>
         </div>

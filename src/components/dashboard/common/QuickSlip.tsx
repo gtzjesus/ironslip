@@ -41,6 +41,13 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
     );
   }
 
-  // 3. If NOT signed in, wrap it in the SignUpButton
-  return <SignUpButton mode="modal">{ButtonContent}</SignUpButton>;
+  // 3. If NOT signed in, wrap it in the SignUpButton with dynamic absolute redirect
+  return (
+    <SignUpButton 
+      mode="modal" 
+      forceRedirectUrl={typeof window !== 'undefined' ? `${window.location.origin}/home` : '/home'}
+    >
+      {ButtonContent}
+    </SignUpButton>
+  );
 }
