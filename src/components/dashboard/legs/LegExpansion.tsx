@@ -84,20 +84,15 @@ export default function LegExpansion({
 
         {/* HEADER */}
         <div className="p-5 relative z-10 flex justify-between items-center ">
-          <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter flex items-center gap-2">
+          <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter truncate">
             {leg.task}
-            {leg.variants?.some((v: any) => v.isDemonSupported) ? (
-              <span className="text-red-500 animate-pulse text-lg not-italic select-none" title="DEMON VARIANT AVAILABLE">😈</span>
-            ) : (
-              <Zap className="w-5 h-5 text-[#c4a000] fill-[#c4a000] inline-block select-none" />
-            )}
           </h2>
           <button 
             onClick={() => { 
               playSound('close'); 
               setTimeout(() => onClose(), 100); 
             }} 
-            className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold uppercase"
+            className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold uppercase flex-shrink-0"
           >
             [ x ]
           </button>

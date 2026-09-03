@@ -1,7 +1,6 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import QuickSlip from '@/components/dashboard/common/QuickSlip';
 import IronFeed from '@/components/dashboard/feed/IronFeed';
 import FeedHeader from '@/components/dashboard/feed/Feedheader';
 
@@ -12,7 +11,7 @@ export default function DashboardHome() {
 
   return (
     <main 
-      className="h-screen w-full overflow-hidden flex flex-col p-2 max-w-2xl mx-auto"
+      className="h-screen w-full overflow-hidden flex flex-col  max-w-2xl mx-auto"
       style={{
         backgroundColor: '#0d0b09',
         backgroundImage: `
@@ -27,10 +26,9 @@ export default function DashboardHome() {
         <FeedHeader />
       </div>
 
-      <div className="flex-grow overflow-y-auto overflow-x-hidden pb-24 scrollbar-hide">
-        <div className="grid grid-cols-1 gap-8 items-start">
+      <div className="flex-grow overflow-y-auto overflow-x-hidden scrollbar-hide">
+        <div className="grid grid-cols-1 items-start">
           <IronFeed isSignedIn={!!isSignedIn} />
-          <QuickSlip isSignedIn={!!isSignedIn} />
         </div>
       </div>
     </main>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { Activity, Terminal, Lock as LockIcon } from 'lucide-react';
@@ -58,7 +59,7 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
 
   return (
     <section 
-      className="flex flex-col h-full w-full relative p-4"
+      className="flex flex-col h-full w-full relative px-2 "
       style={{
         backgroundColor: '#0d0b09',
         backgroundImage: `
@@ -69,7 +70,7 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
       }}
     >
       {/* HEADER */}
-      <div className="flex justify-between items-end mb-4 px-1 flex-shrink-0">
+      <div className="flex justify-between items-end mb-4  flex-shrink-0">
         <div>
           <h3
             className={`text-[10px] font-mono ${statusColor} uppercase tracking-[0.2em] flex items-center gap-2`}
@@ -84,13 +85,13 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
       <div className="relative flex-grow overflow-hidden flex flex-col">
         {/* FEED LIST - NO ANIMATIONS */}
         <div
-          className={`flex-grow h-full overflow-y-auto overflow-x-hidden space-y-2 pr-2 scrollbar-hide
+          className={`flex-grow h-full overflow-y-auto overflow-x-hidden space-y-1 pr-2 scrollbar-hide
                     ${!isSignedIn ? 'blur-md grayscale opacity-30 select-none pointer-events-none' : 'opacity-100'}`}
         >
           {FEED_DATA.map((item) => (
             <div
               key={item.id}
-              className={`relative p-3 bg-zinc-950/60 backdrop-blur-sm border-l-2 ${
+              className={`relative p-3 bg-zinc-950 border-[0.5px] ${
                 item.highlight
                   ? isSignedIn
                     ? 'border-iron-volt'
@@ -99,7 +100,7 @@ export default function IronFeed({ isSignedIn }: { isSignedIn: boolean }) {
               }`}
             >
               <div className="flex justify-between items-start mb-1">
-                <span className="text-white font-black italic text-xs uppercase tracking-tight">
+                <span className="text-white font-black italic text-xl uppercase tracking-tighter">
                   {item.user}
                 </span>
                 <span className="text-[8px] font-mono text-zinc-600 uppercase tabular-nums">

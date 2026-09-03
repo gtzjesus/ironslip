@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRive, Layout, Fit, Alignment } from '@rive-app/react-canvas';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { useUser, SignUpButton } from '@clerk/nextjs';
+import { useUser, useClerk } from '@clerk/nextjs';
 
 export default function IronHero() {
   const { isSignedIn } = useUser();
+  const { openSignIn } = useClerk();
   const [isReady, setIsReady] = useState(false);
 
   // FAIL-SAFE: If Rive takes too long, open the curtain anyway after 3.5s
@@ -28,6 +29,13 @@ export default function IronHero() {
       alignment: Alignment.Center,
     }),
   });
+
+  const handleSignInClick = () => {
+    openSignIn({
+      fallbackRedirectUrl: '/home',
+      forceRedirectUrl: '/home',
+    });
+  };
 
   return (
     <section className="relative h-screen w-screen bg-black overflow-hidden font-sans selection:bg-iron-volt selection:text-black">
@@ -133,14 +141,15 @@ export default function IronHero() {
                   </span>
                 </Link>
               ) : (
-                <SignUpButton mode="modal" forceRedirectUrl="/home">
-                  <button className="group relative p-4 bg-zinc-950 border border-iron-volt/50 text-iron-volt text-[12px] font-mono uppercase tracking-[0.2em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt hover:text-black active:scale-95 shadow-[0_0_20px_rgba(255,211,0,0.2)] flex items-center justify-center cursor-pointer w-full">
-                    <div className="absolute inset-0 -z-10 bg-iron-volt blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
-                    <span className="text-lg font-black uppercase italic tracking-tighter transition-colors">
-                      Start the grind
-                    </span>
-                  </button>
-                </SignUpButton>
+                <button
+                  onClick={handleSignInClick}
+                  className="group relative p-4 bg-zinc-950 border border-iron-volt/50 text-iron-volt text-[12px] font-mono uppercase tracking-[0.2em] transition-all pointer-events-auto md:w-72 hover:bg-iron-volt hover:text-black active:scale-95 shadow-[0_0_20px_rgba(255,211,0,0.2)] flex items-center justify-center cursor-pointer w-full"
+                >
+                  <div className="absolute inset-0 -z-10 bg-iron-volt blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
+                  <span className="text-lg font-black uppercase italic tracking-tighter transition-colors">
+                    Start the grind
+                  </span>
+                </button>
               )}
             </div>
           </div>
