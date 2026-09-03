@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import './globals.css';
@@ -10,6 +11,10 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
+      signInFallbackRedirectUrl="/home"
+      signUpFallbackRedirectUrl="/home"
+      signInForceRedirectUrl="/home"
+      signUpForceRedirectUrl="/home"
       localization={{
         signUp: {
           start: {
@@ -83,7 +88,7 @@ export default function RootLayout({
         <body 
           className="text-white antialiased selection:bg-iron-volt selection:text-black min-h-screen"
           style={{
-            backgroundColor: '#0d0b09', // Fondo café oscuro / carbón industrial
+            backgroundColor: '#0d0b09',
             backgroundImage: `
               linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
               linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
