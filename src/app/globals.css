@@ -104,3 +104,11 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+
+.hide-global-nav nav,
+.hide-global-nav header,
+.hide-global-nav [class*="bottom-nav"],
+.hide-global-nav [class*="navbar"] {
+  display: none !important;
+  pointer-events: none !important;
+}
