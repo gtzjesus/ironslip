@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { executeSlipContract } from '@/actions/supabase/slips';
 import { useSound } from '@/hooks/useSound';
 import { X, Trash2, ShieldAlert, CheckCircle2, Zap, Flame, ShieldCheck, Skull, Activity } from 'lucide-react';
@@ -28,6 +28,23 @@ export default function SlipReviewOverlay({
   const [wagerInput, setWagerInput] = useState<string>('100');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { playSound } = useSound();
+
+  // OCULTAR CUALQUIER NAVBAR O BOTTOM NAV GLOBAL MIENTRAS EL MODAL ESTÉ ABIERTO
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      // Agrega una clase global para ocultar navbars flotantes externas
+      document.documentElement.classList.add('hide-global-nav');
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('hide-global-nav');
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('hide-global-nav');
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -106,33 +123,39 @@ export default function SlipReviewOverlay({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-stretch sm:items-center justify-center bg-black/90 backdrop-blur-xl p-0 sm:p-4 animate-fadeIn">
-      {/* CONTENEDOR PRINCIPAL: Fullscreen en móvil, Modal centrado en Desktop */}
+    /* Z-INDEX 99999 PARA TAPAR NAVBARS Y MARGEN DE SEGURIDAD MÓVIL CON PADDING */
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-2 sm:p-4 animate-fadeIn">
+      
+      {/* GLOW INTENSO DE FONDO PARA MÓVILES (Luz Neón Ambiental) */}
+      <div 
+        className={`absolute inset-2 sm:inset-6 rounded-3xl blur-2xl opacity-70 pointer-events-none transition-all duration-500 ${
+          hasDemon ? 'bg-red-600/40' : 'bg-iron-volt/30'
+        }`}
+      />
+
+      {/* CONTENEDOR PRINCIPAL */}
       <div
-        className={`w-full max-w-2xl h-[100dvh] sm:h-auto sm:max-h-[90vh] bg-zinc-950 flex flex-col relative overflow-hidden transition-all border-0 sm:border ${
+        className={`w-full max-w-2xl h-[96dvh] sm:h-auto sm:max-h-[90vh] bg-zinc-950 flex flex-col relative overflow-hidden transition-all border ${
           hasDemon
-            ? 'border-red-600/70 shadow-[0_0_50px_rgba(220,38,38,0.35)]'
-            : 'border-iron-volt/60 shadow-[0_0_50px_rgba(255,211,0,0.25)]'
+            ? 'border-red-600/80 shadow-[0_0_60px_rgba(220,38,38,0.6)] ring-1 ring-red-500/50'
+            : 'border-iron-volt/80 shadow-[0_0_60px_rgba(255,211,0,0.4)] ring-1 ring-iron-volt/50'
         }`}
       >
-        {/* EFECTO GLOW AMBIENTAL SIFÓNICO (Sin dependencias de tailwind.config) */}
+        {/* LÍNEAS DE LUZ MÓVILES (Bordes resplandecientes en pantalla táctil) */}
+        <div className={`absolute top-0 inset-x-0 h-[3px] z-30 ${hasDemon ? 'bg-red-500 shadow-[0_0_15px_#ef4444]' : 'bg-iron-volt shadow-[0_0_15px_#ffd300]'}`} />
+        <div className={`absolute bottom-0 inset-x-0 h-[3px] z-30 ${hasDemon ? 'bg-red-500 shadow-[0_0_15px_#ef4444]' : 'bg-iron-volt shadow-[0_0_15px_#ffd300]'}`} />
+
+        {/* EFECTO MESH RADIAL INTERNO */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           <div
-            className={`absolute -top-[50%] -left-[50%] w-[200%] h-[200%] opacity-20 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] ${
-              hasDemon ? 'from-red-600 via-transparent to-transparent' : 'from-iron-volt via-transparent to-transparent'
-            } animate-spin`}
-            style={{ animationDuration: '20s' }}
-          />
-          {/* Línea de escáner superior */}
-          <div
-            className={`w-full h-[2px] opacity-70 animate-pulse ${
-              hasDemon ? 'bg-gradient-to-r from-transparent via-red-500 to-transparent' : 'bg-gradient-to-r from-transparent via-iron-volt to-transparent'
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] opacity-25 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] ${
+              hasDemon ? 'from-red-600 via-red-950/20 to-transparent' : 'from-iron-volt via-yellow-950/20 to-transparent'
             }`}
           />
         </div>
 
         {/* ENCABEZADO CYBERPUNK */}
-        <div className="relative z-10 p-4 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="relative z-10 p-4 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="relative flex items-center justify-center">
               <span
@@ -157,14 +180,14 @@ export default function SlipReviewOverlay({
                 {hasDemon ? (
                   <>
                     <Flame className="w-5 h-5 text-red-500 animate-bounce" />
-                    <span className="text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+                    <span className="text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.8)]">
                       DEMON SLIP
                     </span>
                   </>
                 ) : (
                   <>
                     <Zap className="w-5 h-5 text-iron-volt" />
-                    <span className="text-iron-volt drop-shadow-[0_0_8px_rgba(255,211,0,0.5)]">
+                    <span className="text-iron-volt drop-shadow-[0_0_12px_rgba(255,211,0,0.8)]">
                       IRON SLIP
                     </span>
                   </>
@@ -179,7 +202,7 @@ export default function SlipReviewOverlay({
           <button
             onClick={onClose}
             disabled={isSubmitting}
-            className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 disabled:opacity-50"
+            className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -201,9 +224,9 @@ export default function SlipReviewOverlay({
             return (
               <div
                 key={leg._id}
-                className={`p-3.5 bg-zinc-900/40 border backdrop-blur-sm transition-all relative group ${
+                className={`p-3.5 bg-zinc-900/60 border backdrop-blur-sm transition-all relative group ${
                   isItemDemon
-                    ? 'border-red-900/60 bg-gradient-to-r from-red-950/20 to-zinc-900/40'
+                    ? 'border-red-600/50 bg-gradient-to-r from-red-950/40 to-zinc-900/60 shadow-[0_0_15px_rgba(220,38,38,0.15)]'
                     : 'border-zinc-800/90 hover:border-zinc-700'
                 }`}
               >
@@ -289,7 +312,7 @@ export default function SlipReviewOverlay({
         </div>
 
         {/* PANEL DE APUESTA Y BOTÓN DE CONFIRMACIÓN */}
-        <div className="relative z-20 p-4 bg-zinc-950 border-t border-zinc-800/80 shadow-[0_-10px_20px_rgba(0,0,0,0.8)] space-y-3 shrink-0">
+        <div className="relative z-20 p-4 bg-zinc-950 border-t border-zinc-800/80 shadow-[0_-10px_20px_rgba(0,0,0,0.9)] space-y-3 shrink-0">
           <div className="grid grid-cols-2 gap-3 items-end">
             <div>
               <label className="block text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
@@ -319,8 +342,8 @@ export default function SlipReviewOverlay({
               <p
                 className={`text-xl sm:text-2xl font-black font-mono tracking-tight ${
                   hasDemon
-                    ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]'
-                    : 'text-iron-volt drop-shadow-[0_0_10px_rgba(255,211,0,0.4)]'
+                    ? 'text-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.8)]'
+                    : 'text-iron-volt drop-shadow-[0_0_12px_rgba(255,211,0,0.8)]'
                 }`}
               >
                 {potentialPayout.toLocaleString()}{' '}
@@ -340,8 +363,8 @@ export default function SlipReviewOverlay({
               hasInsufficientFunds
                 ? 'bg-zinc-900 text-red-400 border border-red-900/60 cursor-not-allowed'
                 : hasDemon
-                ? 'bg-red-600 hover:bg-red-500 text-white shadow-[0_0_25px_rgba(220,38,38,0.5)] active:shadow-none'
-                : 'bg-iron-volt hover:bg-yellow-400 text-black shadow-[0_0_25px_rgba(255,211,0,0.4)] active:shadow-none'
+                ? 'bg-red-600 hover:bg-red-500 text-white shadow-[0_0_30px_rgba(220,38,38,0.8)] active:shadow-none'
+                : 'bg-iron-volt hover:bg-yellow-400 text-black shadow-[0_0_30px_rgba(255,211,0,0.7)] active:shadow-none'
             } disabled:opacity-50`}
           >
             {isSubmitting ? (
