@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { executeSlipContract } from '@/actions/supabase/slips';
 import { useSound } from '@/hooks/useSound';
-import { X, Trash2, ShieldAlert, CheckCircle2, Zap, Flame, ShieldCheck, Skull, Activity } from 'lucide-react';
+import { X, Trash2, ShieldAlert, CheckCircle2, Zap, Flame, ShieldCheck, Skull, Activity, AlertCircle } from 'lucide-react';
 
 interface SlipReviewOverlayProps {
   isOpen: boolean;
@@ -33,7 +33,6 @@ export default function SlipReviewOverlay({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      // Agrega una clase global para ocultar navbars flotantes externas
       document.documentElement.classList.add('hide-global-nav');
     } else {
       document.body.style.overflow = '';
@@ -49,6 +48,9 @@ export default function SlipReviewOverlay({
   if (!isOpen) return null;
 
   const numericWager = Math.max(0, parseInt(wagerInput, 10) || 0);
+
+  // VALIDACIÓN DE MÍNIMO DE LEGS
+  const hasMinLegs = activeSlip.length >= 3;
 
   const totalOdds = activeSlip.reduce((acc, item) => {
     const baseWeight = item.probabilityWeight || 1.5;
@@ -68,7 +70,7 @@ export default function SlipReviewOverlay({
   const hasInsufficientFunds = numericWager > userBalance;
 
   const handleConfirm = async () => {
-    if (isSubmitting || numericWager <= 0 || hasInsufficientFunds) return;
+    if (isSubmitting || numericWager <= 0 || hasInsufficientFunds || !hasMinLegs) return;
 
     try {
       setIsSubmitting(true);
@@ -123,10 +125,9 @@ export default function SlipReviewOverlay({
   };
 
   return (
-    /* Z-INDEX 99999 PARA TAPAR NAVBARS Y MARGEN DE SEGURIDAD MÓVIL CON PADDING */
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-2 sm:p-4 animate-fadeIn">
-      
-      {/* GLOW INTENSO DE FONDO PARA MÓVILES (Luz Neón Ambiental) */}
+
+      {/* GLOW INTENSO DE FONDO PARA MÓVILES */}
       <div 
         className={`absolute inset-2 sm:inset-6 rounded-3xl blur-2xl opacity-70 pointer-events-none transition-all duration-500 ${
           hasDemon ? 'bg-red-600/40' : 'bg-iron-volt/30'
@@ -141,7 +142,7 @@ export default function SlipReviewOverlay({
             : 'border-iron-volt/80 shadow-[0_0_60px_rgba(255,211,0,0.4)] ring-1 ring-iron-volt/50'
         }`}
       >
-        {/* LÍNEAS DE LUZ MÓVILES (Bordes resplandecientes en pantalla táctil) */}
+        {/* LÍNEAS DE LUZ MÓVILES */}
         <div className={`absolute top-0 inset-x-0 h-[3px] z-30 ${hasDemon ? 'bg-red-500 shadow-[0_0_15px_#ef4444]' : 'bg-iron-volt shadow-[0_0_15px_#ffd300]'}`} />
         <div className={`absolute bottom-0 inset-x-0 h-[3px] z-30 ${hasDemon ? 'bg-red-500 shadow-[0_0_15px_#ef4444]' : 'bg-iron-volt shadow-[0_0_15px_#ffd300]'}`} />
 
@@ -172,9 +173,9 @@ export default function SlipReviewOverlay({
 
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase">
+                {/* <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase">
                   FINAL STAGE // CONTRACT EXECUTION
-                </span>
+                </span> */}
               </div>
               <h2 className="font-mono text-sm sm:text-base font-black uppercase tracking-wider text-zinc-100 flex items-center gap-2">
                 {hasDemon ? (
@@ -192,8 +193,8 @@ export default function SlipReviewOverlay({
                     </span>
                   </>
                 )}
-                <span className="text-zinc-500 text-xs font-normal">
-                  ({activeSlip.length}/5)
+                <span className={`text-xs font-mono font-bold ${hasMinLegs ? 'text-zinc-400' : 'text-amber-500'}`}>
+                  ({activeSlip.length}/5 - {hasMinLegs ? 'READY' : 'MIN 3 LEGS REQUIRED'})
                 </span>
               </h2>
             </div>
@@ -275,18 +276,18 @@ export default function SlipReviewOverlay({
                   <h4 className="text-xs sm:text-sm font-bold text-zinc-100 uppercase tracking-tight">
                     {leg.task || leg.title}
                   </h4>
-                  {leg.selectedVariantName && (
+                  {/* {leg.selectedVariantName && (
                     <p className="text-[10px] font-mono text-iron-volt/90 mt-0.5">
                       VARIANT: {leg.selectedVariantName}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 {/* TARGET / DETALLES DE LA INSTRUCCIÓN */}
                 {(leg.target || leg.description) && (
-                  <div className="bg-zinc-950/80 p-2.5 border border-zinc-800/80 text-[11px] font-mono text-zinc-300 leading-relaxed mb-2">
+                  <div className="uppercase bg-zinc-950/80 p-2.5 border border-zinc-800/80 text-[11px] font-mono text-zinc-300 leading-relaxed mb-2">
                     <span className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5 tracking-wider">
-                      TARGET OBJECTIVE:
+                       OBJECTIVE:
                     </span>
                     {leg.target || leg.description}
                   </div>
@@ -316,7 +317,7 @@ export default function SlipReviewOverlay({
           <div className="grid grid-cols-2 gap-3 items-end">
             <div>
               <label className="block text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-                <Activity className="w-3 h-3 text-zinc-500" /> WAGER ALLOCATION
+                {/* <Activity className="w-3 h-3 text-zinc-500" /> entry fee */} entry fee
               </label>
               <div className="relative">
                 <input
@@ -327,18 +328,19 @@ export default function SlipReviewOverlay({
                   className="w-full bg-zinc-900 border border-zinc-700 focus:border-zinc-400 px-3 py-2 text-base font-mono font-black text-zinc-100 focus:outline-none disabled:opacity-50 transition-colors"
                 />
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold text-zinc-500">
-                  PTS
+                    <Zap className="w-2.5 h-2.5 text-iron-volt" />
                 </span>
               </div>
               <p className="text-[9px] font-mono text-zinc-500 mt-1">
-                BAL: <strong className="text-zinc-300">{userBalance}</strong> CREDITS
+                BAL: <strong className="text-zinc-300">{userBalance}</strong> 
               </p>
             </div>
 
             <div className="flex flex-col justify-end text-right">
-              <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1">
+              {/* <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1">
                 ESTIMATED PAYOUT
-              </span>
+              </span> */}
+              
               <p
                 className={`text-xl sm:text-2xl font-black font-mono tracking-tight ${
                   hasDemon
@@ -347,7 +349,8 @@ export default function SlipReviewOverlay({
                 }`}
               >
                 {potentialPayout.toLocaleString()}{' '}
-                <span className="text-xs">PTS</span>
+                
+                <span className="text-xs"> </span>
               </p>
               <span className="text-[9px] font-mono text-zinc-400">
                 MULT: <strong className="text-zinc-200">x{dynamicMultiplier.toFixed(2)}</strong>
@@ -355,29 +358,33 @@ export default function SlipReviewOverlay({
             </div>
           </div>
 
-          {/* BOTÓN CON EFECTO DE PULSO Y LUZ */}
+          {/* BOTÓN CON VALIDACIÓN MÍNIMA DE 3 LEGS */}
           <button
             onClick={handleConfirm}
-            disabled={isSubmitting || numericWager <= 0 || hasInsufficientFunds}
+            disabled={isSubmitting || numericWager <= 0 || hasInsufficientFunds || !hasMinLegs}
             className={`w-full py-3.5 px-4 font-mono text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 relative overflow-hidden transition-all duration-200 active:scale-[0.98] ${
-              hasInsufficientFunds
-                ? 'bg-zinc-900 text-red-400 border border-red-900/60 cursor-not-allowed'
+              !hasMinLegs || hasInsufficientFunds
+                ? 'bg-zinc-900 text-zinc-500 border border-zinc-800 cursor-not-allowed opacity-75'
                 : hasDemon
                 ? 'bg-red-600 hover:bg-red-500 text-white shadow-[0_0_30px_rgba(220,38,38,0.8)] active:shadow-none'
                 : 'bg-iron-volt hover:bg-yellow-400 text-black shadow-[0_0_30px_rgba(255,211,0,0.7)] active:shadow-none'
-            } disabled:opacity-50`}
+            }`}
           >
             {isSubmitting ? (
               <span className="animate-pulse flex items-center gap-2">
                 <Activity className="w-4 h-4 animate-spin" /> EXECUTING CONTRACT...
               </span>
+            ) : !hasMinLegs ? (
+              <>
+                <AlertCircle className="w-4 h-4 text-amber-500" /> ADD AT LEAST 3 LEGS ({activeSlip.length}/3)
+              </>
             ) : hasInsufficientFunds ? (
               <>
-                <ShieldAlert className="w-4 h-4" /> INSUFFICIENT BALANCE
+                <ShieldAlert className="w-4 h-4 text-red-500" /> INSUFFICIENT BALANCE
               </>
             ) : (
               <>
-                <CheckCircle2 className="w-4 h-4" /> LOCK CONTRACT & TRANSMIT
+                 INITIATE SLIP
               </>
             )}
           </button>
