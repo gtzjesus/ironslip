@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { SlidersHorizontal, ChevronUp } from 'lucide-react';
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
 import LegsHeader from '@/components/dashboard/legs/Legsheader';
@@ -18,7 +17,6 @@ export default function LegsPage() {
   const { isLoaded, isSignedIn } = useUser();
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
   const [userBalance, setUserBalance] = useState<number>(0);
 
   // 🧠 Inicialización perezosa (Lazy State) para el slip
@@ -101,7 +99,14 @@ export default function LegsPage() {
     setActiveSlip((prev) => prev.filter((l) => l._id !== id));
   }, []);
 
-  const isFilteringActive = activeCategory !== 'all';
+  // 🚀 Callback tras el éxito en la creación del slip maestro
+  const handleConfirmSuccess = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('iron_slip_draft');
+    }
+    setActiveSlip([]);
+    window.location.href = '/slips';
+  }, []);
 
   return (
     <main 
@@ -172,6 +177,7 @@ export default function LegsPage() {
         onRemoveLeg={handleRemoveLeg}
         clearSlipData={handleClearSlipData}
         userBalance={userBalance}
+        onConfirmSuccess={handleConfirmSuccess}
       />
 
       {/* MODAL DETALLE DE PIERNA */}
@@ -189,6 +195,7 @@ export default function LegsPage() {
           userBalance={userBalance}
           onRemoveLeg={handleRemoveLeg}
           clearSlipData={handleClearSlipData}
+          onConfirmSuccess={handleConfirmSuccess}
         />
       )}
     </main>

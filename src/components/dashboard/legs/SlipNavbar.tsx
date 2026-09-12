@@ -10,6 +10,7 @@ interface SlipNavbarProps {
   onRemoveLeg: (id: string) => void;
   clearSlipData: () => void;
   userBalance: number;
+  onConfirmSuccess?: (result: any) => void;
 }
 
 export default function SlipNavbar({
@@ -17,6 +18,7 @@ export default function SlipNavbar({
   onRemoveLeg,
   clearSlipData,
   userBalance,
+  onConfirmSuccess,
 }: SlipNavbarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -138,18 +140,17 @@ export default function SlipNavbar({
         </div>
       )}
 
-      {isCurrentlyExpanded && (
-        <SlipReviewOverlay
-          isOpen={isCurrentlyExpanded}
-          onClose={() => setIsExpanded(false)}
-          activeSlip={activeSlip}
-          onRemoveLeg={onRemoveLeg}
-          hasDemon={hasDemon}
-          minReviewsRequired={MIN_REVIEWS_REQUIRED}
-          clearSlipData={clearSlipData}
-          userBalance={userBalance}
-        />
-      )}
+{isCurrentlyExpanded && (
+  <SlipReviewOverlay
+    isOpen={isCurrentlyExpanded}
+    onClose={() => setIsExpanded(false)}
+    activeSlip={activeSlip}
+    onRemoveLeg={onRemoveLeg}
+    hasDemon={hasDemon}
+    userBalance={userBalance}
+    onConfirmSuccess={onConfirmSuccess}
+  />
+)}
     </>
   );
 }

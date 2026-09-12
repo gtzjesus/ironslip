@@ -2,44 +2,45 @@
 import { client } from '@/sanity/lib/client';
 import { useState, useEffect } from 'react';
 
-// 🧠 CACHÉ EN MEMORIA: Evita llamadas repetidas a Sanity
-let cachedLegs: any[] | null = null;
-
 export function useLegs() {
-  const [legs, setLegs] = useState<any[]>(cachedLegs || []);
-  const [loading, setLoading] = useState(!cachedLegs);
+  const [legs, setLegs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ⚡️ RUTA DE ESCAPE RÁPIDA: Si ya tenemos los datos, no hagas fetch
-    if (cachedLegs) {
-      return;
-    }
-
     let isMounted = true;
 
-const fetchLegs = async () => {
-  try {
-    const query = `*[_type == "leg"] | order(_createdAt desc) {
-      _id,
-      task,
-      category,
-      animationKey,  
-      variants[] {
-        name,
-        target,
-        probabilityWeight,
-        isDemonSupported,
-        verificationMethod,
-        reward,        
-        demonMultiplier 
-      }
-    }`;
+    const fetchLegs = async () => {
+      try {
+        const query = `*[_type == "leg"] | order(_createdAt desc) {
+          _id,
+          task,
+          category,
+          animationKey,  
+          variants[] {
+            name,
+            target,
+            probabilityWeight,
+            isDemonSupported,
+            verificationMethod,
+            reward,        
+            demonMultiplier,
+            aiPrompt
+          }
+        }`;
 
-    const data = await client.fetch(query);
-    if (isMounted) {
-      cachedLegs = data;
-      setLegs(data);
-    }
+        // ⚡️ FORCE NEXT.JS TO BYPASS ALL CACHING
+        const data = await client.fetch(
+          query,
+          {},
+          {
+            cache: 'no-store',
+            next: { revalidate: 0 },
+          }
+        );
+
+        if (isMounted) {
+          setLegs(data);
+        }
       } catch (error) {
         console.error('❌ Error fetching legs from Sanity:', error);
       } finally {
@@ -50,7 +51,7 @@ const fetchLegs = async () => {
     fetchLegs();
 
     return () => {
-      isMounted = false; // Evita memory leaks si el usuario cambia de pantalla rápido
+      isMounted = false;
     };
   }, []);
 

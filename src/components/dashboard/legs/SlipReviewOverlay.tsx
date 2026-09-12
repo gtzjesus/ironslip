@@ -1,148 +1,302 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { useGLTF, useAnimations } from '@react-three/drei';
-import { SkeletonUtils } from 'three-stdlib';
-import * as THREE from 'three';
+import { useState } from 'react';
+import { executeSlipContract } from '@/actions/supabase/slips';
 import { useSound } from '@/hooks/useSound';
+import { X, Trash2, ShieldAlert, CheckCircle2, Zap, Flame, ShieldCheck } from 'lucide-react';
 
-// --- COMPONENTE MODELO ---
-function Model({ url, isDemon }: { url: string; isDemon: boolean }) {
-  const group = useRef<THREE.Group>(null);
-  const { scene, animations } = useGLTF(url);
-  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  const { actions } = useAnimations(animations, group);
-
-  useEffect(() => {
-    const action = actions['boxing'];
-    if (action) {
-      action.setEffectiveTimeScale(isDemon ? 1.25 : 1.0);
-      action.reset().fadeIn(0.5).play();
-    }
-  }, [actions, isDemon]);
-
-  return (
-    <group ref={group} dispose={null}>
-      <primitive object={clone} scale={2.8} position={[0, -6.5, 0]} />
-    </group>
-  );
+interface SlipReviewOverlayProps {
+  isOpen: boolean;
+  onClose: () => void;
+  activeSlip: any[];
+  onRemoveLeg: (id: string) => void;
+  hasDemon: boolean;
+  userBalance: number;
+  onConfirmSuccess?: (result: any) => void;
 }
 
-// --- OVERLAY PRINCIPAL ---
 export default function SlipReviewOverlay({
-  isOpen, onClose, activeSlip, onRemoveLeg, hasDemon, userBalance,
-}: any) {
-  const [mounted, setMounted] = useState(false);
+  isOpen,
+  onClose,
+  activeSlip,
+  onRemoveLeg,
+  hasDemon,
+  userBalance,
+  onConfirmSuccess,
+}: SlipReviewOverlayProps) {
+  const [wagerInput, setWagerInput] = useState<string>('100');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { playSound } = useSound();
-  const [wager, setWager] = useState<number | ''>('');
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  if (!isOpen) return null;
 
-  // --- MATEMÁTICA DE ODDS (PARLAY CON LÓGICA DEMON) ---
-  const oddsMatrix = useMemo(() => {
-    const totalOdds = activeSlip.reduce((acc: number, leg: any) => {
-      // Lógica Demon: Si es Demon y el leg lo soporta, forzamos peso a 0.1 (más difícil = más pago)
-      const isDemonActive = hasDemon && leg.isDemonSupported;
-      const weight = isDemonActive ? 0.1 : (leg.probabilityWeight || 1.0); 
-      return acc * (1 / weight);
-    }, 1);
+  const numericWager = Math.max(0, parseInt(wagerInput, 10) || 0);
 
-    let multiplier = (1 / totalOdds);
-    if (hasDemon) multiplier *= 1.5; // Multiplicador extra de riesgo por Modo Demon
+  // Cálculo de Multiplicador Dinámico global
+  const totalOdds = activeSlip.reduce((acc, item) => {
+    const baseWeight = item.probabilityWeight || 1.5;
+    const isItemDemon =
+      item.isDemonMode ||
+      item.isDemon ||
+      item._id?.includes('-demon') ||
+      item.isDemonSupported === true;
+    const demonMult = item.demonMultiplier || 1.5;
 
-    return { multiplier: Math.max(multiplier, 1.01) };
-  }, [activeSlip, hasDemon]);
+    const legOdd = isItemDemon ? baseWeight * demonMult : baseWeight;
+    return acc * legOdd;
+  }, 1.0);
 
-  const wagerNumber = Number(wager === '' ? 0 : wager);
-  const dynamicPayout = Math.floor(wagerNumber * oddsMatrix.multiplier);
-  
-  const isExceedingBalance = wager !== '' && wagerNumber > userBalance;
-  const isInvalid = wager !== '' && (wagerNumber <= 0 || isExceedingBalance);
-  const isParlayValid = activeSlip.length >= 3;
+  const dynamicMultiplier = totalOdds < 1 ? 1.0 : totalOdds;
+  const potentialPayout = Math.floor(numericWager * dynamicMultiplier);
+  const hasInsufficientFunds = numericWager > userBalance;
 
-  const theme = hasDemon
-    ? { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-red/40', titleText: 'text-white', dataCoreBg: 'bg-zinc-900/80 border-t-2 border-iron-red/50', labelColor: 'text-zinc-500', valueColor: 'text-white', inputBg: 'bg-black/60 border border-zinc-800 text-white', buttonBg: 'bg-iron-red text-black' }
-    : { modalBg: 'bg-zinc-950/80', borderStyle: 'border-x-[0.5px] border-iron-volt/30', titleText: 'text-iron-volt', dataCoreBg: 'bg-zinc-900/80 border-t-2 border-iron-volt/40', labelColor: 'text-zinc-400', valueColor: 'text-iron-volt', inputBg: 'bg-black border border-iron-volt/30 text-iron-volt', buttonBg: 'bg-iron-volt text-black' };
+  // 🚀 PROCESO DE CONFIRMACIÓN Y NAVEGACIÓN DURA A /slips
+  const handleConfirm = async () => {
+    if (isSubmitting || numericWager <= 0 || hasInsufficientFunds) return;
 
-  if (!mounted || !isOpen) return null;
+    try {
+      setIsSubmitting(true);
+     
+
+      const slipPayload = {
+        title: hasDemon ? 'DEMON SLIP CONTRACT' : 'IRON SLIP CONTRACT',
+        type: hasDemon ? 'DEMON' : 'STANDARD',
+        wagerAllocated: numericWager,
+        totalPayout: potentialPayout,
+        multiplier: parseFloat(dynamicMultiplier.toFixed(2)),
+        legs: activeSlip.map((leg) => ({
+          _id: leg._id,
+          task: leg.task || leg.title,
+          category: leg.category,
+          selectedVariantName: leg.selectedVariantName || null,
+          target: leg.target || leg.task,
+          verificationMethod: leg.verificationMethod || 'video',
+          aiPrompt: leg.aiPrompt || null,
+          creditReward: leg.creditReward || 0,
+          probabilityWeight: leg.probabilityWeight || 1.5,
+          demonMultiplier: leg.demonMultiplier || 1.5,
+          isDemonSupported:
+            leg.isDemonMode ||
+            leg.isDemon ||
+            leg._id?.includes('-demon') ||
+            leg.isDemonSupported === true,
+        })),
+      };
+
+      const result = await executeSlipContract(slipPayload);
+
+      if (!result.success) {
+        alert(`❌ TRANSACTION FAILED: ${result.error}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 1. Destruir borrador local
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('iron_slip_draft');
+      }
+
+      // 2. Ejecutar callback opcional
+      if (onConfirmSuccess) {
+        onConfirmSuccess(result);
+      }
+
+      // 3. 🎯 REDIRECCIÓN COMPLETA A /slips
+      window.location.href = '/slips';
+    } catch (err) {
+      console.error('💥 Error launching slip:', err);
+      alert('Network error while processing slip transaction.');
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0">
-      <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
-        <Canvas camera={{ position: [0, 0, 3], fov: 85 }} gl={{ alpha: true, antialias: true }} dpr={[1, 2]}>
-          <spotLight position={[0, 5, 5]} intensity={65} />
-          <Model url="/models/avatar.glb" isDemon={hasDemon} />
-        </Canvas>
-      </div>
-
-      <div className={`w-full h-full max-w-2xl relative z-10 flex flex-col overflow-hidden text-white animate-videogame-slam ${theme.modalBg} ${theme.borderStyle} backdrop-blur-md`}>
-        <div className="p-8 pb-4 relative z-10 flex justify-between items-end border-b border-zinc-900/40">
-          <h2 className={`${theme.titleText} text-2xl font-black italic uppercase tracking-tighter leading-none text-white`}>
-            {activeSlip.length}-LEG {hasDemon ? 'DEMON' : 'IRON'} SLIP
-          </h2>
-          <button onClick={() => { playSound('close'); onClose(); }} className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold  uppercase">
-            [ X ]
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 animate-fadeIn">
+      <div
+        className={`w-full max-w-2xl bg-zinc-950 border-t sm:border-[0.5px] ${
+          hasDemon ? 'border-red-600/50 shadow-[0_0_30px_rgba(220,38,38,0.2)]' : 'border-iron-volt/40 shadow-[0_0_30px_rgba(255,211,0,0.15)]'
+        } flex flex-col max-h-[90vh] shadow-2xl overflow-hidden relative`}
+      >
+        {/* ENCABEZADO */}
+        <div className="p-4 border-b border-zinc-900 flex items-center justify-between bg-zinc-900/40">
+          <div className="flex items-center gap-2">
+            <div
+              className={`w-2.5 h-2.5 ${
+                hasDemon ? 'bg-red-600 animate-pulse' : 'bg-iron-volt'
+              }`}
+            />
+            <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-100 flex items-center gap-2">
+              {hasDemon ? (
+                <>
+                  <Flame className="w-4 h-4 text-red-500 animate-bounce" /> REVIEW DEMON SLIP
+                </>
+              ) : (
+                <>
+                  <Zap className="w-4 h-4 text-iron-volt" /> REVIEW IRON SLIP
+                </>
+              )}
+              <span className="text-zinc-500">({activeSlip.length}/5 LEGS)</span>
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="p-1 text-zinc-500 hover:text-zinc-200 transition-colors disabled:opacity-50"
+          >
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-1 z-10">
-          {activeSlip.map((leg: any) => {
-            const legDescription = leg.target || (leg.variants?.[0]?.target) || null;
-            const isDemonActive = hasDemon && leg.isDemonSupported;
+        {/* LISTA COMPLETA DE LEGS CON TODA LA INFORMACIÓN */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide">
+          {activeSlip.map((leg) => {
+            const isItemDemon =
+              leg.isDemonMode ||
+              leg.isDemon ||
+              leg._id?.includes('-demon') ||
+              leg.isDemonSupported === true;
+
+            const baseWeight = leg.probabilityWeight || 1.5;
+            const demonMult = leg.demonMultiplier || 1.5;
+            const itemOdd = isItemDemon ? baseWeight * demonMult : baseWeight;
+
             return (
-              <div key={leg._id} className="relative w-full bg-black/80 border border-zinc-800 p-3 group overflow-hidden transition-all hover:border-iron-volt/50">
-                <div className="absolute top-0 left-0 w-8 h-1 bg-zinc-700 group-hover:bg-iron-volt transition-colors" />
-                <div className="flex justify-between items-start">
-                  <div className="flex flex-col gap-2">
-                    <span className="uppercase text-[9px] font-black tracking-[0.2em] text-zinc-400 bg-zinc-900 px-1 w-fit">{leg.category || 'EXECUTION'}</span>
-                    <h3 className="font-black italic text-lg uppercase tracking-tighter text-white leading-[0.9]">{leg.task}</h3>
-                    {legDescription && <p className="font-mono text-[8px] uppercase text-iron-volt/70 tracking-widest leading-none mt-1">{legDescription}</p>}
+              <div
+                key={leg._id}
+                className={`p-3.5 bg-zinc-900/70 border ${
+                  isItemDemon ? 'border-red-900/40 bg-red-950/10' : 'border-zinc-800/80'
+                } flex flex-col gap-2 relative group`}
+              >
+                {/* FILA SUPERIOR: BADGES & CONTROLES */}
+                <div className="flex items-center justify-between gap-2 border-b border-zinc-800/50 pb-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 bg-zinc-800 text-zinc-300 font-bold uppercase tracking-wider">
+                      {leg.category || 'EXECUTION'}
+                    </span>
+
+                    {leg.verificationMethod && (
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 bg-zinc-900 text-zinc-400 border border-zinc-800 font-semibold uppercase flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3 text-zinc-500" />
+                        {leg.verificationMethod}
+                      </span>
+                    )}
+
+                    {isItemDemon && (
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 bg-red-950 text-red-400 border border-red-800/60 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <Flame className="w-3 h-3 text-red-500" /> DEMON MODE
+                      </span>
+                    )}
                   </div>
-                  <div className="flex flex-col items-end justify-between self-stretch">
-                    <button onClick={() => { playSound('remove'); onRemoveLeg(leg._id); }} className="text-[8px] font-bold text-zinc-600 hover:text-red-500 transition-colors uppercase">[ ABORT ]</button>
-                    {/* Visualizamos si está aplicando el peso demon */}
-                    <div className="text-[12px] font-mono text-zinc-500 mt-2">
-                      {isDemonActive ? <span className="text-iron-red">DEMON (0.1x)</span> : `WEIGHT: ${leg.probabilityWeight}x`}
-                    </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className={`font-mono text-xs font-bold ${isItemDemon ? 'text-red-400' : 'text-iron-volt'}`}>
+                      x{itemOdd.toFixed(2)}
+                    </span>
+                    <button
+                      onClick={() => onRemoveLeg(leg._id)}
+                      disabled={isSubmitting}
+                      className="p-1 text-zinc-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                      title="Remove Leg"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
-                <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-zinc-700 group-hover:border-iron-volt transition-colors" />
+
+                {/* TÍTULO / TAREA */}
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-100 uppercase tracking-tight">
+                    {leg.task || leg.title}
+                  </h4>
+                  {leg.selectedVariantName && (
+                    <p className="text-[10px] font-mono text-iron-volt/80 mt-0.5">
+                      VARIANT: {leg.selectedVariantName}
+                    </p>
+                  )}
+                </div>
+
+                {/* TARGET / DETALLES DE LA INSTRUCCIÓN */}
+                {(leg.target || leg.description) && (
+                  <div className="bg-zinc-950/60 p-2 border border-zinc-900/80 text-[11px] font-mono text-zinc-400 leading-relaxed">
+                    <span className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">TARGET OBJECTIVE:</span>
+                    {leg.target || leg.description}
+                  </div>
+                )}
+
+                {/* FOOTER INTERNO DE LA PIERNA */}
+                <div className="flex items-center justify-between text-[9px] font-mono text-zinc-500 pt-1">
+                  <span>REWARD: <strong className="text-zinc-300">{leg.creditReward || 0} PTS</strong></span>
+                  {leg.aiPrompt && (
+                    <span className="truncate max-w-[200px] text-zinc-600 italic">
+                      AI: {leg.aiPrompt}
+                    </span>
+                  )}
+                </div>
               </div>
             );
           })}
         </div>
 
-        <div className={`p-6 ${theme.dataCoreBg} z-10 shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.5)]`}>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-             <div className="bg-black/60 p-2 border border-white/5 text-center">
-                <p className="text-[8px] uppercase text-zinc-500 font-mono">Mult</p>
-                <p className="text-sm font-black italic text-iron-volt">{oddsMatrix.multiplier.toFixed(2)}x</p>
-             </div>
-             <div className="bg-black/60 p-2 border border-white/5 text-center">
-                <p className="text-[8px] uppercase text-zinc-500 font-mono">To Win</p>
-                <p className="text-sm font-black italic">{wagerNumber > 0 && !isExceedingBalance ? `+${dynamicPayout.toLocaleString()}` : '---'}</p>
-             </div>
+        {/* PANEL DE APUESTA Y CALCULADORA Payout */}
+        <div className="p-4 bg-zinc-900/30 border-t border-zinc-900 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[9px] font-mono text-zinc-400 uppercase tracking-wider mb-1">
+                WAGER (CREDITS)
+              </label>
+              <input
+                type="number"
+                value={wagerInput}
+                onChange={(e) => setWagerInput(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full bg-zinc-950 border border-zinc-800 px-3 py-2 text-sm font-mono font-bold text-zinc-100 focus:outline-none focus:border-iron-volt disabled:opacity-50"
+              />
+              <p className="text-[8px] font-mono text-zinc-500 mt-1">
+                AVAILABLE: {userBalance} CREDITS
+              </p>
+            </div>
+
+            <div className="flex flex-col justify-end text-right">
+              <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-wider mb-1">
+                ESTIMATED PAYOUT
+              </span>
+              <p
+                className={`text-lg font-black font-mono tracking-tight ${
+                  hasDemon ? 'text-red-500' : 'text-iron-volt'
+                }`}
+              >
+                {potentialPayout} <span className="text-xs">PTS</span>
+              </p>
+              <span className="text-[9px] font-mono text-zinc-500">
+                TOTAL MULTIPLIER: x{dynamicMultiplier.toFixed(2)}
+              </span>
+            </div>
           </div>
 
-          <input 
-            type="number" 
-            placeholder="ENTER WAGER"
-            value={wager} 
-            onChange={(e) => setWager(e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))} 
-            className={`w-full px-4 py-3 mb-2 font-mono text-lg ${theme.inputBg} outline-none border-2 ${isExceedingBalance ? 'border-red-500' : 'border-transparent focus:border-zinc-700'}`} 
-          />
-          
-          <button 
-            disabled={!isParlayValid || wager === '' || isInvalid}
-            className={`w-full py-4 font-black italic text-2xl uppercase transition-all ${(!isParlayValid || wager === '' || isInvalid) 
-              ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
-              : theme.buttonBg}`}
+          {/* BOTÓN EJECUTAR CONTRATO */}
+          <button
+            onClick={handleConfirm}
+            disabled={isSubmitting || numericWager <= 0 || hasInsufficientFunds}
+            className={`w-full py-3 px-4 font-mono text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 ${
+              hasInsufficientFunds
+                ? 'bg-zinc-800 text-red-400 border border-red-900/50 cursor-not-allowed'
+                : hasDemon
+                ? 'bg-red-600 hover:bg-red-500 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]'
+                : 'bg-iron-volt hover:bg-yellow-400 text-black shadow-[0_0_20px_rgba(255,211,0,0.3)]'
+            } disabled:opacity-50`}
           >
-            {!isParlayValid ? `REQUIRES 3+ LEGS` : isExceedingBalance ? 'INSUFFICIENT FUNDS' : 'INITIATE SLIP!'}
+            {isSubmitting ? (
+              <span className="animate-pulse">EXECUTING CONTRACT...</span>
+            ) : hasInsufficientFunds ? (
+              <>
+                <ShieldAlert className="w-4 h-4" /> INSUFFICIENT BALANCE
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4" /> CONFIRM & TRANSMIT SLIP
+              </>
+            )}
           </button>
         </div>
       </div>
