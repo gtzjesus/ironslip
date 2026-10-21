@@ -10,6 +10,7 @@ interface LegProps {
   isSignedIn: boolean;
   isAlreadyInSlip: boolean;
   hasDemon?: boolean;
+  isGridView?: boolean; // 👈 Nuevo prop para adaptar padding/tamaños en 2 columnas
 }
 
 function LegCardComponent({
@@ -18,6 +19,7 @@ function LegCardComponent({
   isSignedIn,
   isAlreadyInSlip,
   hasDemon = false,
+  isGridView = false,
 }: LegProps) {
   const { playSound } = useSound();
   
@@ -49,7 +51,9 @@ function LegCardComponent({
       ref={cardRef}
       onClick={handleCardClick}
       disabled={isDisabled}
-      className={`relative w-full text-left border-[0.5px] p-3 px-3 mb-1 overflow-hidden transition-all duration-300 ${
+      className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col justify-between ${
+        isGridView ? 'p-2.5 h-32 mb-0' : 'p-3 mb-1'
+      } ${
         isAlreadyInSlip
           ? 'border-iron-volt bg-iron-volt/[0.03] shadow-[inset_0_0_15px_rgba(163,230,53,0.08),0_0_20px_rgba(163,230,53,0.05)]'
           : isDemonActive
@@ -60,7 +64,7 @@ function LegCardComponent({
       {/* 🦾 BACKGROUND AVATAR */}
       {isSignedIn && (
         <div className="absolute inset-y-0 right-0 w-full pointer-events-none z-0 opacity-45">
-          <div className="w-40 h-40 absolute -bottom-16 -right-5 z-10">
+          <div className={`${isGridView ? 'w-28 h-28 absolute -bottom-10 -right-4 z-10' : 'w-40 h-40 absolute -bottom-16 -right-5 z-10'}`}>
             {isVisible && (
               <AvatarCanvas
                 avatarUrl="/models/avatar.glb"
@@ -73,10 +77,10 @@ function LegCardComponent({
       )}
 
       {/* CONTENIDO PRINCIPAL */}
-      <div className="relative z-10 flex justify-between items-center">
-        <div className="flex-1 min-w-0 ">
-          {/* CATEGORY BADGE - Gris Industrial */}
-          <div className={`inline-block mb-1.5 px-2 py-0.5  font-mono text-[7px] uppercase tracking-widest font-bold  ${
+      <div className="relative z-10 flex justify-between items-start w-full">
+        <div className="flex-1 min-w-0">
+          {/* CATEGORY BADGE */}
+          <div className={`inline-block mb-1 px-1.5 py-0.5 font-mono text-[6.5px] uppercase tracking-widest font-bold ${
             isAlreadyInSlip 
               ? 'bg-zinc-700 text-white border-zinc-600' 
               : isDemonActive 
@@ -86,20 +90,27 @@ function LegCardComponent({
             {isAlreadyInSlip ? 'ACTIVE' : isDemonActive ? 'DEMON' : leg.category || 'EXECUTION'}
           </div>
 
-          <h3 className={`font-black italic text-xl uppercase tracking-tighter truncate ${
+          <h3 className={`font-black italic uppercase tracking-tighter truncate ${
+            isGridView ? 'text-sm leading-tight' : 'text-xl'
+          } ${
             isAlreadyInSlip ? 'text-white' : isDemonActive ? 'text-iron-red' : 'text-white'
           } ${!isSignedIn ? 'blur-[5px]' : ''}`}>
             {leg.task}
           </h3>
         </div>
 
-        {/* Espacio reservado para acciones o estados adicionales */}
         {!isSignedIn && (
-          <div className="text-right">
+          <div className="text-right flex-shrink-0">
             <p className="text-[6px] font-mono uppercase text-iron-red">[ LOCKED ]</p>
           </div>
         )}
       </div>
+
+      {/* Footer extra en modo grid para alinear estéticamente si hace falta */}
+      {isGridView && isSignedIn && (
+        <div className="relative z-10 flex items-center justify-between text-[7px] font-mono text-zinc-500 uppercase tracking-wider">
+        </div>
+      )}
     </button>
   );
 }

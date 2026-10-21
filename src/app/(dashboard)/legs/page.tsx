@@ -4,6 +4,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
+import { motion, AnimatePresence } from 'framer-motion';
 import LegsHeader from '@/components/dashboard/legs/Legsheader';
 import LegCard from '@/components/dashboard/legs/LegCard';
 import LegExpansion from '@/components/dashboard/legs/LegExpansion';
@@ -18,6 +19,15 @@ export default function LegsPage() {
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState('all');
   const [userBalance, setUserBalance] = useState<number>(0);
+  
+  // 🎛️ Estado para alternar vista: 'list' (1 col) o 'grid' (2 cols)
+  const [isGridView, setIsGridView] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('iron_slip_view_mode');
+      return saved ? JSON.parse(saved) : false;
+    }
+    return false;
+  });
 
   // 🧠 Inicialización perezosa (Lazy State) para el slip
   const [activeSlip, setActiveSlip] = useState<any[]>(() => {
@@ -33,6 +43,13 @@ export default function LegsPage() {
     }
     return [];
   });
+
+  // Sincronizar preferencia de vista
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('iron_slip_view_mode', JSON.stringify(isGridView));
+    }
+  }, [isGridView]);
 
   // Sincronización bancaria en vivo con protección anti-fantasmas de desmontaje
   useEffect(() => {
@@ -129,19 +146,42 @@ export default function LegsPage() {
         </div>
 
         {isLoaded && isSignedIn && (
-          <div className="w-full border-b border-zinc-900">
-            <div className="overflow-x-auto overflow-y-hidden scrollbar-hide">
+          <div className="w-full border-b border-zinc-900 flex items-center justify-between gap-2 pr-1">
+            <div className="overflow-x-auto overflow-y-hidden scrollbar-hide flex-1">
               <LegFilterNav
                 activeCategory={activeCategory}
                 onCategoryChange={setActiveCategory}
                 legs={legs}
               />
             </div>
+
+            {/* 🎛️ BOTÓN CYBERPUNK PARA ALTERNAR VISTA (1 COL vs 2 COLS) */}
+            <button
+              onClick={() => setIsGridView((prev) => !prev)}
+              className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+              title={isGridView ? "Switch to List View" : "Switch to 2-Col Grid View"}
+            >
+              {isGridView ? (
+                <>
+                  <svg className="w-3.5 h-3.5 text-iron-volt" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round"  strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  <span>GRID</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-3.5 h-3.5 text-iron-volt" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                  </svg>
+                  <span>2X2</span>
+                </>
+              )}
+            </button>
           </div>
         )}
       </div>
 
-      {/* CONTENEDOR PRINCIPAL SCROLLABLE */}
+      {/* CONTENEDOR PRINCIPAL SCROLLABLE CON ANIMACIÓN DE TRANSICIÓN */}
       <div className="flex-1 mt-3 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
         {loading || !isLoaded ? (
           <div className="flex items-center justify-center py-20">
@@ -150,24 +190,44 @@ export default function LegsPage() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-1 pb-32">
-            {filteredLegs.map((leg: any) => (
-              <LegCard
-                key={leg._id}
-                leg={leg}
-                isSignedIn={!!isSignedIn}
-                onClick={setSelectedLeg}
-                isAlreadyInSlip={activeSlipIds.has(leg._id)}
-              />
-            ))}
-            <div className="mt-8 flex flex-col items-center opacity-20">
+          <motion.div 
+            layout 
+            className={`pb-32 transition-all duration-300 ${
+              isGridView 
+                ? 'grid grid-cols-2 gap-2' 
+                : 'flex flex-col gap-1'
+            }`}
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredLegs.map((leg: any) => (
+                <motion.div
+                  key={leg._id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="w-full h-full"
+                >
+                  <LegCard
+                    leg={leg}
+                    isSignedIn={!!isSignedIn}
+                    onClick={setSelectedLeg}
+                    isAlreadyInSlip={activeSlipIds.has(leg._id)}
+                    isGridView={isGridView}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            <div className="col-span-full mt-8 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
               <p className="font-mono text-[8px] text-iron-volt uppercase tracking-widest text-center">
                 End_of_transmission
               </p>
             </div>
-            <div className="h-40 w-full flex-shrink-0" aria-hidden="true" />
-          </div>
+            <div className="col-span-full h-40 w-full flex-shrink-0" aria-hidden="true" />
+          </motion.div>
         )}
       </div>
 
