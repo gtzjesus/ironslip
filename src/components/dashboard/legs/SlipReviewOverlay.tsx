@@ -73,7 +73,9 @@ export default function SlipReviewOverlay({
     if (isSubmitting || numericWager <= 0 || hasInsufficientFunds || !hasMinLegs) return;
 
     try {
+      
       setIsSubmitting(true);
+
 
       const slipPayload = {
         title: hasDemon ? 'DEMON SLIP CONTRACT' : 'IRON SLIP CONTRACT',
