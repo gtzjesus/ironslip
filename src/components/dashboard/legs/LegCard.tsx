@@ -26,6 +26,7 @@ function LegCardComponent({
   const isDemonActive = hasDemon && leg.variants?.some((v: any) => v.isDemonSupported);
 
   const [isVisible, setIsVisible] = useState(false);
+  const [isCanvasLoaded, setIsCanvasLoaded] = useState(false);
   const cardRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -36,6 +37,16 @@ function LegCardComponent({
     if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, []);
+
+  // Simula el tiempo de montaje del canvas sin modificar AvatarCanvas
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        setIsCanvasLoaded(true);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible]);
 
   const isDisabled = !isSignedIn;
 
@@ -61,16 +72,18 @@ function LegCardComponent({
             : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
     >
-      {/* 🦾 BACKGROUND AVATAR (Diferenciado por Vista) */}
+      {/* 🦾 BACKGROUND AVATAR (Con transición instantánea de carga) */}
       {isSignedIn && (
-        <div className={`pointer-events-none z-0 opacity-45 ${
+        <div className={`pointer-events-none z-0 transition-opacity duration-300 ${
+          isCanvasLoaded ? 'opacity-45' : 'opacity-0'
+        } ${
           isGridView 
-            ? 'absolute inset-0 flex items-center justify-end overflow-hidden pr-[-10px]' // En grid: más sutil a la derecha sin estorbar
-            : 'absolute inset-y-0 right-0 w-full' // En lista: tu original exacto (far right abajo)
+            ? 'absolute inset-0 flex items-center justify-end overflow-hidden pr-[-10px]' 
+            : 'absolute inset-y-0 right-0 w-full'
         }`}>
           <div className={`${
             isGridView 
-              ? 'w-40 h-40 absolute -bottom-6 -right-2 z-10 opacity-60' 
+              ? 'w-40 h-40 absolute -bottom-6 -right-2 z-10' 
               : 'w-26 h-26 absolute -bottom-6 -right-0 z-10'
           }`}>
             {isVisible && (
