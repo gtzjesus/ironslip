@@ -126,7 +126,7 @@ export default function LegsPage() {
 
   return (
     <div 
-      className="w-full h-full max-w-2xl mx-auto border-x border-zinc-900/60 relative flex flex-col"
+      className="w-full min-h-full max-w-2xl mx-auto border-x border-zinc-900/60 relative flex flex-col pb-44"
       style={{
         backgroundColor: '#0d0b09',
         backgroundImage: `
@@ -138,14 +138,14 @@ export default function LegsPage() {
     >
       <meta name="theme-color" content="#0d0b09" />
 
-      {/* HEADER & FILTROS (FIJOS ARRIBA) */}
-      <div className="flex-shrink-0 p-2 pb-0 flex flex-col z-20 bg-[#0d0b09]">
+      {/* HEADER & FILTROS (STICKY ARRIBA) */}
+      <div className="sticky top-0 z-30 p-2 pb-0 flex flex-col bg-[#0d0b09]/95 backdrop-blur-md border-b border-zinc-900">
         <div className="w-full">
           <LegsHeader userBalance={userBalance} />
         </div>
 
         {isLoaded && isSignedIn && (
-          <div className="w-full border-b border-zinc-900 flex items-center justify-between gap-2 pr-1">
+          <div className="w-full flex items-center justify-between gap-2 pr-1 pt-1">
             <div className="overflow-x-auto overflow-y-hidden scrollbar-hide flex-1">
               <LegFilterNav
                 activeCategory={activeCategory}
@@ -157,7 +157,7 @@ export default function LegsPage() {
             {/* 🎛️ BOTÓN CYBERPUNK PARA ALTERNAR VISTA */}
             <button
               onClick={() => setIsGridView((prev) => !prev)}
-              className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 my-1 cursor-pointer"
+              className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
               title={isGridView ? "Switch to List View" : "Switch to 2-Col Grid View"}
             >
               {isGridView ? (
@@ -180,16 +180,8 @@ export default function LegsPage() {
         )}
       </div>
 
-      {/* ÁREA DE SCROLL BLINDADA (CON MIN-HEIGHT 0 PARA EL GRID 2X2) */}
-      <div 
-        className="flex-1 px-2 pt-3 scrollbar-hide"
-        style={{
-          overflowY: 'scroll',
-          WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y',
-          minHeight: 0,
-        }}
-      >
+      {/* ÁREA DE CONTENIDO NATIVA (SCROLL GLOBAL LIBRE DE TRABAS) */}
+      <div className="w-full px-2 pt-3">
         {loading || !isLoaded ? (
           <div className="flex items-center justify-center py-20">
             <p className="text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
@@ -197,7 +189,7 @@ export default function LegsPage() {
             </p>
           </div>
         ) : (
-          <div className={`pb-40 ${isGridView ? 'grid grid-cols-2 gap-2' : 'flex flex-col gap-1'}`}>
+          <div className={`w-full ${isGridView ? 'grid grid-cols-2 gap-2' : 'flex flex-col gap-1'}`}>
             {filteredLegs.map((leg: any) => (
               <div key={leg._id} className="w-full">
                 <LegCard
