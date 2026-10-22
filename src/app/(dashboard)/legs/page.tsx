@@ -173,7 +173,7 @@ export default function LegsPage() {
               {/* 🎛️ BOTÓN PARA ALTERNAR VISTA CON SONIDO */}
               <button
                 onClick={() => {
-                  playSound('add');
+                  playSound('remove');
                   setIsGridView((prev) => !prev);
                 }}
                 className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 text-zinc-400 font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
@@ -213,7 +213,7 @@ export default function LegsPage() {
 
       {/* 🕹️ CONTROLES DE PAGINACIÓN CYBERPUNK */}
       {!loading && isLoaded && filteredLegs.length > 0 && (
-        <div className="px-2 mt-4 my-2 flex items-center justify-between font-mono text-[10px] uppercase">
+        <div className="px-2 mt-1 my-2 flex items-center justify-between font-mono text-[10px] uppercase">
           <button
             disabled={currentPage === 1}
             onClick={() => {

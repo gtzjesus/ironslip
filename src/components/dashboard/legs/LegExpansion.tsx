@@ -67,7 +67,7 @@ export default function LegExpansion({
     const calculatedId = `${leg._id}-${v.name}${isDemonLeg ? '-demon' : ''}`;
 
     if (isAlreadySelected) {
-      playSound('remove');
+      playSound('add');
       const itemInSlip = currentSlipItems.find(
         (item: any) =>
           item._id === calculatedId || item._id === `${leg._id}-${v.name}`
