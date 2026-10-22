@@ -10,7 +10,7 @@ interface LegProps {
   isSignedIn: boolean;
   isAlreadyInSlip: boolean;
   hasDemon?: boolean;
-  isGridView?: boolean; // 👈 Nuevo prop para adaptar padding/tamaños en 2 columnas
+  isGridView?: boolean;
 }
 
 function LegCardComponent({
@@ -61,10 +61,18 @@ function LegCardComponent({
             : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
     >
-      {/* 🦾 BACKGROUND AVATAR */}
+      {/* 🦾 BACKGROUND AVATAR (Diferenciado por Vista) */}
       {isSignedIn && (
-        <div className="absolute inset-y-0 right-0 w-full pointer-events-none z-0 opacity-45">
-          <div className={`${isGridView ? 'w-28 h-28 absolute -bottom-10 -right-4 z-10' : 'w-40 h-40 absolute -bottom-16 -right-5 z-10'}`}>
+        <div className={`pointer-events-none z-0 opacity-45 ${
+          isGridView 
+            ? 'absolute inset-0 flex items-center justify-end overflow-hidden pr-[-10px]' // En grid: más sutil a la derecha sin estorbar
+            : 'absolute inset-y-0 right-0 w-full' // En lista: tu original exacto (far right abajo)
+        }`}>
+          <div className={`${
+            isGridView 
+              ? 'w-40 h-40 absolute -bottom-6 -right-2 z-10 opacity-60' 
+              : 'w-26 h-26 absolute -bottom-6 -right-0 z-10'
+          }`}>
             {isVisible && (
               <AvatarCanvas
                 avatarUrl="/models/avatar.glb"
@@ -91,7 +99,7 @@ function LegCardComponent({
           </div>
 
           <h3 className={`font-black italic uppercase tracking-tighter truncate ${
-            isGridView ? 'text-sm leading-tight' : 'text-xl'
+            isGridView ? 'text-sm leading-tight pr-6' : 'text-xl'
           } ${
             isAlreadyInSlip ? 'text-white' : isDemonActive ? 'text-iron-red' : 'text-white'
           } ${!isSignedIn ? 'blur-[5px]' : ''}`}>
