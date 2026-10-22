@@ -6,8 +6,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen w-full overflow-hidden bg-black flex flex-col">
-      <main className="flex-grow overflow-hidden">{children}</main>
+    <div className="h-[100dvh] w-full bg-black flex flex-col relative overflow-hidden">
+      {/* El main ahora permite que sus hijos manejen el scroll fluidamente */}
+      <main className="flex-1 w-full relative flex flex-col min-h-0 overflow-hidden">
+        {children}
+      </main>
       <BottomNav />
     </div>
   );
