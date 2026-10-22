@@ -173,7 +173,7 @@ export default function LegsPage() {
               {/* 🎛️ BOTÓN PARA ALTERNAR VISTA CON SONIDO */}
               <button
                 onClick={() => {
-                  playSound('select');
+                  playSound('demon');
                   setIsGridView((prev) => !prev);
                 }}
                 className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 text-zinc-400 font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
@@ -236,7 +236,7 @@ export default function LegsPage() {
           <button
             disabled={currentPage >= totalPages}
             onClick={() => {
-              playSound('select');
+              playSound('open-card');
               setCurrentPage((p) => Math.min(p + 1, totalPages));
             }}
             className={`px-3 py-1.5 border transition-all flex items-center gap-1 cursor-pointer ${
