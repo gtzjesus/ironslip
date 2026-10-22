@@ -51,7 +51,7 @@ export default function LegsPage() {
     }
   }, [isGridView]);
 
-  // Sincronización bancaria en vivo con protección anti-fantasmas de desmontaje
+  // Sincronización bancaria en vivo
   useEffect(() => {
     let isMounted = true;
     async function syncWallet() {
@@ -127,7 +127,7 @@ export default function LegsPage() {
 
   return (
     <main 
-      className="h-screen w-full overflow-hidden flex flex-col max-w-2xl mx-auto border-x border-zinc-900/60 relative"
+      className="min-h-screen w-full flex flex-col max-w-2xl mx-auto border-x border-zinc-900/60 relative pb-40"
       style={{
         backgroundColor: '#0d0b09',
         backgroundImage: `
@@ -139,14 +139,14 @@ export default function LegsPage() {
     >
       <meta name="theme-color" content="#0d0b09" />
 
-      {/* HEADER & FILTROS */}
-      <div className="flex-shrink-0 p-2 pb-0 flex flex-col">
+      {/* HEADER & FILTROS (FIJOS ARRIBA PARA COMODIDAD) */}
+      <div className="sticky top-0 z-30 bg-[#0d0b09]/95 backdrop-blur-md p-2 pb-0 flex flex-col border-b border-zinc-900">
         <div className="w-full">
           <LegsHeader userBalance={userBalance} />
         </div>
 
         {isLoaded && isSignedIn && (
-          <div className="w-full border-b border-zinc-900 flex items-center justify-between gap-2 pr-1">
+          <div className="w-full flex items-center justify-between gap-2 pr-1 pt-1">
             <div className="overflow-x-auto overflow-y-hidden scrollbar-hide flex-1">
               <LegFilterNav
                 activeCategory={activeCategory}
@@ -155,16 +155,16 @@ export default function LegsPage() {
               />
             </div>
 
-            {/* 🎛️ BOTÓN CYBERPUNK PARA ALTERNAR VISTA (1 COL vs 2 COLS) */}
+            {/* 🎛️ BOTÓN CYBERPUNK PARA ALTERNAR VISTA */}
             <button
               onClick={() => setIsGridView((prev) => !prev)}
-              className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+              className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-2"
               title={isGridView ? "Switch to List View" : "Switch to 2-Col Grid View"}
             >
               {isGridView ? (
                 <>
                   <svg className="w-3.5 h-3.5 text-iron-volt" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round"  strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                   <span>GRID</span>
                 </>
@@ -181,8 +181,8 @@ export default function LegsPage() {
         )}
       </div>
 
-      {/* CONTENEDOR PRINCIPAL SCROLLABLE CON ANIMACIÓN DE TRANSICIÓN */}
-      <div className="flex-1 mt-3 overflow-y-auto scrollbar-hide overscroll-contain touch-pan-y px-2">
+      {/* CONTENEDOR PRINCIPAL CON SCROLL NATIVO FLUIDO */}
+      <div className="flex-1 mt-3 px-2">
         {loading || !isLoaded ? (
           <div className="flex items-center justify-center py-20">
             <p className="text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
@@ -192,7 +192,7 @@ export default function LegsPage() {
         ) : (
           <motion.div 
             layout 
-            className={`pb-32 transition-all duration-300 ${
+            className={`transition-all duration-300 ${
               isGridView 
                 ? 'grid grid-cols-2 gap-2' 
                 : 'flex flex-col gap-1'
@@ -210,7 +210,7 @@ export default function LegsPage() {
                   className="w-full h-full"
                 >
                   <LegCard
-                    leg={leg}
+                    leg= {leg}
                     isSignedIn={!!isSignedIn}
                     onClick={setSelectedLeg}
                     isAlreadyInSlip={activeSlipIds.has(leg._id)}
@@ -226,7 +226,6 @@ export default function LegsPage() {
                 End_of_transmission
               </p>
             </div>
-            <div className="col-span-full h-40 w-full flex-shrink-0" aria-hidden="true" />
           </motion.div>
         )}
       </div>
