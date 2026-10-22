@@ -4,6 +4,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
+import { useSound } from '@/hooks/useSound';
 import LegsHeader from '@/components/dashboard/legs/Legsheader';
 import LegCard from '@/components/dashboard/legs/LegCard';
 import LegExpansion from '@/components/dashboard/legs/LegExpansion';
@@ -13,6 +14,7 @@ import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
 import { getUserBalance } from '@/actions/supabase/slips';
 
 export default function LegsPage() {
+  const { playSound } = useSound();
   const { legs, loading } = useLegs();
   const { isLoaded, isSignedIn } = useUser();
   const [selectedLeg, setSelectedLeg] = useState<any>(null);
@@ -168,10 +170,13 @@ export default function LegsPage() {
                 />
               </div>
 
-              {/* 🎛️ BOTÓN PARA ALTERNAR VISTA */}
+              {/* 🎛️ BOTÓN PARA ALTERNAR VISTA CON SONIDO */}
               <button
-                onClick={() => setIsGridView((prev) => !prev)}
-                className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800  text-zinc-400  font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
+                onClick={() => {
+                  playSound('select');
+                  setIsGridView((prev) => !prev);
+                }}
+                className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 text-zinc-400 font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
                 title={isGridView ? "Switch to List View" : "Switch to 2-Col Grid View"}
               >
                 {isGridView ? 'GRID' : '2X2'}
@@ -211,7 +216,10 @@ export default function LegsPage() {
         <div className="px-2 mt-4 my-2 flex items-center justify-between font-mono text-[10px] uppercase">
           <button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            onClick={() => {
+              playSound('select');
+              setCurrentPage((p) => Math.max(p - 1, 1));
+            }}
             className={`px-3 py-1.5 border transition-all flex items-center gap-1 cursor-pointer ${
               currentPage === 1
                 ? 'border-zinc-800 text-zinc-600 opacity-40 cursor-not-allowed'
@@ -227,7 +235,10 @@ export default function LegsPage() {
 
           <button
             disabled={currentPage >= totalPages}
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onClick={() => {
+              playSound('select');
+              setCurrentPage((p) => Math.min(p + 1, totalPages));
+            }}
             className={`px-3 py-1.5 border transition-all flex items-center gap-1 cursor-pointer ${
               currentPage >= totalPages
                 ? 'border-zinc-800 text-zinc-600 opacity-40 cursor-not-allowed'
