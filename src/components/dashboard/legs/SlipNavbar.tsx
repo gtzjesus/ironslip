@@ -53,7 +53,7 @@ export default function SlipNavbar({
 
   const handleExpand = () => {
     if (isEligibleToExpand) {
-      playSound('open-card');
+      playSound('demon');
       setIsExpanded(true);
     }
   };

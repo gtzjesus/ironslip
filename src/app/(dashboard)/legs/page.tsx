@@ -93,7 +93,7 @@ export default function LegsPage() {
   }, [legs, activeCategory]);
 
   // 📄 LÓGICA DE PAGINACIÓN DINÁMICA (5 para list, 6 para grid 2x2)
-  const itemsPerPage = isGridView ? 6 : 5;
+  const itemsPerPage = isGridView ? 6 : 4;
   const totalPages = Math.ceil(filteredLegs.length / itemsPerPage) || 1;
   
   const paginatedLegs = useMemo(() => {
@@ -113,8 +113,8 @@ export default function LegsPage() {
       if (exists) {
         return prevSlip.filter((l) => l._id !== mutatedLeg._id);
       } else {
-        if (prevSlip.length >= 5) {
-          alert('MAX_CAPACITY: 5_LEGS');
+        if (prevSlip.length >= 4) {
+          alert('MAX_CAPACITY: 4_LEGS');
           return prevSlip;
         }
         return [...prevSlip, mutatedLeg];
@@ -213,7 +213,7 @@ export default function LegsPage() {
 
       {/* 🕹️ CONTROLES DE PAGINACIÓN CYBERPUNK */}
       {!loading && isLoaded && filteredLegs.length > 0 && (
-        <div className="px-2 mt-1 my-2 flex items-center justify-between font-mono text-[10px] uppercase">
+        <div className="px-2 mt-2 my-2 flex items-center justify-between font-mono text-[10px] uppercase">
           <button
             disabled={currentPage === 1}
             onClick={() => {
