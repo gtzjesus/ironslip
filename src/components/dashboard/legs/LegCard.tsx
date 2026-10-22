@@ -51,7 +51,7 @@ function LegCardComponent({
 
   const handleCardClick = () => {
     if (!isDisabled) {
-      playSound('open-card' as any);
+      playSound('select' as any);
       onClick(leg);
     }
   };

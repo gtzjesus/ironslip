@@ -217,7 +217,7 @@ export default function LegsPage() {
           <button
             disabled={currentPage === 1}
             onClick={() => {
-              playSound('select');
+              playSound('open-card');
               setCurrentPage((p) => Math.max(p - 1, 1));
             }}
             className={`px-3 py-1.5 border transition-all flex items-center gap-1 cursor-pointer ${
