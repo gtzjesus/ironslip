@@ -53,7 +53,7 @@ export default function SlipNavbar({
 
   const handleExpand = () => {
     if (isEligibleToExpand) {
-      playSound('demon');
+      playSound('select');
       setIsExpanded(true);
     }
   };
@@ -61,19 +61,18 @@ export default function SlipNavbar({
   return (
     <>
       {!isCurrentlyExpanded && (
-        /* CAMBIO CLAVE: bottom-[80px] o bottom-20 eleva la barra por encima del navbar y z-[120] le da prioridad visual total */
         <div className="fixed bottom-[65px] left-0 w-full z-[120] px-2 flex justify-center pointer-events-none animate-videogame-slam">
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
               onClick={handleExpand}
-              className={`relative overflow-hidden p-3.5 flex items-center justify-between transition-all duration-300 bg-zinc-950 border-[0.5px] ${
+              className={`relative overflow-hidden p-3.5 flex items-center justify-between transition-all duration-300 bg-zinc-950 border-[1px] ${
                 isEligibleToExpand
                   ? 'cursor-pointer active:scale-[0.98]'
                   : 'cursor-not-allowed'
               } ${
                 hasDemon
-                  ? 'border-red-600/60 shadow-[0_0_25px_rgba(220,38,38,0.45)]'
-                  : 'border-iron-volt/50 shadow-[0_0_20px_rgba(255,211,0,0.25)]'
+                  ? 'border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.35)]'
+                  : 'border-iron-volt shadow-[0_0_15px_rgba(163,230,53,0.3)]'
               }`}
               style={{
                 backgroundImage: `
@@ -90,9 +89,6 @@ export default function SlipNavbar({
                   backgroundImage: 'repeating-linear-gradient(45deg, #fff, #fff 2px, transparent 2px, transparent 8px)'
                 }}
               />
-
-              {/* LÍNEA DE ACENTO SUPERIOR CON BRILLO */}
-              <div className={`absolute top-0 left-0 right-0 h-[2px] ${hasDemon ? 'bg-red-600 shadow-[0_0_8px_rgba(220,38,38,1)]' : 'bg-iron-volt shadow-[0_0_8px_rgba(255,211,0,1)]'}`} />
 
               <div className="relative z-10 flex flex-col justify-center items-start leading-none">
                 <p className={`text-[9px] font-mono uppercase tracking-[0.15em] mb-1.5 ${hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt font-bold'}`}>
