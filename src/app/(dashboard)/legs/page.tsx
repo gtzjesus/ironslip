@@ -12,8 +12,6 @@ import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
 
 import { getUserBalance } from '@/actions/supabase/slips';
 
-const ITEMS_PER_PAGE = 4;
-
 export default function LegsPage() {
   const { legs, loading } = useLegs();
   const { isLoaded, isSignedIn } = useUser();
@@ -53,10 +51,10 @@ export default function LegsPage() {
     }
   }, [isGridView]);
 
-  // Resetear a la página 1 cuando cambia la categoría
+  // Resetear a la página 1 cuando cambia la categoría o el modo de vista
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeCategory]);
+  }, [activeCategory, isGridView]);
 
   // Sincronización bancaria en vivo
   useEffect(() => {
@@ -92,12 +90,14 @@ export default function LegsPage() {
     return legs.filter((leg: any) => leg.category === activeCategory);
   }, [legs, activeCategory]);
 
-  // 📄 LÓGICA DE PAGINACIÓN (4 CARDS)
-  const totalPages = Math.ceil(filteredLegs.length / ITEMS_PER_PAGE) || 1;
+  // 📄 LÓGICA DE PAGINACIÓN DINÁMICA (5 para list, 6 para grid 2x2)
+  const itemsPerPage = isGridView ? 6 : 5;
+  const totalPages = Math.ceil(filteredLegs.length / itemsPerPage) || 1;
+  
   const paginatedLegs = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredLegs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredLegs, currentPage]);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredLegs.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredLegs, currentPage, itemsPerPage]);
 
   // Búsqueda ultrarrápida O(1) de elementos activos en el slip
   const activeSlipIds = useMemo(() => {
@@ -171,7 +171,7 @@ export default function LegsPage() {
               {/* 🎛️ BOTÓN PARA ALTERNAR VISTA */}
               <button
                 onClick={() => setIsGridView((prev) => !prev)}
-                className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
+                className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800  text-zinc-400  font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
                 title={isGridView ? "Switch to List View" : "Switch to 2-Col Grid View"}
               >
                 {isGridView ? 'GRID' : '2X2'}
@@ -180,7 +180,7 @@ export default function LegsPage() {
           )}
         </div>
 
-        {/* 🎴 MOSTRAR SOLO LAS 4 CARDS PAGINADAS */}
+        {/* 🎴 MOSTRAR LAS CARDS PAGINADAS (5 en list / 6 en grid) */}
         <div className="w-full px-2 pt-3">
           {loading || !isLoaded ? (
             <div className="flex items-center justify-center py-20">
@@ -222,7 +222,7 @@ export default function LegsPage() {
           </button>
 
           <span className="text-zinc-500 tracking-widest font-bold">
-            PAGE <span className="text-iron-volt">{currentPage}</span> / {totalPages}
+             <span className="text-iron-volt">{currentPage}</span> / {totalPages}
           </span>
 
           <button
