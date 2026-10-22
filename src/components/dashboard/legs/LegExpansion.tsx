@@ -154,7 +154,7 @@ export default function LegExpansion({
                 isDemon={!!demonStates[i]}
                 onToggleAccordion={() => {
                   setExpandedIndex(expandedIndex === i ? null : i);
-                  playSound('select');
+                  playSound('open-card');
                 }}
                 onToggleSelection={(e: any) => toggleVariantSelection(i, e)}
               />
