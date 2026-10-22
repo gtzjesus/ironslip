@@ -4,7 +4,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLegs } from '@/hooks/useLegs';
 import { useUser } from '@clerk/nextjs';
-import { motion, AnimatePresence } from 'framer-motion';
 import LegsHeader from '@/components/dashboard/legs/Legsheader';
 import LegCard from '@/components/dashboard/legs/LegCard';
 import LegExpansion from '@/components/dashboard/legs/LegExpansion';
@@ -20,7 +19,7 @@ export default function LegsPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [userBalance, setUserBalance] = useState<number>(0);
   
-  // 🎛️ Estado para alternar vista: 'list' (1 col) o 'grid' (2 cols)
+  // 🎛️ Estado para alternar vista: 'list' (false) o 'grid 2x2' (true)
   const [isGridView, setIsGridView] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('iron_slip_view_mode');
@@ -158,7 +157,7 @@ export default function LegsPage() {
             {/* 🎛️ BOTÓN CYBERPUNK PARA ALTERNAR VISTA */}
             <button
               onClick={() => setIsGridView((prev) => !prev)}
-              className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 my-1"
+              className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 border border-zinc-800 hover:border-iron-volt/60 text-zinc-400 hover:text-iron-volt font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 my-1 cursor-pointer"
               title={isGridView ? "Switch to List View" : "Switch to 2-Col Grid View"}
             >
               {isGridView ? (
@@ -181,7 +180,7 @@ export default function LegsPage() {
         )}
       </div>
 
-      {/* CONTENEDOR PRINCIPAL CON SCROLL FLUIDO INERTIAL (`overflow-y-auto` + `-webkit-overflow-scrolling`) */}
+      {/* CONTENEDOR PRINCIPAL CON SCROLL NATIVO FLUIDO */}
       <div 
         className="flex-1 overflow-y-auto scrollbar-hide px-2 pt-3"
         style={{ WebkitOverflowScrolling: 'touch' }}
@@ -193,35 +192,24 @@ export default function LegsPage() {
             </p>
           </div>
         ) : (
-          <motion.div 
-            layout 
-            className={`pb-36 transition-all duration-300 ${
+          <div 
+            className={`pb-36 ${
               isGridView 
                 ? 'grid grid-cols-2 gap-2' 
                 : 'flex flex-col gap-1'
             }`}
           >
-            <AnimatePresence mode="popLayout">
-              {filteredLegs.map((leg: any) => (
-                <motion.div
-                  key={leg._id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
-                  className="w-full h-full"
-                >
-                  <LegCard
-                    leg={leg}
-                    isSignedIn={!!isSignedIn}
-                    onClick={setSelectedLeg}
-                    isAlreadyInSlip={activeSlipIds.has(leg._id)}
-                    isGridView={isGridView}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {filteredLegs.map((leg: any) => (
+              <div key={leg._id} className="w-full h-full">
+                <LegCard
+                  leg={leg}
+                  isSignedIn={!!isSignedIn}
+                  onClick={setSelectedLeg}
+                  isAlreadyInSlip={activeSlipIds.has(leg._id)}
+                  isGridView={isGridView}
+                />
+              </div>
+            ))}
 
             <div className="col-span-full mt-8 flex flex-col items-center opacity-20">
               <div className="w-full h-[1px] bg-iron-volt mb-2" />
@@ -230,7 +218,7 @@ export default function LegsPage() {
               </p>
             </div>
             <div className="col-span-full h-20 w-full flex-shrink-0" aria-hidden="true" />
-          </motion.div>
+          </div>
         )}
       </div>
 

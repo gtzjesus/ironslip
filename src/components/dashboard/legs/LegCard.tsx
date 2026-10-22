@@ -38,7 +38,6 @@ function LegCardComponent({
     return () => observer.disconnect();
   }, []);
 
-  // Simula el tiempo de montaje del canvas sin modificar AvatarCanvas
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -72,7 +71,7 @@ function LegCardComponent({
             : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
     >
-      {/* 🦾 BACKGROUND AVATAR (Con transición instantánea de carga) */}
+      {/* 🦾 BACKGROUND AVATAR */}
       {isSignedIn && (
         <div className={`pointer-events-none z-0 transition-opacity duration-300 ${
           isCanvasLoaded ? 'opacity-45' : 'opacity-0'
@@ -127,7 +126,6 @@ function LegCardComponent({
         )}
       </div>
 
-      {/* Footer extra en modo grid para alinear estéticamente si hace falta */}
       {isGridView && isSignedIn && (
         <div className="relative z-10 flex items-center justify-between text-[7px] font-mono text-zinc-500 uppercase tracking-wider">
         </div>
