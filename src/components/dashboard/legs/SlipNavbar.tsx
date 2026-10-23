@@ -61,7 +61,7 @@ export default function SlipNavbar({
   return (
     <>
       {!isCurrentlyExpanded && (
-        <div className="fixed bottom-[65px] left-0 w-full z-[120] px-2 flex justify-center pointer-events-none animate-videogame-slam">
+        <div className="fixed bottom-[62.5px] left-0 w-full z-[120] px-2 flex justify-center pointer-events-none animate-videogame-slam">
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
               onClick={handleExpand}

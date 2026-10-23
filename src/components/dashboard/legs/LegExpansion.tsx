@@ -32,7 +32,6 @@ export default function LegExpansion({
     const demons: Record<number, boolean> = {};
 
     leg.variants.forEach((v: any, index: number) => {
-      // Determinamos si es demonio por schema (v.isDemonSupported) o si ya venía marcado con -demon
       const isDemonVariant = v.isDemonSupported === true;
       const idBase = `${leg._id}-${v.name}`;
       const targetId = isDemonVariant ? `${idBase}-demon` : idBase;
@@ -75,7 +74,6 @@ export default function LegExpansion({
       if (itemInSlip) onToggleSlip(itemInSlip);
     } else {
       playSound('add');
-      // Inyectamos los datos completos de la variante seleccionada al objeto del slip
       onToggleSlip({
         ...leg,
         _id: calculatedId,
@@ -99,9 +97,24 @@ export default function LegExpansion({
       onClick={onClose}
     >
       <div
-        className="w-full h-full max-w-2xl relative bg-zinc-950 flex flex-col overflow-hidden"
+        className="w-full h-full max-w-2xl relative bg-zinc-950 flex flex-col overflow-hidden border border-zinc-900 shadow-[0_0_50px_rgba(0,0,0,0.9)]"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 🕹️ HUD OVERLAY: ESQUINAS REFORZADAS Y OVERLAY SCANLINE */}
+        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-iron-volt z-30 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-iron-volt z-30 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-iron-volt z-30 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-iron-volt z-30 pointer-events-none" />
+
+        {/* SCANLINES retro-monitor */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.02] z-20"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0) 50%, rgba(0,0,0,1) 50%)',
+            backgroundSize: '100% 4px',
+          }}
+        />
+
         {/* WATERMARK */}
         <div className="text-iron-volt absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden rotate-[-12deg] scale-125 select-none">
           {Array.from({ length: 10 }).map((_, i) => (
@@ -116,31 +129,76 @@ export default function LegExpansion({
           ))}
         </div>
 
-        {/* HEADER */}
-        <div className="p-5 relative z-10 flex justify-between items-center ">
-          <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter">
-            {leg.task}
-          </h2>
-          <button
-            onClick={() => {
-              playSound('close');
-              setTimeout(() => onClose(), 100);
-            }}
-            className="text-black bg-iron-red px-3 py-1 text-[10px] font-bold uppercase"
-          >
-            [ x ]
-          </button>
+        {/* HEADER TÁCTICO */}
+        <div className="p-4 pt-5 relative z-10 flex flex-col gap-1 border-b border-zinc-900/80 bg-zinc-950/80">
+          <div className="flex items-center justify-between font-mono text-[8px] tracking-widest text-zinc-500 uppercase">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-iron-volt animate-ping" />
+              [SYS.EXPANSION_NODE_v2]
+            </span>
+            <span className="text-iron-volt font-bold">[ LINK: ONLINE ]</span>
+          </div>
+
+          <div className="flex justify-between items-center mt-1">
+            <div>
+              <span className="font-mono text-[8px] bg-iron-volt/10 text-iron-volt border border-iron-volt/30 px-1.5 py-0.5 uppercase tracking-widest font-bold">
+                {displayCategory} EXECUTION
+              </span>
+              <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter mt-1">
+                {leg.task}
+              </h2>
+            </div>
+
+            <button
+              onClick={() => {
+                playSound('close');
+                setTimeout(() => onClose(), 100);
+              }}
+              className="text-black bg-iron-red hover:bg-red-500 transition-colors px-3 py-1.5 text-[10px] font-mono font-black uppercase tracking-wider active:scale-95 shadow-[0_0_10px_rgba(220,38,38,0.5)] cursor-pointer"
+            >
+              [ ESC_x ]
+            </button>
+          </div>
         </div>
 
         {/* CONTENT */}
         <div className="flex-1 relative z-10 overflow-y-auto p-3 custom-scrollbar pb-48">
-          <div className="w-full h-58 mb-4 flex items-center justify-center">
+          
+          {/* VISOR TÁCTICO DE PUNTERÍA ALREDEDOR DEL AVATAR */}
+          <div className="relative w-full h-48 mb-4 border border-zinc-800/60 bg-zinc-900/20 flex items-center justify-center overflow-hidden">
+            {/* Esquinas tácticas del visor */}
+            <div className="absolute top-1 left-1 font-mono text-[7px] text-zinc-600 tracking-wider">
+              [TARGET_ACQUIRED]
+            </div>
+            <div className="absolute top-1 right-1 font-mono text-[7px] text-iron-volt/60 tracking-wider">
+              VIEW_360°
+            </div>
+            <div className="absolute bottom-1 left-1 font-mono text-[6.5px] text-zinc-600">
+              ID: {leg._id?.slice(0, 12)}...
+            </div>
+            <div className="absolute bottom-1 right-1 font-mono text-[6.5px] text-zinc-600">
+              ANIM: {leg.animationKey || 'IDLE'}
+            </div>
+
+            {/* Malla de mira de francotirador / Target overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+              <div className="w-32 h-32 border border-iron-volt rounded-full" />
+              <div className="w-48 h-[1px] bg-iron-volt absolute" />
+              <div className="h-48 w-[1px] bg-iron-volt absolute" />
+            </div>
+
             {is3DReady && (
               <AvatarCanvas
                 avatarUrl="/models/avatar.glb"
                 activeAnimation={leg.animationKey || 'breathingidle'}
               />
             )}
+          </div>
+
+          {/* BARRA BANNER DE STATUS PREVIO A LAS VARIANTES */}
+          <div className="flex items-center justify-between mb-2 px-1 font-mono text-[8px] text-zinc-500 uppercase tracking-widest">
+            <span>VARIANTS_LOADED ({leg.variants?.length || 0})</span>
+            <span>STATUS: ENCRYPTED_SLIP</span>
           </div>
 
           <div className="space-y-2">
@@ -162,6 +220,7 @@ export default function LegExpansion({
           </div>
         </div>
 
+        {/* SLIP NAVBAR OVERLAY */}
         <div className="absolute bottom-[64px] left-0 w-full z-[90]">
           <SlipNavbar
             activeSlip={currentSlipItems}
