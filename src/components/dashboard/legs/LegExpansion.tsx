@@ -202,7 +202,7 @@ export default function LegExpansion({
                   <div className="relative z-10 flex items-start justify-between w-full mb-0.5">
                     <div className="flex-1 min-w-0 pr-2">
                       <h4
-                        className={`font-black mb-3 italic uppercase tracking-tighter truncate text-2xl leading-none ${
+                        className={`font-black mb-3 italic uppercase tracking-tighter truncate text-xl leading-none ${
                           isSelected
                             ? isDemonSupported
                               ? 'text-iron-red'
@@ -222,7 +222,7 @@ export default function LegExpansion({
                   </div>
 
                   <div className="flex items-center justify-between font-mono uppercase tracking-wider text-zinc-400 pt-1 border-t border-zinc-800/60 mt-0.5">
-                    <span className="text-[11px] truncate max-w-[80%] text-zinc-300">{v.target || 'TARGET'}</span>
+                    <span className="text-[10px] truncate max-w-[80%] text-zinc-300">{v.target || 'TARGET'}</span>
                     <span className={isSelected ? (isDemonSupported ? 'text-[8.5px] text-iron-red font-bold tracking-widest' : 'text-[8.5px] text-iron-volt font-bold tracking-widest') : 'text-zinc-500'}>
                       {isSelected ? '[ picked ]' : ''}
                     </span>
