@@ -21,7 +21,7 @@ export default function LegExpansion({
   const displayCategory = (leg?.category || 'IRON').toUpperCase();
   const [is3DReady, setIs3DReady] = useState(false);
   const [avatarSkin, setAvatarSkin] = useState<string>('/models/avatar.glb');
-  const [manualCloseTip, setManualCloseTip] = useState(false); // 🟢 Control por si el usuario lo cierra manualmente
+  const [manualCloseTip, setManualCloseTip] = useState(false);
 
   // 1️⃣ Cargar la skin dinámica del usuario desde Supabase
   useEffect(() => {
@@ -76,7 +76,6 @@ export default function LegExpansion({
     return { selectedVariants: selected, demonStates: demons };
   }, [currentSlipItems, leg]);
 
-  // 🟢 El tip solo se muestra si NO hay variantes seleccionadas en esta categoría y el usuario no lo cerró a la fuerza
   const showTip = selectedVariants.length === 0 && !manualCloseTip;
 
   const toggleVariantSelection = (index: number, e: React.MouseEvent) => {
@@ -149,13 +148,13 @@ export default function LegExpansion({
           }}
         />
 
-        {/* HEADER TÁCTICO FLOTANTE */}
-        <div className="p-3.5 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/80 backdrop-blur-sm">
+        {/* HEADER TÁCTICO FLOTANTE CON TÍTULO MÁS GRANDE */}
+        <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/80 backdrop-blur-sm">
           <div>
-            <div className="inline-block px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest font-bold bg-iron-volt/10 text-iron-volt border border-iron-volt/30 mb-0.5">
+            {/* <div className="inline-block px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest font-bold bg-iron-volt/10 text-iron-volt border border-iron-volt/30 mb-1">
               {displayCategory} 
-            </div>
-            <h2 className="text-iron-volt font-black italic text-3xl uppercase tracking-tighter mt-1 leading-none">
+            </div> */}
+            <h2 className="text-iron-volt font-black italic text-4xl uppercase tracking-tighter leading-none">
               {leg.task}
             </h2>
           </div>
@@ -166,26 +165,23 @@ export default function LegExpansion({
             }}
             className="text-black bg-iron-red hover:bg-red-500 transition-colors px-2.5 py-1 text-[9px] font-mono font-bold uppercase active:scale-95 cursor-pointer shadow-[0_0_10px_rgba(220,38,38,0.5)]"
           >
-            [ close ]
+            [ x ]
           </button>
         </div>
 
-        {/* CONTENT (UBICADO ARRIBA Y SIN SCROLL) */}
+        {/* CONTENT */}
         <div className="flex-1 relative z-20 overflow-hidden p-2 pt-2 flex flex-col justify-start">
           
-          {/* 💡 TIP TÁCTICO CYBERPUNK (SE OCULTA AUTOMÁTICAMENTE AL SELECCIONAR) */}
+          {/* 💡 TIP TÁCTICO */}
           {showTip && (
             <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
                 <span className="text-iron-volt font-bold truncate">Tap and stack your iron legs to build your iron slip</span> 
-                {/* <span className="w-1.5 h-1.5 rounded-full bg-iron-volt animate-ping flex-shrink-0" /> */}
               </span>
-              <div className="flex items-center gap-2 flex-shrink-0">
-              </div>
             </div>
           )}
 
-          {/* 🎴 LISTA DE VARIANTES COMPACTAS EN PRIMER PLANO */}
+          {/* 🎴 LISTA DE VARIANTES */}
           <div className="flex flex-col gap-2">
             {leg.variants?.map((v: any, i: number) => {
               const isSelected = selectedVariants.includes(i);
@@ -205,10 +201,8 @@ export default function LegExpansion({
                 >
                   <div className="relative z-10 flex items-start justify-between w-full mb-0.5">
                     <div className="flex-1 min-w-0 pr-2">
-                    
-
                       <h4
-                        className={`font-black mb-3 italic uppercase tracking-tighter truncate text-base  leading-none ${
+                        className={`font-black mb-3 italic uppercase tracking-tighter truncate text-2xl leading-none ${
                           isSelected
                             ? isDemonSupported
                               ? 'text-iron-red'
@@ -221,14 +215,14 @@ export default function LegExpansion({
                     </div>
 
                     <div className="text-right flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? (isDemonSupported ? 'text-iron-green font-bold' : 'text-iron-green font-bold') : 'text-zinc-400'}>
+                      <span className={isSelected ? 'text-iron-volt font-bold' : 'text-zinc-400'}>
                         +{v.reward || 50} CR
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between  font-mono uppercase tracking-wider text-zinc-400 pt-1 border-t border-zinc-800/60 mt-0.5">
-                    <span className="text-[12px] truncate max-w-[70%] text-zinc-300">{v.target || 'TARGET'}</span>
+                  <div className="flex items-center justify-between font-mono uppercase tracking-wider text-zinc-400 pt-1 border-t border-zinc-800/60 mt-0.5">
+                    <span className="text-[11px] truncate max-w-[80%] text-zinc-300">{v.target || 'TARGET'}</span>
                     <span className={isSelected ? (isDemonSupported ? 'text-[8.5px] text-iron-red font-bold tracking-widest' : 'text-[8.5px] text-iron-volt font-bold tracking-widest') : 'text-zinc-500'}>
                       {isSelected ? '[ picked ]' : ''}
                     </span>
@@ -239,8 +233,8 @@ export default function LegExpansion({
           </div>
         </div>
 
-        {/* FOOTER OVERLAYS */}
-        <div className="absolute bottom-[64px] left-0 w-full z-[90]">
+        {/* FOOTER OVERLAYS - SIN PROPS EXTRA */}
+        <div className="absolute bottom-[64px] left-0 w-full z-[90] pointer-events-auto">
           <SlipNavbar
             activeSlip={currentSlipItems}
             onRemoveLeg={onRemoveLeg}
