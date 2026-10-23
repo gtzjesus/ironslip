@@ -100,7 +100,7 @@ function LegCardComponent({
       <div className="relative z-10 flex justify-between items-start w-full">
         <div className="flex-1 min-w-0">
           {/* CATEGORY BADGE */}
-          <div className={`inline-block mb-1 px-1.5 py-0.5 font-mono text-[6.5px] uppercase tracking-widest font-bold ${
+          <div className={`inline-block mb-1 px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-widest font-bold ${
             isAlreadyInSlip 
               ? 'bg-zinc-700 text-white border-zinc-600' 
               : isDemonActive 
@@ -111,7 +111,7 @@ function LegCardComponent({
           </div>
 
           <h3 className={`font-black italic uppercase tracking-tighter truncate ${
-            isGridView ? 'text-sm leading-tight pr-6' : 'text-xl'
+            isGridView ? 'text-2xl leading-tight pr-6' : 'text-2xl'
           } ${
             isAlreadyInSlip ? 'text-white' : isDemonActive ? 'text-iron-red' : 'text-white'
           } ${!isSignedIn ? 'blur-[5px]' : ''}`}>

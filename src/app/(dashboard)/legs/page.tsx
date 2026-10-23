@@ -189,7 +189,7 @@ export default function LegsPage() {
         <div className="w-full px-2 pt-3">
           {loading || !isLoaded ? (
             <div className="flex items-center justify-center py-20">
-              <p className="text-iron-volt font-mono text-[10px] animate-pulse tracking-[0.3em]">
+              <p className="text-iron-volt font-mono text-[8.5px] animate-pulse tracking-[0.3em]">
                 CONNECTING
               </p>
             </div>
