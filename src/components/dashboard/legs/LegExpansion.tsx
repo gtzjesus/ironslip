@@ -6,6 +6,7 @@ import { useSound } from '@/hooks/useSound';
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
 import BottomNav from '@/components/common/BottomNav';
+import { getUserAvatarSkin } from '@/actions/supabase/avatar';
 
 export default function LegExpansion({
   leg,
@@ -19,10 +20,29 @@ export default function LegExpansion({
   const { playSound } = useSound();
   const displayCategory = (leg?.category || 'IRON').toUpperCase();
   const [is3DReady, setIs3DReady] = useState(false);
+  const [avatarSkin, setAvatarSkin] = useState<string>('/models/avatar.glb');
 
+  // 1️⃣ Cargar la skin dinámica del usuario desde Supabase
   useEffect(() => {
-    const timer = setTimeout(() => setIs3DReady(true), 150);
-    return () => clearTimeout(timer);
+    let isMounted = true;
+    async function loadSkin() {
+      try {
+        const res = await getUserAvatarSkin();
+        if (isMounted && res?.avatarSkin) {
+          setAvatarSkin(res.avatarSkin);
+        }
+      } catch (err) {
+        console.error('Failed fetching dynamic skin for modal:', err);
+      } finally {
+        if (isMounted) {
+          setIs3DReady(true);
+        }
+      }
+    }
+    loadSkin();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const { selectedVariants, demonStates } = useMemo(() => {
@@ -99,8 +119,27 @@ export default function LegExpansion({
         className="w-full h-full max-w-2xl relative bg-zinc-950 flex flex-col overflow-hidden border-[0.5px] border-zinc-800"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 🦾 AVATAR 3D DINÁMICO DE FONDO */}
+        <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center opacity-30 scale-110">
+          {is3DReady && (
+            <AvatarCanvas
+              avatarUrl={avatarSkin}
+              activeAnimation={leg.animationKey || 'breathingidle'}
+            />
+          )}
+        </div>
+
+        {/* Scanlines Overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.03] z-[1]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0) 50%, rgba(0,0,0,1) 50%)',
+            backgroundSize: '100% 4px',
+          }}
+        />
+
         {/* WATERMARK */}
-        <div className="text-iron-volt absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden rotate-[-12deg] scale-125 select-none">
+        <div className="text-iron-volt absolute inset-0 pointer-events-none opacity-[0.025] overflow-hidden rotate-[-12deg] scale-125 select-none z-[1]">
           {Array.from({ length: 10 }).map((_, i) => (
             <div
               key={i}
@@ -113,13 +152,13 @@ export default function LegExpansion({
           ))}
         </div>
 
-        {/* HEADER */}
-        <div className="p-4 relative z-10 flex justify-between items-center border-b border-zinc-900 bg-zinc-950/80">
+        {/* HEADER TÁCTICO FLOTANTE */}
+        <div className="p-3.5 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-zinc-950/80 backdrop-blur-sm">
           <div>
-            <div className="inline-block px-1.5 py-0.5 font-mono text-[6.5px] uppercase tracking-widest font-bold bg-iron-volt/10 text-iron-volt border border-iron-volt/30 mb-1">
+            <div className="inline-block px-1.5 py-0.5 font-mono text-[6.5px] uppercase tracking-widest font-bold bg-iron-volt/10 text-iron-volt border border-iron-volt/30 mb-0.5">
               {displayCategory} EXECUTION
             </div>
-            <h2 className="text-iron-volt font-black italic text-2xl uppercase tracking-tighter">
+            <h2 className="text-iron-volt font-black italic text-xl uppercase tracking-tighter leading-none">
               {leg.task}
             </h2>
           </div>
@@ -128,30 +167,22 @@ export default function LegExpansion({
               playSound('close');
               setTimeout(() => onClose(), 100);
             }}
-            className="text-black bg-iron-red hover:bg-red-500 transition-colors px-3 py-1.5 text-[10px] font-mono font-bold uppercase active:scale-95 cursor-pointer"
+            className="text-black bg-iron-red hover:bg-red-500 transition-colors px-2.5 py-1 text-[9px] font-mono font-bold uppercase active:scale-95 cursor-pointer shadow-[0_0_10px_rgba(220,38,38,0.5)]"
           >
             [ ESC_x ]
           </button>
         </div>
 
-        {/* CONTENT */}
-        <div className="flex-1 relative z-10 overflow-y-auto p-3 custom-scrollbar pb-48">
-          {/* AVATAR CANVAS VISOR */}
-          <div className="w-full h-44 mb-3 relative flex items-center justify-center border border-zinc-900 bg-zinc-950/40">
-            {is3DReady && (
-              <AvatarCanvas
-                avatarUrl="/models/avatar.glb"
-                activeAnimation={leg.animationKey || 'breathingidle'}
-              />
-            )}
+        {/* CONTENT (UBICADO ARRIBA Y SIN SCROLL) */}
+        <div className="flex-1 relative z-20 overflow-hidden p-3 pt-2 flex flex-col justify-start">
+          
+          {/* BARRA DE ESTADO */}
+          <div className="flex items-center justify-between mb-2 px-1 font-mono text-[8px] text-zinc-400 uppercase tracking-widest bg-zinc-950/70 p-1 border border-zinc-900/80 backdrop-blur-xs">
+            <span>VARIANTS_AVAILABLE ({leg.variants?.length || 0})</span>
+            <span className="text-iron-volt font-bold">SELECT_EXECUTION</span>
           </div>
 
-          <div className="flex items-center justify-between mb-2 px-0.5 font-mono text-[8px] text-zinc-500 uppercase tracking-widest">
-            <span>VARIANTS_LIST ({leg.variants?.length || 0})</span>
-            <span className="text-iron-volt font-bold">SELECT_OPTION</span>
-          </div>
-
-          {/* 🎴 VISTA SINGULAR EN COLUMNA CON EL DISEÑO DE LEGCARD */}
+          {/* 🎴 LISTA DE VARIANTES COMPACTAS EN PRIMER PLANO */}
           <div className="flex flex-col gap-1.5">
             {leg.variants?.map((v: any, i: number) => {
               const isSelected = selectedVariants.includes(i);
@@ -161,24 +192,23 @@ export default function LegExpansion({
                 <button
                   key={i}
                   onClick={(e) => toggleVariantSelection(i, e)}
-                  className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col justify-between p-3 cursor-pointer active:scale-95 ${
+                  className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-200 flex flex-col justify-between p-2.5 cursor-pointer backdrop-blur-md active:scale-98 ${
                     isSelected
-                      ? 'border-iron-volt bg-iron-volt/[0.03] shadow-[inset_0_0_15px_rgba(163,230,53,0.08),0_0_20px_rgba(163,230,53,0.05)]'
+                      ? 'border-iron-volt bg-zinc-950/85 text-white shadow-[0_0_15px_rgba(163,230,53,0.15)]'
                       : isDemonActive
-                      ? 'border-iron-red bg-zinc-950/20'
-                      : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'
+                      ? 'border-iron-red bg-zinc-950/70 text-iron-red'
+                      : 'bg-zinc-950/75 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-zinc-950/90'
                   }`}
                 >
-                  <div className="relative z-10 flex items-start justify-between w-full mb-2">
+                  <div className="relative z-10 flex items-start justify-between w-full mb-0.5">
                     <div className="flex-1 min-w-0 pr-2">
-                      {/* CATEGORY / STATUS BADGE */}
                       <div
-                        className={`inline-block mb-1 px-1.5 py-0.5 font-mono text-[6.5px] uppercase tracking-widest font-bold ${
+                        className={`inline-block mb-0.5 px-1 py-0.2 font-mono text-[6px] uppercase tracking-widest font-bold ${
                           isSelected
-                            ? 'bg-zinc-700 text-white border-zinc-600'
+                            ? 'bg-iron-volt text-black border-iron-volt'
                             : isDemonActive
                             ? 'bg-iron-red text-white border-red-900'
-                            : 'bg-zinc-800 text-zinc-400 border-zinc-700'
+                            : 'bg-zinc-800/80 text-zinc-400 border-zinc-700'
                         }`}
                       >
                         {isSelected
@@ -188,9 +218,8 @@ export default function LegExpansion({
                           : `VARIANT 0${i + 1}`}
                       </div>
 
-                      {/* TASK NAME */}
                       <h3
-                        className={`font-black italic uppercase tracking-tighter truncate text-lg leading-tight ${
+                        className={`font-black italic uppercase tracking-tighter truncate text-base leading-none ${
                           isSelected
                             ? 'text-white'
                             : isDemonActive
@@ -202,18 +231,17 @@ export default function LegExpansion({
                       </h3>
                     </div>
 
-                    <div className="text-right flex-shrink-0 font-mono text-[8px]">
+                    <div className="text-right flex-shrink-0 font-mono text-[8.5px]">
                       <span className={isSelected ? 'text-iron-volt font-bold' : 'text-zinc-400'}>
                         +{v.reward || 50} CR
                       </span>
                     </div>
                   </div>
 
-                  {/* TARGET BOTTOM BAR */}
-                  <div className="flex items-center justify-between text-[7.5px] font-mono uppercase tracking-wider text-zinc-500 pt-1.5 border-t border-zinc-900/80">
-                    <span className="truncate">{v.target || 'TARGET'}</span>
-                    <span className={isSelected ? 'text-iron-volt font-bold' : 'text-zinc-600'}>
-                      {isSelected ? '[ IN SLIP ]' : '[ ADD ]'}
+                  <div className="flex items-center justify-between text-[7px] font-mono uppercase tracking-wider text-zinc-400 pt-1 border-t border-zinc-800/60 mt-0.5">
+                    <span className="truncate max-w-[70%] text-zinc-300">{v.target || 'TARGET'}</span>
+                    <span className={isSelected ? 'text-iron-volt font-bold tracking-widest' : 'text-zinc-500'}>
+                      {isSelected ? '[ IN_SLIP ]' : '[ SELECT ]'}
                     </span>
                   </div>
                 </button>
@@ -222,7 +250,7 @@ export default function LegExpansion({
           </div>
         </div>
 
-        {/* SLIP NAVBAR OVERLAY */}
+        {/* FOOTER OVERLAYS */}
         <div className="absolute bottom-[64px] left-0 w-full z-[90]">
           <SlipNavbar
             activeSlip={currentSlipItems}
