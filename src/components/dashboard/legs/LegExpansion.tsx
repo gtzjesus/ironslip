@@ -178,7 +178,7 @@ export default function LegExpansion({
             <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
                 <span className="text-iron-volt font-bold truncate">Tap and stack your iron legs to build your iron slip</span> 
-                <span className="w-1.5 h-1.5 rounded-full bg-iron-volt animate-ping flex-shrink-0" />
+                {/* <span className="w-1.5 h-1.5 rounded-full bg-iron-volt animate-ping flex-shrink-0" /> */}
               </span>
               <div className="flex items-center gap-2 flex-shrink-0">
               </div>
@@ -205,26 +205,10 @@ export default function LegExpansion({
                 >
                   <div className="relative z-10 flex items-start justify-between w-full mb-0.5">
                     <div className="flex-1 min-w-0 pr-2">
-                      <div
-                        className={`inline-block mb-2 px-1 py-0.2 font-mono text-[8.5px] uppercase tracking-widest font-bold ${
-                          isSelected
-                            ? isDemonSupported
-                              ? 'bg-iron-red text-white border-red-900'
-                              : 'bg-iron-volt text-black border-iron-volt'
-                            : 'bg-zinc-800/80 text-zinc-400 border-zinc-700'
-                        }`}
-                      >
-                        {isSelected
-                          ? isDemonSupported
-                            ? 'DEMON ACTIVE 😈'
-                            : 'ACTIVE'
-                          : isDemonSupported
-                          ? 'DEMON'
-                          : `VARIANT 0${i + 1}`}
-                      </div>
+                    
 
-                      <h3
-                        className={`font-black mb-2 italic uppercase tracking-tighter truncate text-base leading-none ${
+                      <h4
+                        className={`font-black mb-3 italic uppercase tracking-tighter truncate text-base  leading-none ${
                           isSelected
                             ? isDemonSupported
                               ? 'text-iron-red'
@@ -233,7 +217,7 @@ export default function LegExpansion({
                         }`}
                       >
                         {v.name}
-                      </h3>
+                      </h4>
                     </div>
 
                     <div className="text-right flex-shrink-0 font-mono text-[12.5px]">
