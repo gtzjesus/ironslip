@@ -21,7 +21,7 @@ export default function LegExpansion({
   const displayCategory = (leg?.category || 'IRON').toUpperCase();
   const [is3DReady, setIs3DReady] = useState(false);
   const [avatarSkin, setAvatarSkin] = useState<string>('/models/avatar.glb');
-  const [showTip, setShowTip] = useState(true); // 🟢 Estado para mostrar u ocultar el tip táctico
+  const [manualCloseTip, setManualCloseTip] = useState(false); // 🟢 Control por si el usuario lo cierra manualmente
 
   // 1️⃣ Cargar la skin dinámica del usuario desde Supabase
   useEffect(() => {
@@ -75,6 +75,9 @@ export default function LegExpansion({
     });
     return { selectedVariants: selected, demonStates: demons };
   }, [currentSlipItems, leg]);
+
+  // 🟢 El tip solo se muestra si NO hay variantes seleccionadas en esta categoría y el usuario no lo cerró a la fuerza
+  const showTip = selectedVariants.length === 0 && !manualCloseTip;
 
   const toggleVariantSelection = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -170,31 +173,20 @@ export default function LegExpansion({
         {/* CONTENT (UBICADO ARRIBA Y SIN SCROLL) */}
         <div className="flex-1 relative z-20 overflow-hidden p-2 pt-2 flex flex-col justify-start">
           
-          {/* 💡 TIP TÁCTICO CYBERPUNK CON BOTÓN DE CIERRE */}
+          {/* 💡 TIP TÁCTICO CYBERPUNK (SE OCULTA AUTOMÁTICAMENTE AL SELECCIONAR) */}
           {showTip && (
-            <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[10px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
+            <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
+                <span className="text-iron-volt font-bold truncate">Tap and stack your iron legs to build your iron slip</span> 
                 <span className="w-1.5 h-1.5 rounded-full bg-iron-volt animate-ping flex-shrink-0" />
-                <span className="text-iron-volt font-bold truncate">Tap and stack your legs to build your slip</span> 
               </span>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="text-zinc-500 font-bold hidden sm:inline">({leg.variants?.length || 0})</span>
-                <button
-                  onClick={() => {
-                    playSound('close');
-                    setShowTip(false);
-                  }}
-                  className="text-zinc-400 hover:text-white font-mono text-[9px] uppercase bg-zinc-900/80 border border-zinc-700 px-1.5 py-0.5 active:scale-95 cursor-pointer transition-colors"
-                  title="Close tip"
-                >
-                  [ x ]
-                </button>
               </div>
             </div>
           )}
 
           {/* 🎴 LISTA DE VARIANTES COMPACTAS EN PRIMER PLANO */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             {leg.variants?.map((v: any, i: number) => {
               const isSelected = selectedVariants.includes(i);
               const isDemonSupported = v.isDemonSupported === true || !!demonStates[i];
@@ -214,7 +206,7 @@ export default function LegExpansion({
                   <div className="relative z-10 flex items-start justify-between w-full mb-0.5">
                     <div className="flex-1 min-w-0 pr-2">
                       <div
-                        className={`inline-block mb-0.5 px-1 py-0.2 font-mono text text-[7.5px] uppercase tracking-widest font-bold ${
+                        className={`inline-block mb-2 px-1 py-0.2 font-mono text-[8.5px] uppercase tracking-widest font-bold ${
                           isSelected
                             ? isDemonSupported
                               ? 'bg-iron-red text-white border-red-900'
@@ -232,7 +224,7 @@ export default function LegExpansion({
                       </div>
 
                       <h3
-                        className={`font-black italic uppercase tracking-tighter truncate text-base leading-none ${
+                        className={`font-black mb-2 italic uppercase tracking-tighter truncate text-base leading-none ${
                           isSelected
                             ? isDemonSupported
                               ? 'text-iron-red'
@@ -244,17 +236,17 @@ export default function LegExpansion({
                       </h3>
                     </div>
 
-                    <div className="text-right flex-shrink-0 font-mono text-[8.5px]">
-                      <span className={isSelected ? (isDemonSupported ? 'text-iron-red font-bold' : 'text-iron-volt font-bold') : 'text-zinc-400'}>
+                    <div className="text-right flex-shrink-0 font-mono text-[12.5px]">
+                      <span className={isSelected ? (isDemonSupported ? 'text-iron-green font-bold' : 'text-iron-green font-bold') : 'text-zinc-400'}>
                         +{v.reward || 50} CR
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[7px] font-mono uppercase tracking-wider text-zinc-400 pt-1 border-t border-zinc-800/60 mt-0.5">
-                    <span className="truncate max-w-[70%] text-zinc-300">{v.target || 'TARGET'}</span>
-                    <span className={isSelected ? (isDemonSupported ? 'text-iron-red font-bold tracking-widest' : 'text-iron-volt font-bold tracking-widest') : 'text-zinc-500'}>
-                      {isSelected ? '[ IN_SLIP ]' : '[ SELECT ]'}
+                  <div className="flex items-center justify-between  font-mono uppercase tracking-wider text-zinc-400 pt-1 border-t border-zinc-800/60 mt-0.5">
+                    <span className="text-[12px] truncate max-w-[70%] text-zinc-300">{v.target || 'TARGET'}</span>
+                    <span className={isSelected ? (isDemonSupported ? 'text-[8.5px] text-iron-red font-bold tracking-widest' : 'text-[8.5px] text-iron-volt font-bold tracking-widest') : 'text-zinc-500'}>
+                      {isSelected ? '[ picked ]' : ''}
                     </span>
                   </div>
                 </button>
