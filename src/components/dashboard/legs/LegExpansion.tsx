@@ -191,8 +191,8 @@ export default function LegExpansion({
                   className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-200 flex flex-col justify-between p-2.5 cursor-pointer backdrop-blur-md active:scale-98 ${
                     isSelected
                       ? isDemonSupported
-                        ? 'border-iron-red bg-zinc-950/90 text-iron-red shadow-[0_0_15px_rgba(220,38,38,0.3)]'
-                        : 'border-iron-volt bg-iron-volt text-black shadow-[0_0_20px_rgba(255,211,0,0.4)]' // 💥 CONTRATO AMARILLO BRILLANTE ESTILO CLERK
+                        ? 'border-iron-red bg-iron-red text-black shadow-[0_0_20px_rgba(220,38,38,0.5)]' // 💥 CONTRATO ROJO DEMONIO BRILLANTE
+                        : 'border-iron-volt bg-iron-volt text-black shadow-[0_0_20px_rgba(255,211,0,0.4)]'  // 💥 CONTRATO AMARILLO BRILLANTE
                       : 'bg-[#0d0b09]/75 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/90'
                   }`}
                 >
@@ -201,9 +201,7 @@ export default function LegExpansion({
                       <h4
                         className={`font-black mb-3 italic uppercase tracking-tighter truncate text-xl leading-none ${
                           isSelected
-                            ? isDemonSupported
-                              ? 'text-iron-red'
-                              : 'text-black font-extrabold' // Texto en negro para contraste perfecto sobre el amarillo brillante
+                            ? 'text-black font-extrabold' // Texto oscuro para contraste perfecto sobre fondo brillante
                             : 'text-white'
                         }`}
                       >
@@ -212,19 +210,19 @@ export default function LegExpansion({
                     </div>
 
                     <div className="text-right flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? (isDemonSupported ? 'text-iron-red font-bold' : 'text-black font-bold') : 'text-zinc-400'}>
+                      <span className={isSelected ? 'text-black font-bold' : 'text-zinc-400'}>
                         +{v.reward || 50} CR
                       </span>
                     </div>
                   </div>
 
                   <div className={`flex items-center justify-between font-mono uppercase tracking-wider pt-1 border-t mt-0.5 ${
-                    isSelected && !isDemonSupported ? 'border-black/20 text-black/80' : 'border-zinc-800/60 text-zinc-400'
+                    isSelected ? 'border-black/20 text-black/90 font-medium' : 'border-zinc-800/60 text-zinc-400'
                   }`}>
-                    <span className={`text-[10px] truncate max-w-[80%] ${isSelected && !isDemonSupported ? 'text-black/90 font-medium' : 'text-zinc-300'}`}>
+                    <span className={`text-[10px] truncate max-w-[80%] ${isSelected ? 'text-black/90 font-medium' : 'text-zinc-300'}`}>
                       {v.target || 'TARGET'}
                     </span>
-                    <span className={isSelected ? (isDemonSupported ? 'text-[8.5px] text-iron-red font-bold tracking-widest' : 'text-[8.5px] text-black font-black tracking-widest') : 'text-zinc-500'}>
+                    <span className={isSelected ? 'text-[8.5px] text-black font-black tracking-widest' : 'text-zinc-500'}>
                       {isSelected ? '[ picked ]' : ''}
                     </span>
                   </div>
