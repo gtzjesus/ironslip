@@ -151,9 +151,6 @@ export default function LegExpansion({
         {/* HEADER TÁCTICO FLOTANTE CON TÍTULO MÁS GRANDE */}
         <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/80 backdrop-blur-sm">
           <div>
-            {/* <div className="inline-block px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest font-bold bg-iron-volt/10 text-iron-volt border border-iron-volt/30 mb-1">
-              {displayCategory} 
-            </div> */}
             <h2 className="text-iron-volt font-black italic text-4xl uppercase tracking-tighter leading-none">
               {leg.task}
             </h2>
@@ -195,7 +192,7 @@ export default function LegExpansion({
                     isSelected
                       ? isDemonSupported
                         ? 'border-iron-red bg-zinc-950/90 text-iron-red shadow-[0_0_15px_rgba(220,38,38,0.3)]'
-                        : 'border-iron-volt bg-[#0d0b09]/90 text-white shadow-[0_0_15px_rgba(163,230,53,0.15)]'
+                        : 'border-iron-volt bg-iron-volt text-black shadow-[0_0_20px_rgba(255,211,0,0.4)]' // 💥 CONTRATO AMARILLO BRILLANTE ESTILO CLERK
                       : 'bg-[#0d0b09]/75 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/90'
                   }`}
                 >
@@ -206,7 +203,7 @@ export default function LegExpansion({
                           isSelected
                             ? isDemonSupported
                               ? 'text-iron-red'
-                              : 'text-white'
+                              : 'text-black font-extrabold' // Texto en negro para contraste perfecto sobre el amarillo brillante
                             : 'text-white'
                         }`}
                       >
@@ -215,15 +212,19 @@ export default function LegExpansion({
                     </div>
 
                     <div className="text-right flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? 'text-iron-volt font-bold' : 'text-zinc-400'}>
+                      <span className={isSelected ? (isDemonSupported ? 'text-iron-red font-bold' : 'text-black font-bold') : 'text-zinc-400'}>
                         +{v.reward || 50} CR
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between font-mono uppercase tracking-wider text-zinc-400 pt-1 border-t border-zinc-800/60 mt-0.5">
-                    <span className="text-[10px] truncate max-w-[80%] text-zinc-300">{v.target || 'TARGET'}</span>
-                    <span className={isSelected ? (isDemonSupported ? 'text-[8.5px] text-iron-red font-bold tracking-widest' : 'text-[8.5px] text-iron-volt font-bold tracking-widest') : 'text-zinc-500'}>
+                  <div className={`flex items-center justify-between font-mono uppercase tracking-wider pt-1 border-t mt-0.5 ${
+                    isSelected && !isDemonSupported ? 'border-black/20 text-black/80' : 'border-zinc-800/60 text-zinc-400'
+                  }`}>
+                    <span className={`text-[10px] truncate max-w-[80%] ${isSelected && !isDemonSupported ? 'text-black/90 font-medium' : 'text-zinc-300'}`}>
+                      {v.target || 'TARGET'}
+                    </span>
+                    <span className={isSelected ? (isDemonSupported ? 'text-[8.5px] text-iron-red font-bold tracking-widest' : 'text-[8.5px] text-black font-black tracking-widest') : 'text-zinc-500'}>
                       {isSelected ? '[ picked ]' : ''}
                     </span>
                   </div>
@@ -233,7 +234,7 @@ export default function LegExpansion({
           </div>
         </div>
 
-        {/* FOOTER OVERLAYS - SIN PROPS EXTRA */}
+        {/* FOOTER OVERLAYS */}
         <div className="absolute bottom-[64px] left-0 w-full z-[90] pointer-events-auto">
           <SlipNavbar
             activeSlip={currentSlipItems}
