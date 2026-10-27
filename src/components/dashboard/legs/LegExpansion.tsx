@@ -187,7 +187,7 @@ export default function LegExpansion({
           {showTip && (
             <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
-                <span className="text-iron-volt font-bold truncate">Tap variant to reveal, tap again to add or remove</span> 
+                <span className="text-iron-volt font-bold truncate">Tap to reveal, tap again to add or remove</span> 
               </span>
             </div>
           )}
@@ -230,7 +230,7 @@ export default function LegExpansion({
                     </div>
 
                     <div className="flex items-center gap-3 flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? (isDemonSupported ? 'text-iron-red font-bold' : 'text-iron-volt font-bold') : 'text-zinc-400'}>
+                      <span className={isSelected ? (isDemonSupported ? 'text-iron-green font-bold' : 'text-iron-green font-bold') : 'text-zinc-400'}>
                         +{v.reward || 50} CR
                       </span>
                       <span className="text-[9px] text-zinc-500">
@@ -242,19 +242,19 @@ export default function LegExpansion({
                   {/* 🔍 DETALLES REVELADOS AL HACER EL PRIMER TAP */}
                   {isExpanded && (
                     <div className="mt-3 pt-2 border-t border-zinc-800/80 flex flex-col gap-2 animate-fadeIn font-mono">
-                      <span className="text-[7.5px] uppercase tracking-widest text-zinc-500">
+                      {/* <span className="text-[7.5px] uppercase tracking-widest text-zinc-500">
                         TARGET_SPEC:
-                      </span>
-                      <p className="text-[11px] text-zinc-300 leading-relaxed">
+                      </span> */}
+                      <p className="uppercase text-[11px] text-zinc-300 leading-relaxed">
                         {v.target || 'Execute optimal training parameters for maximum output.'}
                       </p>
                       
                       <div className="flex items-center justify-between pt-1 border-t border-zinc-800/50 mt-1">
-                        <span className="text-[8.5px] text-zinc-400 uppercase">
+                        {/* <span className="text-[8.5px] text-zinc-400 uppercase">
                           {isSelected ? '[ STATUS: IN_SLIP ]' : '[ TAP AGAIN TO ADD ]'}
-                        </span>
+                        </span> */}
                         <span className={`text-[8.5px] font-bold tracking-widest uppercase ${isSelected ? (isDemonSupported ? 'text-iron-red' : 'text-iron-volt') : 'text-zinc-500'}`}>
-                          {isSelected ? '[ REMOVE ]' : '[ ADD ]'}
+                          {isSelected ? '' : ''}
                         </span>
                       </div>
                     </div>
@@ -266,9 +266,9 @@ export default function LegExpansion({
                       <span className={isDemonSupported ? 'text-iron-red' : 'text-iron-volt'}>
                         {v.target || 'TARGET'}
                       </span>
-                      <span className={isDemonSupported ? 'text-iron-red font-bold tracking-widest' : 'text-iron-volt font-bold tracking-widest'}>
+                      {/* <span className={isDemonSupported ? 'text-iron-red font-bold tracking-widest' : 'text-iron-volt font-bold tracking-widest'}>
                         [ picked ]
-                      </span>
+                      </span> */}
                     </div>
                   )}
                 </div>

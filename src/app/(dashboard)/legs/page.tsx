@@ -92,7 +92,7 @@ export default function LegsPage() {
     return legs.filter((leg: any) => leg.category === activeCategory);
   }, [legs, activeCategory]);
 
-  // 📄 LÓGICA DE PAGINACIÓN DINÁMICA (5 para list, 6 para grid 2x2)
+  // 📄 LÓGICA DE PAGINACIÓN DINÁMICA (4 para list, 6 para grid 2x2)
   const itemsPerPage = isGridView ? 6 : 4;
   const totalPages = Math.ceil(filteredLegs.length / itemsPerPage) || 1;
   
@@ -113,8 +113,8 @@ export default function LegsPage() {
       if (exists) {
         return prevSlip.filter((l) => l._id !== mutatedLeg._id);
       } else {
-        if (prevSlip.length >= 4) {
-          alert('MAX_CAPACITY: 4_LEGS');
+        if (prevSlip.length >= 5) { // Límite actualizado a 5 legs máx
+          alert('MAX_CAPACITY: 5_LEGS');
           return prevSlip;
         }
         return [...prevSlip, mutatedLeg];
@@ -176,7 +176,7 @@ export default function LegsPage() {
                   playSound('remove');
                   setIsGridView((prev) => !prev);
                 }}
-                className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80  text-zinc-400 font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
+                className="flex-shrink-0 px-2.5 py-1.5 bg-zinc-900/80 text-zinc-400 font-mono text-[9px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95 mb-1 cursor-pointer"
                 title={isGridView ? "Switch to List View" : "Switch to 2-Col Grid View"}
               >
                 {isGridView ? 'GRID' : '2X2'}
@@ -185,7 +185,7 @@ export default function LegsPage() {
           )}
         </div>
 
-        {/* 🎴 MOSTRAR LAS CARDS PAGINADAS (5 en list / 6 en grid) */}
+        {/* 🎴 MOSTRAR LAS CARDS PAGINADAS */}
         <div className="w-full px-2 pt-3">
           {loading || !isLoaded ? (
             <div className="flex items-center justify-center py-20">
@@ -250,7 +250,7 @@ export default function LegsPage() {
         </div>
       )}
 
-      {/* FOOTER NAV COMANDOS */}
+      {/* FOOTER NAV COMANDOS - SOLO SE MUESTRA COMO BARRA INFERIOR FIJA SIN AUTO-ABRIRSE */}
       <SlipNavbar
         activeSlip={activeSlip}
         onRemoveLeg={handleRemoveLeg}
