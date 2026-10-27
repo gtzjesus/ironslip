@@ -47,14 +47,18 @@ export default function SlipNavbar({
 
   const dynamicMultiplier = totalOdds < 1 ? 1.0 : totalOdds;
 
-  const MIN_REVIEWS_REQUIRED = 1;
-  const isEligibleToExpand = activeSlip.length >= MIN_REVIEWS_REQUIRED;
-  const legsNeeded = MIN_REVIEWS_REQUIRED - activeSlip.length;
+  // 🟢 REGLA ESTRICTA: Mínimo 3 legs requeridas para abrir el slip
+  const MIN_LEGS_REQUIRED = 3;
+  const isEligibleToExpand = activeSlip.length >= MIN_LEGS_REQUIRED;
+  const legsNeeded = MIN_LEGS_REQUIRED - activeSlip.length;
 
   const handleExpand = () => {
     if (isEligibleToExpand) {
       playSound('select');
       setIsExpanded(true);
+    } else {
+      // Sonido de error o bloqueo si intenta abrirlo sin las 3 legs
+      playSound('remove'); 
     }
   };
 
@@ -68,7 +72,7 @@ export default function SlipNavbar({
               className={`relative overflow-hidden p-3.5 flex items-center justify-between transition-all duration-300 bg-zinc-950 border-[1px] ${
                 isEligibleToExpand
                   ? 'cursor-pointer active:scale-[0.98]'
-                  : 'cursor-not-allowed'
+                  : 'cursor-pointer opacity-80' // Se mantiene visible pero avisa que está bloqueado
               } ${
                 hasDemon
                   ? 'border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.35)]'
@@ -101,12 +105,25 @@ export default function SlipNavbar({
 
               <div className="relative z-10 flex items-center gap-4">
                 <div className="flex flex-col justify-center items-end text-right leading-none">
-                  <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-400 mb-1.5">
-                    WIN UP TO <span className={hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt font-bold'}>x{dynamicMultiplier.toFixed(2)}</span>
-                  </p>
-                  <p className="text-sm font-black uppercase tracking-tight italic leading-none text-zinc-100">
-                    {hasDemon ? 'START DEMON SLIP' : 'LOCK IN SLIP'}
-                  </p>
+                  {isEligibleToExpand ? (
+                    <>
+                      <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-400 mb-1.5">
+                        WIN UP TO <span className={hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt font-bold'}>x{dynamicMultiplier.toFixed(2)}</span>
+                      </p>
+                      <p className="text-sm font-black uppercase tracking-tight italic leading-none text-zinc-100">
+                        {hasDemon ? 'START DEMON SLIP' : 'LOCK IN SLIP'}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-[8px] font-mono uppercase tracking-widest text-amber-500 mb-1.5 font-bold">
+                        ADD {legsNeeded} MORE LEG{legsNeeded > 1 ? 'S' : ''}
+                      </p>
+                      <p className="text-xs font-black uppercase tracking-tight italic leading-none text-zinc-400">
+                        LOCKED (MIN 3)
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 <div
@@ -115,7 +132,7 @@ export default function SlipNavbar({
                       ? hasDemon
                         ? 'bg-red-950/80 border-red-600/60 text-red-500'
                         : 'bg-zinc-900 border-iron-volt/60 text-iron-volt'
-                      : 'bg-zinc-900 border-zinc-800 text-zinc-600'
+                      : 'bg-zinc-900 border-amber-500/50 text-amber-500'
                   }`}
                 >
                   {isEligibleToExpand ? (
@@ -124,10 +141,7 @@ export default function SlipNavbar({
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
-                      <Lock className="w-2.5 h-2.5 mb-0.5 text-zinc-600" />
-                      <span className="text-[8px] font-mono font-black text-zinc-500">
-                        {legsNeeded}
-                      </span>
+                      <Lock className="w-3 h-3 text-amber-500 animate-pulse" />
                     </div>
                   )}
                 </div>

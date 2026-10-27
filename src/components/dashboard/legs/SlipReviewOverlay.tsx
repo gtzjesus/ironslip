@@ -73,9 +73,7 @@ export default function SlipReviewOverlay({
     if (isSubmitting || numericWager <= 0 || hasInsufficientFunds || !hasMinLegs) return;
 
     try {
-      
       setIsSubmitting(true);
-
 
       const slipPayload = {
         title: hasDemon ? 'DEMON SLIP CONTRACT' : 'IRON SLIP CONTRACT',
@@ -127,21 +125,21 @@ export default function SlipReviewOverlay({
   };
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-2 sm:p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/98 backdrop-blur-2xl animate-fadeIn">
 
-      {/* GLOW INTENSO DE FONDO PARA MÓVILES */}
+      {/* GLOW INTENSO DE FONDO A PANTALLA COMPLETA */}
       <div 
-        className={`absolute inset-2 sm:inset-6 rounded-3xl blur-2xl opacity-70 pointer-events-none transition-all duration-500 ${
-          hasDemon ? 'bg-red-600/40' : 'bg-iron-volt/30'
+        className={`absolute inset-0 blur-3xl opacity-40 pointer-events-none transition-all duration-500 ${
+          hasDemon ? 'bg-red-600/50' : 'bg-iron-volt/30'
         }`}
       />
 
-      {/* CONTENEDOR PRINCIPAL */}
+      {/* CONTENEDOR PRINCIPAL A 100% PANTALLA */}
       <div
-        className={`w-full max-w-2xl h-[96dvh] sm:h-auto sm:max-h-[90vh] bg-zinc-950 flex flex-col relative overflow-hidden transition-all border ${
+        className={`w-full h-[100dvh] bg-zinc-950 flex flex-col relative overflow-hidden transition-all border-0 sm:border ${
           hasDemon
-            ? 'border-red-600/80 shadow-[0_0_60px_rgba(220,38,38,0.6)] ring-1 ring-red-500/50'
-            : 'border-iron-volt/80 shadow-[0_0_60px_rgba(255,211,0,0.4)] ring-1 ring-iron-volt/50'
+            ? 'sm:border-red-600/80 sm:shadow-[0_0_80px_rgba(220,38,38,0.7)] sm:max-w-2xl sm:h-[92vh] sm:rounded-xl'
+            : 'sm:border-iron-volt/80 sm:shadow-[0_0_80px_rgba(255,211,0,0.5)] sm:max-w-2xl sm:h-[92vh] sm:rounded-xl'
         }`}
       >
         {/* LÍNEAS DE LUZ MÓVILES */}
@@ -174,11 +172,6 @@ export default function SlipReviewOverlay({
             </div>
 
             <div>
-              <div className="flex items-center gap-1.5">
-                {/* <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase">
-                  FINAL STAGE // CONTRACT EXECUTION
-                </span> */}
-              </div>
               <h2 className="font-mono text-sm sm:text-base font-black uppercase tracking-wider text-zinc-100 flex items-center gap-2">
                 {hasDemon ? (
                   <>
@@ -205,14 +198,14 @@ export default function SlipReviewOverlay({
           <button
             onClick={onClose}
             disabled={isSubmitting}
-            className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 disabled:opacity-50"
+            className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 disabled:opacity-50 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* LISTA COMPLETA DE LEGS */}
-        <div className="relative z-10 flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
+        <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-3">
           {activeSlip.map((leg) => {
             const isItemDemon =
               leg.isDemonMode ||
@@ -265,7 +258,7 @@ export default function SlipReviewOverlay({
                     <button
                       onClick={() => onRemoveLeg(leg._id)}
                       disabled={isSubmitting}
-                      className="p-1 text-zinc-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                      className="p-1 text-zinc-500 hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
                       title="Remove Leg"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -278,11 +271,6 @@ export default function SlipReviewOverlay({
                   <h4 className="text-xs sm:text-sm font-bold text-zinc-100 uppercase tracking-tight">
                     {leg.task || leg.title}
                   </h4>
-                  {/* {leg.selectedVariantName && (
-                    <p className="text-[10px] font-mono text-iron-volt/90 mt-0.5">
-                      VARIANT: {leg.selectedVariantName}
-                    </p>
-                  )} */}
                 </div>
 
                 {/* TARGET / DETALLES DE LA INSTRUCCIÓN */}
@@ -319,7 +307,7 @@ export default function SlipReviewOverlay({
           <div className="grid grid-cols-2 gap-3 items-end">
             <div>
               <label className="block text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-                {/* <Activity className="w-3 h-3 text-zinc-500" /> entry fee */} entry fee
+                entry fee
               </label>
               <div className="relative">
                 <input
@@ -339,10 +327,6 @@ export default function SlipReviewOverlay({
             </div>
 
             <div className="flex flex-col justify-end text-right">
-              {/* <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-widest mb-1">
-                ESTIMATED PAYOUT
-              </span> */}
-              
               <p
                 className={`text-xl sm:text-2xl font-black font-mono tracking-tight ${
                   hasDemon
@@ -351,7 +335,6 @@ export default function SlipReviewOverlay({
                 }`}
               >
                 {potentialPayout.toLocaleString()}{' '}
-                
                 <span className="text-xs"> </span>
               </p>
               <span className="text-[9px] font-mono text-zinc-400">
@@ -364,7 +347,7 @@ export default function SlipReviewOverlay({
           <button
             onClick={handleConfirm}
             disabled={isSubmitting || numericWager <= 0 || hasInsufficientFunds || !hasMinLegs}
-            className={`w-full py-3.5 px-4 font-mono text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 relative overflow-hidden transition-all duration-200 active:scale-[0.98] ${
+            className={`w-full py-4 px-4 font-mono text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 relative overflow-hidden transition-all duration-200 active:scale-[0.98] cursor-pointer ${
               !hasMinLegs || hasInsufficientFunds
                 ? 'bg-zinc-900 text-zinc-500 border border-zinc-800 cursor-not-allowed opacity-75'
                 : hasDemon
@@ -386,7 +369,7 @@ export default function SlipReviewOverlay({
               </>
             ) : (
               <>
-                 INITIATE SLIP
+                INITIATE SLIP
               </>
             )}
           </button>

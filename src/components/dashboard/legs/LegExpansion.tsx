@@ -128,8 +128,18 @@ export default function LegExpansion({
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md"
       onClick={onClose}
     >
+      {/* 🦾 AVATAR 3D FIJO AL FONDO DE LA PANTALLA (INTERACTIVO Y ROTABLE LIBREMENTE) */}
+      <div className="fixed inset-0 pointer-events-auto z-[1] flex items-center justify-center opacity-30 scale-110">
+        {is3DReady && (
+          <AvatarCanvas
+            avatarUrl={avatarSkin}
+            activeAnimation={leg.animationKey || 'breathingidle'}
+          />
+        )}
+      </div>
+
       <div
-        className="w-full h-full max-w-2xl relative bg-[#0d0b09] flex flex-col overflow-hidden border-[0.5px] border-zinc-800"
+        className="w-full h-full max-w-2xl relative z-10 bg-[#0d0b09]/80 backdrop-blur-[2px] flex flex-col overflow-hidden border-[0.5px] border-zinc-800"
         style={{
           backgroundImage: `
             linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
@@ -139,20 +149,9 @@ export default function LegExpansion({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 🦾 AVATAR 3D DINÁMICO DE FONDO (INTERACTIVO Y ROTABLE) */}
-        {/* Cambiamos pointer-events-none por pointer-events-auto en el contenedor del canvas para que capte el arrastre del dedo/mouse */}
-        <div className="absolute inset-0 pointer-events-auto z-0 flex items-center justify-center opacity-30 scale-110">
-          {is3DReady && (
-            <AvatarCanvas
-              avatarUrl={avatarSkin}
-              activeAnimation={leg.animationKey || 'breathingidle'}
-            />
-          )}
-        </div>
-
         {/* Scanlines Overlay */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-[0.03] z-[1]"
+          className="absolute inset-0 pointer-events-none opacity-[0.03] z-[2]"
           style={{
             backgroundImage: 'linear-gradient(rgba(255,255,255,0) 50%, rgba(0,0,0,1) 50%)',
             backgroundSize: '100% 4px',
@@ -160,7 +159,7 @@ export default function LegExpansion({
         />
 
         {/* HEADER TÁCTICO FLOTANTE */}
-        <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/80 backdrop-blur-sm">
+        <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/90 backdrop-blur-sm">
           <div>
             <h2 className="text-iron-volt font-black italic text-3xl uppercase tracking-tighter leading-none">
               {leg.task}
@@ -203,11 +202,11 @@ export default function LegExpansion({
                   className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col p-3 cursor-pointer backdrop-blur-md active:scale-98 ${
                     isSelected
                       ? isDemonSupported
-                        ? 'border-iron-red bg-iron-red/15 text-iron-red shadow-[0_0_20px_rgba(220,38,38,0.25)]'
-                        : 'border-iron-volt bg-iron-volt/15 text-iron-volt shadow-[0_0_20px_rgba(255,211,0,0.2)]'
+                        ? 'border-iron-red bg-iron-red/20 text-iron-red shadow-[0_0_20px_rgba(220,38,38,0.25)]'
+                        : 'border-iron-volt bg-iron-volt/20 text-iron-volt shadow-[0_0_20px_rgba(255,211,0,0.2)]'
                       : isExpanded
-                      ? 'border-zinc-500 bg-[#0d0b09]/90 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]'
-                      : 'bg-[#0d0b09]/75 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/90'
+                      ? 'border-zinc-500 bg-[#0d0b09]/95 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]'
+                      : 'bg-[#0d0b09]/85 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/95'
                   }`}
                 >
                   {/* VISTA MÍNIMA (TÍTULO Y RECOMPENSA) */}
