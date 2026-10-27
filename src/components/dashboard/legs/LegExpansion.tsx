@@ -125,11 +125,11 @@ export default function LegExpansion({
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md overflow-hidden"
       onClick={onClose}
     >
-      {/* 🦾 AVATAR 3D FIJO AL FONDO DE LA PANTALLA (INTERACTIVO Y ROTABLE LIBREMENTE) */}
-      <div className="fixed inset-0 pointer-events-auto z-[1] flex items-center justify-center opacity-30 scale-110">
+      {/* 🦾 AVATAR 3D 100% INTERACTIVO Y ROTABLE EN EL FONDO ABSOLUTO */}
+      <div className="absolute inset-0 z-0 pointer-events-auto flex items-center justify-center opacity-30 scale-110">
         {is3DReady && (
           <AvatarCanvas
             avatarUrl={avatarSkin}
@@ -138,8 +138,9 @@ export default function LegExpansion({
         )}
       </div>
 
+      {/* CONTENEDOR DE LA INTERFAZ */}
       <div
-        className="w-full h-full max-w-2xl relative z-10 bg-[#0d0b09]/80 backdrop-blur-[2px] flex flex-col overflow-hidden border-[0.5px] border-zinc-800"
+        className="w-full h-full max-w-2xl relative z-10 bg-[#0d0b09]/75 backdrop-blur-[1px] flex flex-col overflow-hidden border-[0.5px] border-zinc-800 pointer-events-none"
         style={{
           backgroundImage: `
             linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
@@ -159,7 +160,7 @@ export default function LegExpansion({
         />
 
         {/* HEADER TÁCTICO FLOTANTE */}
-        <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/90 backdrop-blur-sm">
+        <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/90 backdrop-blur-sm pointer-events-auto">
           <div>
             <h2 className="text-iron-volt font-black italic text-3xl uppercase tracking-tighter leading-none">
               {leg.task}
@@ -177,7 +178,7 @@ export default function LegExpansion({
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 relative z-20 overflow-y-auto p-2 pt-2 flex flex-col justify-start">
+        <div className="flex-1 relative z-20 overflow-y-auto p-2 pt-2 flex flex-col justify-start pointer-events-auto">
           
           {/* 💡 TIP TÁCTICO */}
           {showTip && (
@@ -202,8 +203,8 @@ export default function LegExpansion({
                   className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col p-3 cursor-pointer backdrop-blur-md active:scale-98 ${
                     isSelected
                       ? isDemonSupported
-                        ? 'border-iron-red bg-iron-red/20 text-iron-red shadow-[0_0_20px_rgba(220,38,38,0.25)]'
-                        : 'border-iron-volt bg-iron-volt/20 text-iron-volt shadow-[0_0_20px_rgba(255,211,0,0.2)]'
+                        ? 'border-iron-red bg-zinc-950 text-iron-red shadow-[0_0_15px_rgba(220,38,38,0.25)]'
+                        : 'border-iron-volt bg-zinc-950 text-iron-volt shadow-[0_0_15px_rgba(255,211,0,0.2)]'
                       : isExpanded
                       ? 'border-zinc-500 bg-[#0d0b09]/95 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]'
                       : 'bg-[#0d0b09]/85 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/95'
@@ -216,8 +217,8 @@ export default function LegExpansion({
                         className={`font-black italic uppercase tracking-tighter truncate text-lg leading-none ${
                           isSelected
                             ? isDemonSupported
-                              ? 'text-iron-red'
-                              : 'text-iron-volt'
+                              ? 'text-iron-red font-bold'
+                              : 'text-iron-volt font-bold'
                             : 'text-white'
                         }`}
                       >
@@ -226,8 +227,8 @@ export default function LegExpansion({
                     </div>
 
                     <div className="flex items-center gap-3 flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? (isDemonSupported ? 'text-iron-red font-bold' : 'text-iron-volt font-bold') : 'text-zinc-400'}>
-                        +{v.reward || 50} CR
+                      <span className={isSelected ? (isDemonSupported ? 'text-iron-green font-bold' : 'text-iron-green font-bold') : 'text-zinc-400'}>
+                        +{v.reward || 50} 
                       </span>
                       <span className="text-[9px] text-zinc-500">
                         {isExpanded ? '▲' : '▼'}
