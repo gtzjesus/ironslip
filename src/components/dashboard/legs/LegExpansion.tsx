@@ -87,11 +87,9 @@ export default function LegExpansion({
     const isExpanded = expandedIndex === index;
 
     if (!isExpanded) {
-      // FASE 1: Si no estaba expandida, solo la revelamos
       playSound('open-card');
       setExpandedIndex(index);
     } else {
-      // Si ya estaba expandida, el siguiente tap decide si añade o remueve
       const v = leg?.variants?.[index];
       if (!v) return;
 
@@ -99,7 +97,6 @@ export default function LegExpansion({
       const calculatedId = `${leg._id}-${v.name}${isDemonLeg ? '-demon' : ''}`;
 
       if (isSelected) {
-        // FASE 3: Si ya estaba seleccionada, la removemos del slip
         playSound('remove');
         const itemInSlip = currentSlipItems.find(
           (item: any) =>
@@ -107,7 +104,6 @@ export default function LegExpansion({
         );
         if (itemInSlip) onToggleSlip(itemInSlip);
       } else {
-        // FASE 2: Si estaba revelada pero no seleccionada, la añadimos al slip
         playSound('add');
         onToggleSlip({
           ...leg,
@@ -143,8 +139,9 @@ export default function LegExpansion({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 🦾 AVATAR 3D DINÁMICO DE FONDO */}
-        <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center opacity-20 scale-110">
+        {/* 🦾 AVATAR 3D DINÁMICO DE FONDO (INTERACTIVO Y ROTABLE) */}
+        {/* Cambiamos pointer-events-none por pointer-events-auto en el contenedor del canvas para que capte el arrastre del dedo/mouse */}
+        <div className="absolute inset-0 pointer-events-auto z-0 flex items-center justify-center opacity-30 scale-110">
           {is3DReady && (
             <AvatarCanvas
               avatarUrl={avatarSkin}
@@ -181,7 +178,7 @@ export default function LegExpansion({
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 relative z-20 overflow-hidden p-2 pt-2 flex flex-col justify-start">
+        <div className="flex-1 relative z-20 overflow-y-auto p-2 pt-2 flex flex-col justify-start">
           
           {/* 💡 TIP TÁCTICO */}
           {showTip && (
@@ -192,7 +189,7 @@ export default function LegExpansion({
             </div>
           )}
 
-          {/* 🎴 LISTA DE VARIANTES (SOLO TÍTULO Y RECOMPENSA POR DEFECTO) */}
+          {/* 🎴 LISTA DE VARIANTES */}
           <div className="flex flex-col gap-2">
             {leg.variants?.map((v: any, i: number) => {
               const isSelected = selectedVariants.includes(i);
@@ -230,7 +227,7 @@ export default function LegExpansion({
                     </div>
 
                     <div className="flex items-center gap-3 flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? (isDemonSupported ? 'text-iron-green font-bold' : 'text-iron-green font-bold') : 'text-zinc-400'}>
+                      <span className={isSelected ? (isDemonSupported ? 'text-iron-red font-bold' : 'text-iron-volt font-bold') : 'text-zinc-400'}>
                         +{v.reward || 50} CR
                       </span>
                       <span className="text-[9px] text-zinc-500">
@@ -242,21 +239,9 @@ export default function LegExpansion({
                   {/* 🔍 DETALLES REVELADOS AL HACER EL PRIMER TAP */}
                   {isExpanded && (
                     <div className="mt-3 pt-2 border-t border-zinc-800/80 flex flex-col gap-2 animate-fadeIn font-mono">
-                      {/* <span className="text-[7.5px] uppercase tracking-widest text-zinc-500">
-                        TARGET_SPEC:
-                      </span> */}
                       <p className="uppercase text-[11px] text-zinc-300 leading-relaxed">
                         {v.target || 'Execute optimal training parameters for maximum output.'}
                       </p>
-                      
-                      <div className="flex items-center justify-between pt-1 border-t border-zinc-800/50 mt-1">
-                        {/* <span className="text-[8.5px] text-zinc-400 uppercase">
-                          {isSelected ? '[ STATUS: IN_SLIP ]' : '[ TAP AGAIN TO ADD ]'}
-                        </span> */}
-                        <span className={`text-[8.5px] font-bold tracking-widest uppercase ${isSelected ? (isDemonSupported ? 'text-iron-red' : 'text-iron-volt') : 'text-zinc-500'}`}>
-                          {isSelected ? '' : ''}
-                        </span>
-                      </div>
                     </div>
                   )}
 
@@ -266,9 +251,6 @@ export default function LegExpansion({
                       <span className={isDemonSupported ? 'text-iron-red' : 'text-iron-volt'}>
                         {v.target || 'TARGET'}
                       </span>
-                      {/* <span className={isDemonSupported ? 'text-iron-red font-bold tracking-widest' : 'text-iron-volt font-bold tracking-widest'}>
-                        [ picked ]
-                      </span> */}
                     </div>
                   )}
                 </div>
