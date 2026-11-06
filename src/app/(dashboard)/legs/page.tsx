@@ -10,6 +10,7 @@ import LegCard from '@/components/dashboard/legs/LegCard';
 import LegExpansion from '@/components/dashboard/legs/LegExpansion';
 import LegFilterNav from '@/components/dashboard/legs/LegFilterNav';
 import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
+import StartGrindButton from '@/components/common/StartGrindButton';
 
 import { getUserBalance } from '@/actions/supabase/slips';
 
@@ -247,6 +248,15 @@ export default function LegsPage() {
           >
             NEXT &gt;
           </button>
+        </div>
+      )}
+
+      {/* 🔴 BOTÓN FLOTANTE LLAMATIVO SI NO ESTÁ LOGUEADO (ARRIBA DE LA NAVBAR) */}
+      {!isSignedIn && isLoaded && (
+        <div className="fixed bottom-18 left-0 right-0 px-4 z-[90] flex justify-center pointer-events-none">
+          <div className="w-full flex justify-center pointer-events-auto">
+            <StartGrindButton className="max-w-md w-full shadow-[0_0_40px_rgba(255,211,0,0.5)] border-2" />
+          </div>
         </div>
       )}
 

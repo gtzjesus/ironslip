@@ -59,7 +59,7 @@ export default function QuickSlip({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <SignUpButton 
       mode="modal" 
-      forceRedirectUrl={typeof window !== 'undefined' ? `${window.location.origin}/home` : '/home'}
+      forceRedirectUrl={typeof window !== 'undefined' ? `${window.location.origin}/` : '/'}
     >
       {ButtonContent}
     </SignUpButton>

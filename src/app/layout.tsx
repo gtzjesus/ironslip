@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import BottomNav from '@/components/common/BottomNav';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 
@@ -11,10 +12,10 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
-      signInFallbackRedirectUrl="/home"
-      signUpFallbackRedirectUrl="/home"
-      signInForceRedirectUrl="/home"
-      signUpForceRedirectUrl="/home"
+      signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
+      signInForceRedirectUrl="/"
+      signUpForceRedirectUrl="/"
       localization={{
         signUp: {
           start: {
@@ -99,6 +100,7 @@ export default function RootLayout({
           {children}
         </body>
       </html>
+        <BottomNav />
     </ClerkProvider>
   );
 }
