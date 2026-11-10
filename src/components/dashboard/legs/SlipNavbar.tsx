@@ -106,12 +106,12 @@ export default function SlipNavbar({
                       <p className={`text-[9px] font-mono uppercase tracking-widest mb-1.5 font-bold italic ${
                         hasDemon ? 'text-[#E5B2B2]' : 'text-zinc-900'
                       }`}>
-                        ADD {legsNeeded} MORE LEG{legsNeeded > 1 ? 'S' : ''}
+                        ADD {legsNeeded} MORE LEG{legsNeeded > 1 ? 'S!' : ''}
                       </p>
                       <p className={`text-xs font-black uppercase tracking-tight italic leading-none ${
                         hasDemon ? 'text-zinc-200' : 'text-zinc-900'
                       }`}>
-                        LOCKED (MIN 3)
+                        LOCKED
                       </p>
                     </>
                   )}

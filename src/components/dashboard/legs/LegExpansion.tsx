@@ -154,8 +154,8 @@ export default function LegExpansion({
     const deltaY = currentPosRef.current.y - startPosRef.current.y;
 
     setTranslate({
-      x: deltaX, // Permitimos arrastrar libremente a la izquierda y derecha
-      y: deltaY > 0 ? deltaY : 0, // Solo deslizar hacia abajo (+Y) para respetar el scroll vertical superior
+      x: deltaX,
+      y: deltaY > 0 ? deltaY : 0,
     });
   };
 
@@ -163,7 +163,6 @@ export default function LegExpansion({
     if (!isDragging) return;
     setIsDragging(false);
 
-    // Umbrales de cierre: 120px abajo, o 100px a la izquierda / derecha
     const isSwipeDown = translate.y > 120;
     const isSwipeLeft = translate.x < -100;
     const isSwipeRight = translate.x > 100;
@@ -220,7 +219,7 @@ export default function LegExpansion({
         <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/90 backdrop-blur-sm pointer-events-auto">
           <div className="flex flex-col">
             <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-2 opacity-50" />
-            <h2 className="text-iron-volt font-black italic text-3xl uppercase tracking-tighter leading-none">
+            <h2 className="text-[#B89223] font-black italic text-3xl uppercase tracking-tighter leading-none">
               {leg.task}
             </h2>
           </div>
@@ -229,7 +228,7 @@ export default function LegExpansion({
               playSound('close');
               setTimeout(() => onClose(), 100);
             }}
-            className="text-black bg-iron-red hover:bg-red-500 transition-colors px-2.5 py-1 text-[9px] font-mono font-bold uppercase active:scale-95 cursor-pointer shadow-[0_0_10px_rgba(220,38,38,0.5)]"
+            className="text-white bg-[#6E1717] hover:bg-[#801B1B] transition-colors px-2.5 py-1 text-[9px] font-mono font-bold uppercase active:scale-95 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] border border-black"
           >
             [ x ]
           </button>
@@ -240,9 +239,9 @@ export default function LegExpansion({
           
           {/* TIP TÁCTICO */}
           {showTip && (
-            <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
+            <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-[#B89223]/5 border border-[#B89223]/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
-                <span className="text-iron-volt font-bold truncate">Tap to reveal, swipe down, left or right to close</span> 
+                <span className="text-[#B89223] font-bold truncate">Tap to reveal, tap again to add to slip</span> 
               </span>
             </div>
           )}
@@ -261,8 +260,8 @@ export default function LegExpansion({
                   className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col p-3 cursor-pointer backdrop-blur-md active:scale-98 ${
                     isSelected
                       ? isDemonSupported
-                        ? 'border-iron-red bg-zinc-950 text-iron-red shadow-[0_0_15px_rgba(220,38,38,0.25)]'
-                        : 'border-iron-volt bg-zinc-950 text-iron-volt shadow-[0_0_15px_rgba(255,211,0,0.2)]'
+                        ? 'border-[#6E1717] bg-[#6E1717]/20 text-[#E5B2B2] shadow-[0_0_15px_rgba(110,23,23,0.3)]'
+                        : 'border-[#B89223] bg-zinc-950 text-[#B89223] shadow-[0_0_15px_rgba(184,146,35,0.2)]'
                       : isExpanded
                       ? 'border-zinc-500 bg-[#0d0b09]/95 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]'
                       : 'bg-[#0d0b09]/85 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/95'
@@ -275,8 +274,8 @@ export default function LegExpansion({
                         className={`font-black italic uppercase tracking-tighter truncate text-lg leading-none ${
                           isSelected
                             ? isDemonSupported
-                              ? 'text-iron-red font-bold'
-                              : 'text-iron-volt font-bold'
+                              ? 'text-[#E5B2B2] font-bold'
+                              : 'text-[#B89223] font-bold'
                             : 'text-white'
                         }`}
                       >
@@ -285,7 +284,7 @@ export default function LegExpansion({
                     </div>
 
                     <div className="flex items-center gap-3 flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? 'text-iron-green font-bold' : 'text-zinc-400'}>
+                      <span className={isSelected ? 'text-[#B89223] font-bold' : 'text-zinc-400'}>
                         +{v.reward || 50} 
                       </span>
                       <span className="text-[9px] text-zinc-500">
@@ -305,7 +304,7 @@ export default function LegExpansion({
 
                   {!isExpanded && isSelected && (
                     <div className="mt-1 pt-1 border-t border-zinc-800/40 flex justify-between items-center font-mono text-[8px] uppercase">
-                      <span className={isDemonSupported ? 'text-iron-red' : 'text-iron-volt'}>
+                      <span className={isDemonSupported ? 'text-[#E5B2B2]' : 'text-[#B89223]'}>
                         {v.target || 'TARGET'}
                       </span>
                     </div>

@@ -93,8 +93,8 @@ export default function LegsPage() {
     return legs.filter((leg: any) => leg.category === activeCategory);
   }, [legs, activeCategory]);
 
-  // 📄 LÓGICA DE PAGINACIÓN DINÁMICA (4 para list, 6 para grid 2x2)
-  const itemsPerPage = isGridView ? 6 : 4;
+  // 📄 LÓGICA DE PAGINACIÓN DINÁMICA (4 para list, 4 para grid 2x2)
+  const itemsPerPage = 4;
   const totalPages = Math.ceil(filteredLegs.length / itemsPerPage) || 1;
   
   const paginatedLegs = useMemo(() => {
