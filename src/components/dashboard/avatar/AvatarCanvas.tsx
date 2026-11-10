@@ -3,7 +3,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
-import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
@@ -79,10 +79,29 @@ export default function AvatarCanvas({
   activeAnimation,
   isDemon = false,
 }: AvatarCanvasProps) {
+  const [isReady, setIsReady] = useState(false);
+
+  // 🛡️ Blindaje de transición: Espera 50ms a que el DOM de la nueva ruta esté listo
+  // para evitar que Three.js pierda el contexto de WebGL al navegar.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 50);
+
+    return () => {
+      setIsReady(false);
+    };
+  }, []);
+
+  if (!isReady) {
+    return <div className="w-full h-full relative overflow-hidden z-0 flex items-center justify-center bg-transparent" />;
+  }
+
   return (
     <div className="w-full h-full relative overflow-hidden z-0 flex items-center justify-center bg-transparent">
       <Suspense fallback={null}>
         <Canvas
+          key={avatarUrl}
           className="w-full h-full"
           camera={{ position: [0, 0, 6.5], fov: 42 }}
           // 📊 EL SECOTO PARA TELÉFONOS VIEJOS:
