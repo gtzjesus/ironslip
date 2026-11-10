@@ -13,10 +13,9 @@ export default function StartGrindButton({
   text = 'Start the grind' 
 }: StartGrindButtonProps) {
   const { openSignUp } = useClerk();
-  const pathname = usePathname(); // Captura la ruta exacta actual (ej. /legs, /avatar)
+  const pathname = usePathname();
 
   const handleAuthClick = () => {
-    // Forzamos la redirección exacta a la ruta actual tras completar el registro/login
     openSignUp({
       fallbackRedirectUrl: pathname,
       forceRedirectUrl: pathname,
@@ -26,11 +25,8 @@ export default function StartGrindButton({
   return (
     <button
       onClick={handleAuthClick}
-      className={`group relative p-4 bg-iron-volt border-2 border-iron-volt text-black text-[12px] font-mono uppercase tracking-[0.2em] transition-all hover:bg-zinc-950 hover:text-iron-volt hover:border-iron-volt/80 active:scale-95 shadow-[0_0_35px_rgba(255,211,0,0.45)] flex items-center justify-center cursor-pointer overflow-hidden animate-pulse ${className}`}
+      className={`group relative p-4 bg-[#B89223] border-4 border-black text-black text-[12px] font-mono uppercase tracking-[0.2em] transition-all hover:bg-black hover:text-[#B89223] active:translate-x-0.5 active:translate-y-0.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center cursor-pointer overflow-hidden ${className}`}
     >
-      {/* ⚡ Halo de luz dinámico de fondo más intenso */}
-      <div className="absolute inset-0 -z-10 bg-iron-volt blur-xl opacity-60 group-hover:opacity-30 group-hover:scale-110 transition-all duration-500" />
-
       <span className="text-lg font-black uppercase italic tracking-tighter transition-colors z-10">
         {text}
       </span>

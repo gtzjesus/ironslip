@@ -2,13 +2,12 @@
 'use client';
 
 import { useMemo } from 'react';
-// 🔥 IMPORTAMOS TU HOOK DE SONIDO
 import { useSound } from '@/hooks/useSound';
 
 interface LegFilterNavProps {
   activeCategory: string;
   onCategoryChange: (category: string) => void;
-  legs: any[]; // 👈 Recibimos la lista completa de Sanity
+  legs: any[];
 }
 
 export default function LegFilterNav({
@@ -16,10 +15,8 @@ export default function LegFilterNav({
   onCategoryChange,
   legs,
 }: LegFilterNavProps) {
-  // 🔥 INICIALIZAMOS EL MOTOR DE AUDIO
   const { playSound } = useSound();
   
-  // 🧠 CÁLCULO DINÁMICO: Extrae categorías únicas de tus ejercicios
   const categories = useMemo(() => {
     const uniqueCategories = Array.from(new Set(legs.map((l) => l.category || 'lifting')));
     return [
@@ -32,7 +29,7 @@ export default function LegFilterNav({
   }, [legs]);
 
   return (
-    <div className="mx-0.5 flex overflow-x-auto gap-1  scrollbar-hide no-scrollbar ">
+    <div className="mx-0.5 flex overflow-x-auto gap-1.5 scrollbar-hide no-scrollbar py-1">
       {categories.map((cat) => {
         const isActive = activeCategory === cat.value;
         return (
@@ -45,11 +42,11 @@ export default function LegFilterNav({
               onCategoryChange(cat.value);
             }}
             className={`
-              flex-shrink-0 px-3 py-2 font-mono text-[10px] uppercase tracking-widest  transition-all duration-200
+              flex-shrink-0 px-3.5 py-2 font-mono text-[10px] uppercase tracking-widest italic transition-all duration-150 border-2
               ${
                 isActive
-                  ? 'bg-iron-volt text-black border-iron-volt font-black shadow-[0_0_10px_rgba(250,204,21,0.2)]'
-                  : 'bg-transparent text-zinc-600 border-zinc-800'
+                  ? 'bg-[#B89223] text-black border-black font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
+                  : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white'
               }
             `}
           >

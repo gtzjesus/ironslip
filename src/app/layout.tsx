@@ -34,25 +34,25 @@ export default function RootLayout({
       appearance={{
         variables: {
           colorPrimary: '#000000',
-          colorBackground: '#F1C232',
+          colorBackground: '#B89223',
           colorText: '#000000',
-          colorInputBackground: '#e5b428',
+          colorInputBackground: '#A07D1C',
           colorInputText: '#000000',
           borderRadius: '0px',
         },
         elements: {
-          card: 'bg-[#F1C232] border-4 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] animate-arcade-slide',
+          card: 'bg-[#B89223] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-arcade-slide',
           modalContent: 'p-0 bg-transparent shadow-none',
           modalBackdrop: 'backdrop-blur-sm bg-black/60',
           footer: 'hidden',
           'clerk-branding': 'hidden',
           headerTitle: 'text-black font-black italic uppercase tracking-tighter text-3xl',
-          headerSubtitle: 'text-zinc-900 italic font-mono text-[10px] uppercase tracking-widest font-bold',
-          formButtonPrimary: 'bg-black !text-[#F1C232] font-black uppercase italic transition-all py-3 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1',
+          headerSubtitle: 'text-zinc-950 italic font-mono text-[10px] uppercase tracking-widest font-bold',
+          formButtonPrimary: 'bg-black !text-[#B89223] font-black uppercase italic transition-all py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-0.5 hover:translate-y-0.5 active:translate-x-1 active:translate-y-1',
           formFieldLabel: 'text-black font-mono text-[10px] uppercase tracking-widest mb-1 font-black italic',
           formFieldInput: 'bg-black/10 border-2 border-black text-black placeholder:text-zinc-800 focus:bg-black/20 focus:outline-none transition-all py-3 px-4 italic font-bold [appearance:textfield]',
           footerActionLink: 'text-black font-mono text-[10px] font-black underline decoration-2 uppercase hover:opacity-70',
-          footerActionText: 'text-zinc-900 font-mono text-[10px] uppercase italic font-bold',
+          footerActionText: 'text-zinc-950 font-mono text-[10px] uppercase italic font-bold',
           identityPreviewText: 'text-black font-mono font-bold uppercase italic',
           identityPreviewEditButtonIcon: 'text-black',
           socialButtonsBlockButton: 'bg-black/10 border-2 border-black text-black hover:bg-black/20 font-bold',
@@ -83,7 +83,7 @@ export default function RootLayout({
           `}} />
         </head>
         <body 
-          className="text-white antialiased selection:bg-iron-volt selection:text-black min-h-screen"
+          className="text-white antialiased selection:bg-[#B89223] selection:text-black min-h-screen"
           style={{
             backgroundColor: '#0d0b09',
             backgroundImage: `
