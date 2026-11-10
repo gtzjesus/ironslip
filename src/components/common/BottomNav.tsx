@@ -1,5 +1,4 @@
 'use client';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Ticket, ShoppingBag, User, Scroll } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
@@ -7,7 +6,7 @@ import { useUser } from '@clerk/nextjs';
 const navItems = [
   { name: 'Slips', href: '/slips', icon: Scroll },
   { name: 'Legs', href: '/legs', icon: Ticket },
-  { name: 'Feed', href: '/', icon: Home }, // 👈 Actualizado a la raíz '/'
+  { name: 'Feed', href: '/', icon: Home },
   { name: 'Shop', href: '/shop', icon: ShoppingBag },
   { name: 'Avatar', href: '/avatar', icon: User },
 ];
@@ -20,6 +19,18 @@ export default function BottomNav() {
   const glowColor = isSignedIn ? 'bg-iron-volt/10' : 'bg-iron-red/10';
   const dotColor = isSignedIn ? 'bg-iron-volt' : 'bg-iron-red';
 
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Si ya estamos en la misma ruta, no recargamos a lo tonto
+    if (pathname === href) {
+      e.preventDefault();
+      return;
+    }
+
+    // 🚀 RECARGA LIMPIA TOTAL: Mata el contexto de WebGL corrupto y arranca fresco
+    e.preventDefault();
+    window.location.href = href;
+  };
+
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] w-[100%] max-w-2xl">
       <div className="flex items-center justify-around bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 p-2 shadow-2xl">
@@ -27,10 +38,11 @@ export default function BottomNav() {
           const isActive = pathname === item.href;
 
           return (
-            <Link
+            <a
               key={item.href}
               href={item.href}
-              className="relative p-1 group flex flex-col items-center justify-center min-w-[56px]"
+              onClick={(e) => handleNavigation(e, item.href)}
+              className="relative p-1 group flex flex-col items-center justify-center min-w-[56px] cursor-pointer"
             >
               {isActive && (
                 <div className={`absolute inset-0 blur-md rounded-xl pointer-events-none transition-opacity duration-150 ${glowColor}`} />
@@ -54,7 +66,7 @@ export default function BottomNav() {
                   <div className={`h-[2px] w-1 mt-0.5 rounded-full ${dotColor}`} />
                 )}
               </div>
-            </Link>
+            </a>
           );
         })}
       </div>
