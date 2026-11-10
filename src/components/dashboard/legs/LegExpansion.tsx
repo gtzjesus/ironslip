@@ -25,11 +25,11 @@ export default function LegExpansion({
   // 🟢 Estado para saber qué tarjeta está revelada/inspeccionada
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-  // 🤏 Estados para el arrastre táctil (Swipe to close)
-  const [translateY, setTranslateY] = useState(0);
+  // 🤏 Estados para el arrastre táctil multidireccional (Swipe down / left)
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const startYRef = useRef(0);
-  const currentYRef = useRef(0);
+  const startPosRef = useRef({ x: 0, y: 0 });
+  const currentPosRef = useRef({ x: 0, y: 0 });
 
   // 1️⃣ Cargar la skin dinámica del usuario desde Supabase
   useEffect(() => {
@@ -128,32 +128,46 @@ export default function LegExpansion({
     }
   };
 
-  // 🤏 Manejadores de gestos táctiles (Swipe down to close)
+  // 🤏 Gestos táctiles multidireccionales (Abajo + Izquierda)
   const handleTouchStart = (e: React.TouchEvent) => {
-    startYRef.current = e.touches[0].clientY;
+    startPosRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
     setIsDragging(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
-    currentYRef.current = e.touches[0].clientY;
-    const deltaY = currentYRef.current - startYRef.current;
-    // Solo permitimos arrastrar hacia abajo
-    if (deltaY > 0) {
-      setTranslateY(deltaY);
-    }
+    currentPosRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
+
+    const deltaX = currentPosRef.current.x - startPosRef.current.x;
+    const deltaY = currentPosRef.current.y - startPosRef.current.y;
+
+    // Solo permitimos mover en direcciones válidas (Abajo o Hacia la Izquierda)
+    setTranslate({
+      x: deltaX < 0 ? deltaX : 0, // Solo deslizar a la izquierda (-X)
+      y: deltaY > 0 ? deltaY : 0, // Solo deslizar abajo (+Y)
+    });
   };
 
   const handleTouchEnd = () => {
     if (!isDragging) return;
     setIsDragging(false);
-    // Si el usuario desliza más de 120px hacia abajo, cerramos el componente
-    if (translateY > 120) {
+
+    // Umbrales para activar el cierre: 120px abajo O 100px a la izquierda
+    const isSwipeDown = translate.y > 120;
+    const isSwipeLeft = translate.x < -100;
+
+    if (isSwipeDown || isSwipeLeft) {
       playSound('close');
       onClose();
     } else {
-      // Si no, regresa a su posición original con animación suave
-      setTranslateY(0);
+      // Regresa a su posición original suavemente si no alcanzó el umbral
+      setTranslate({ x: 0, y: 0 });
     }
   };
 
@@ -172,14 +186,14 @@ export default function LegExpansion({
         )}
       </div>
 
-      {/* CONTENEDOR DE LA INTERFAZ CON SOPORTE DE GESTOS TÁCTILES */}
+      {/* CONTENEDOR DE LA INTERFAZ CON SOPORTE GESTUAL MULTIDIRECCIONAL */}
       <div
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         className="w-full h-full max-w-2xl relative z-10 bg-[#0d0b09]/75 backdrop-blur-[1px] flex flex-col overflow-hidden border-[0.5px] border-zinc-800 pointer-events-none transition-transform duration-200 ease-out"
         style={{
-          transform: `translateY(${translateY}px)`,
+          transform: `translate(${translate.x}px, ${translate.y}px)`,
           backgroundImage: `
             linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px)
@@ -200,7 +214,7 @@ export default function LegExpansion({
         {/* HEADER TÁCTICO FLOTANTE */}
         <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/90 backdrop-blur-sm pointer-events-auto">
           <div className="flex flex-col">
-            {/* Indicador visual táctil de arrastre (Barrita superior) */}
+            {/* Indicador visual gestual (Barrita superior) */}
             <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-2 opacity-50" />
             <h2 className="text-iron-volt font-black italic text-3xl uppercase tracking-tighter leading-none">
               {leg.task}
@@ -220,11 +234,11 @@ export default function LegExpansion({
         {/* CONTENT */}
         <div className="flex-1 relative z-20 overflow-y-auto p-2 pt-2 flex flex-col justify-start pointer-events-auto">
           
-          {/* 💡 TIP TÁCTICO */}
+          {/* 💡 TIP TÁCTICO MULTIDIRECCIONAL */}
           {showTip && (
             <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
-                <span className="text-iron-volt font-bold truncate">Tap to reveal, drag down to close</span> 
+                <span className="text-iron-volt font-bold truncate">Tap to reveal, drag down or left to close</span> 
               </span>
             </div>
           )}
