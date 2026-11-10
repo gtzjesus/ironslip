@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSound } from '@/hooks/useSound';
 import AvatarCanvas from '@/components/dashboard/avatar/AvatarCanvas';
 import SlipNavbar from '@/components/dashboard/legs/SlipNavbar';
@@ -18,13 +18,18 @@ export default function LegExpansion({
   onToggleSlip,
 }: any) {
   const { playSound } = useSound();
-  const displayCategory = (leg?.category || 'IRON').toUpperCase();
   const [is3DReady, setIs3DReady] = useState(false);
   const [avatarSkin, setAvatarSkin] = useState<string>('/models/avatar.glb');
-  const [manualCloseTip, setManualCloseTip] = useState(false);
+  const [manualCloseTip] = useState(false);
 
   // 🟢 Estado para saber qué tarjeta está revelada/inspeccionada
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  // 🤏 Estados para el arrastre táctil (Swipe to close)
+  const [translateY, setTranslateY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startYRef = useRef(0);
+  const currentYRef = useRef(0);
 
   // 1️⃣ Cargar la skin dinámica del usuario desde Supabase
   useEffect(() => {
@@ -123,6 +128,35 @@ export default function LegExpansion({
     }
   };
 
+  // 🤏 Manejadores de gestos táctiles (Swipe down to close)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    startYRef.current = e.touches[0].clientY;
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    currentYRef.current = e.touches[0].clientY;
+    const deltaY = currentYRef.current - startYRef.current;
+    // Solo permitimos arrastrar hacia abajo
+    if (deltaY > 0) {
+      setTranslateY(deltaY);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    // Si el usuario desliza más de 120px hacia abajo, cerramos el componente
+    if (translateY > 120) {
+      playSound('close');
+      onClose();
+    } else {
+      // Si no, regresa a su posición original con animación suave
+      setTranslateY(0);
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md overflow-hidden"
@@ -138,10 +172,14 @@ export default function LegExpansion({
         )}
       </div>
 
-      {/* CONTENEDOR DE LA INTERFAZ */}
+      {/* CONTENEDOR DE LA INTERFAZ CON SOPORTE DE GESTOS TÁCTILES */}
       <div
-        className="w-full h-full max-w-2xl relative z-10 bg-[#0d0b09]/75 backdrop-blur-[1px] flex flex-col overflow-hidden border-[0.5px] border-zinc-800 pointer-events-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className="w-full h-full max-w-2xl relative z-10 bg-[#0d0b09]/75 backdrop-blur-[1px] flex flex-col overflow-hidden border-[0.5px] border-zinc-800 pointer-events-none transition-transform duration-200 ease-out"
         style={{
+          transform: `translateY(${translateY}px)`,
           backgroundImage: `
             linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px)
@@ -161,7 +199,9 @@ export default function LegExpansion({
 
         {/* HEADER TÁCTICO FLOTANTE */}
         <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/90 backdrop-blur-sm pointer-events-auto">
-          <div>
+          <div className="flex flex-col">
+            {/* Indicador visual táctil de arrastre (Barrita superior) */}
+            <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-2 opacity-50" />
             <h2 className="text-iron-volt font-black italic text-3xl uppercase tracking-tighter leading-none">
               {leg.task}
             </h2>
@@ -184,7 +224,7 @@ export default function LegExpansion({
           {showTip && (
             <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
-                <span className="text-iron-volt font-bold truncate">Tap to reveal, tap again to add or remove</span> 
+                <span className="text-iron-volt font-bold truncate">Tap to reveal, drag down to close</span> 
               </span>
             </div>
           )}
@@ -227,7 +267,7 @@ export default function LegExpansion({
                     </div>
 
                     <div className="flex items-center gap-3 flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? (isDemonSupported ? 'text-iron-green font-bold' : 'text-iron-green font-bold') : 'text-zinc-400'}>
+                      <span className={isSelected ? 'text-iron-green font-bold' : 'text-zinc-400'}>
                         +{v.reward || 50} 
                       </span>
                       <span className="text-[9px] text-zinc-500">

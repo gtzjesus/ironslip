@@ -1,4 +1,6 @@
 'use client';
+
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Ticket, ShoppingBag, User, Scroll } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
@@ -19,14 +21,6 @@ export default function BottomNav() {
   const glowColor = isSignedIn ? 'bg-iron-volt/10' : 'bg-iron-red/10';
   const dotColor = isSignedIn ? 'bg-iron-volt' : 'bg-iron-red';
 
-  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (pathname === href) {
-      e.preventDefault();
-      return;
-    }
-    // Dejamos que Next.js navegue de forma nativa por SPA sin forzar recargas completas que rompan estados
-  };
-
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[100] w-[100%] max-w-2xl">
       <div className="flex items-center justify-around bg-zinc-900/90 backdrop-blur-xl border-t border-white/10 p-2 shadow-2xl">
@@ -34,10 +28,9 @@ export default function BottomNav() {
           const isActive = pathname === item.href;
 
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
-              onClick={(e) => handleNavigation(e, item.href)}
               className="relative p-1 group flex flex-col items-center justify-center min-w-[56px] cursor-pointer"
             >
               {isActive && (
@@ -62,7 +55,7 @@ export default function BottomNav() {
                   <div className={`h-[2px] w-1 mt-0.5 rounded-full ${dotColor}`} />
                 )}
               </div>
-            </a>
+            </Link>
           );
         })}
       </div>
