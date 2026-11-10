@@ -2,7 +2,6 @@
 import { usePathname } from 'next/navigation';
 import { Home, Ticket, ShoppingBag, User, Scroll } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
-import { useEffect, useRef } from 'react';
 
 const navItems = [
   { name: 'Slips', href: '/slips', icon: Scroll },
@@ -14,16 +13,7 @@ const navItems = [
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const { isSignedIn, isLoaded } = useUser();
-  const prevSignedIn = useRef(isSignedIn);
-
-  // 🚀 Detector global de login: si pasa de invitado a logueado, recarga limpio la app
-  useEffect(() => {
-    if (isLoaded && !prevSignedIn.current && isSignedIn) {
-      window.location.reload();
-    }
-    prevSignedIn.current = isSignedIn;
-  }, [isSignedIn, isLoaded]);
+  const { isSignedIn } = useUser();
 
   const themeColor = isSignedIn ? 'text-iron-volt' : 'text-iron-red';
   const glowColor = isSignedIn ? 'bg-iron-volt/10' : 'bg-iron-red/10';
@@ -34,8 +24,7 @@ export default function BottomNav() {
       e.preventDefault();
       return;
     }
-    e.preventDefault();
-    window.location.href = href;
+    // Dejamos que Next.js navegue de forma nativa por SPA sin forzar recargas completas que rompan estados
   };
 
   return (
