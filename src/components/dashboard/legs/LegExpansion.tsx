@@ -22,40 +22,9 @@ export default function LegExpansion({
   const [avatarSkin, setAvatarSkin] = useState<string>('/models/avatar.glb');
   const [manualCloseTip] = useState(false);
 
-  // 🟢 Estado para saber qué tarjeta está revelada/inspeccionada
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-
-  // 🤏 Estados para el arrastre táctil multidireccional (Swipe down / left)
-  const [translate, setTranslate] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const startPosRef = useRef({ x: 0, y: 0 });
-  const currentPosRef = useRef({ x: 0, y: 0 });
-
-  // 1️⃣ Cargar la skin dinámica del usuario desde Supabase
-  useEffect(() => {
-    let isMounted = true;
-    async function loadSkin() {
-      try {
-        const res = await getUserAvatarSkin();
-        if (isMounted && res?.avatarSkin) {
-          setAvatarSkin(res.avatarSkin);
-        }
-      } catch (err) {
-        console.error('Failed fetching dynamic skin for modal:', err);
-      } finally {
-        if (isMounted) {
-          setIs3DReady(true);
-        }
-      }
-    }
-    loadSkin();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const { selectedVariants, demonStates } = useMemo(() => {
-    if (!leg?.variants) return { selectedVariants: [], demonStates: {} };
+  // 1️⃣ Calcular variantes seleccionadas y auto-expandir la activa al abrir
+  const { selectedVariants, demonStates, initialExpandedIndex } = useMemo(() => {
+    if (!leg?.variants) return { selectedVariants: [], demonStates: {}, initialExpandedIndex: null };
     const selected: number[] = [];
     const demons: Record<number, boolean> = {};
 
@@ -81,12 +50,49 @@ export default function LegExpansion({
         demons[index] = true;
       }
     });
-    return { selectedVariants: selected, demonStates: demons };
+
+    const firstSelectedIndex = selected.length > 0 ? selected[0] : null;
+
+    return { 
+      selectedVariants: selected, 
+      demonStates: demons, 
+      initialExpandedIndex: firstSelectedIndex 
+    };
   }, [currentSlipItems, leg]);
+
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(initialExpandedIndex);
+
+  // 🤏 Estados para el arrastre táctil omnidireccional (Abajo, Izquierda y Derecha)
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const startPosRef = useRef({ x: 0, y: 0 });
+  const currentPosRef = useRef({ x: 0, y: 0 });
+
+  // Cargar skin dinámica desde Supabase
+  useEffect(() => {
+    let isMounted = true;
+    async function loadSkin() {
+      try {
+        const res = await getUserAvatarSkin();
+        if (isMounted && res?.avatarSkin) {
+          setAvatarSkin(res.avatarSkin);
+        }
+      } catch (err) {
+        console.error('Failed fetching dynamic skin for modal:', err);
+      } finally {
+        if (isMounted) {
+          setIs3DReady(true);
+        }
+      }
+    }
+    loadSkin();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const showTip = selectedVariants.length === 0 && !manualCloseTip;
 
-  // 🟢 LÓGICA DE INTERACCIÓN POR FASES (REVELAR -> AÑADIR -> REMOVER)
   const handleCardClick = (index: number) => {
     const isSelected = selectedVariants.includes(index);
     const isExpanded = expandedIndex === index;
@@ -128,7 +134,7 @@ export default function LegExpansion({
     }
   };
 
-  // 🤏 Gestos táctiles multidireccionales (Abajo + Izquierda)
+  // 🤏 Gestos táctiles omnidireccionales (Abajo + Izquierda + Derecha)
   const handleTouchStart = (e: React.TouchEvent) => {
     startPosRef.current = {
       x: e.touches[0].clientX,
@@ -147,10 +153,9 @@ export default function LegExpansion({
     const deltaX = currentPosRef.current.x - startPosRef.current.x;
     const deltaY = currentPosRef.current.y - startPosRef.current.y;
 
-    // Solo permitimos mover en direcciones válidas (Abajo o Hacia la Izquierda)
     setTranslate({
-      x: deltaX < 0 ? deltaX : 0, // Solo deslizar a la izquierda (-X)
-      y: deltaY > 0 ? deltaY : 0, // Solo deslizar abajo (+Y)
+      x: deltaX, // Permitimos arrastrar libremente a la izquierda y derecha
+      y: deltaY > 0 ? deltaY : 0, // Solo deslizar hacia abajo (+Y) para respetar el scroll vertical superior
     });
   };
 
@@ -158,15 +163,15 @@ export default function LegExpansion({
     if (!isDragging) return;
     setIsDragging(false);
 
-    // Umbrales para activar el cierre: 120px abajo O 100px a la izquierda
+    // Umbrales de cierre: 120px abajo, o 100px a la izquierda / derecha
     const isSwipeDown = translate.y > 120;
     const isSwipeLeft = translate.x < -100;
+    const isSwipeRight = translate.x > 100;
 
-    if (isSwipeDown || isSwipeLeft) {
+    if (isSwipeDown || isSwipeLeft || isSwipeRight) {
       playSound('close');
       onClose();
     } else {
-      // Regresa a su posición original suavemente si no alcanzó el umbral
       setTranslate({ x: 0, y: 0 });
     }
   };
@@ -176,7 +181,7 @@ export default function LegExpansion({
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md overflow-hidden"
       onClick={onClose}
     >
-      {/* 🦾 AVATAR 3D 100% INTERACTIVO Y ROTABLE EN EL FONDO ABSOLUTO */}
+      {/* AVATAR 3D */}
       <div className="absolute inset-0 z-0 pointer-events-auto flex items-center justify-center opacity-30 scale-110">
         {is3DReady && (
           <AvatarCanvas
@@ -186,7 +191,7 @@ export default function LegExpansion({
         )}
       </div>
 
-      {/* CONTENEDOR DE LA INTERFAZ CON SOPORTE GESTUAL MULTIDIRECCIONAL */}
+      {/* CONTENEDOR DE LA INTERFAZ CON GESTOS OMNIDIRECCIONALES */}
       <div
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -211,10 +216,9 @@ export default function LegExpansion({
           }}
         />
 
-        {/* HEADER TÁCTICO FLOTANTE */}
+        {/* HEADER TÁCTICO */}
         <div className="p-3.5 pt-4 relative z-20 flex justify-between items-center border-b border-zinc-900/80 bg-[#0d0b09]/90 backdrop-blur-sm pointer-events-auto">
           <div className="flex flex-col">
-            {/* Indicador visual gestual (Barrita superior) */}
             <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-2 opacity-50" />
             <h2 className="text-iron-volt font-black italic text-3xl uppercase tracking-tighter leading-none">
               {leg.task}
@@ -234,16 +238,16 @@ export default function LegExpansion({
         {/* CONTENT */}
         <div className="flex-1 relative z-20 overflow-y-auto p-2 pt-2 flex flex-col justify-start pointer-events-auto">
           
-          {/* 💡 TIP TÁCTICO MULTIDIRECCIONAL */}
+          {/* TIP TÁCTICO */}
           {showTip && (
             <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
-                <span className="text-iron-volt font-bold truncate">Tap to reveal, tap again to add to slip</span> 
+                <span className="text-iron-volt font-bold truncate">Tap to reveal, swipe down, left or right to close</span> 
               </span>
             </div>
           )}
 
-          {/* 🎴 LISTA DE VARIANTES */}
+          {/* LISTA DE VARIANTES */}
           <div className="flex flex-col gap-2">
             {leg.variants?.map((v: any, i: number) => {
               const isSelected = selectedVariants.includes(i);
@@ -264,7 +268,7 @@ export default function LegExpansion({
                       : 'bg-[#0d0b09]/85 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/95'
                   }`}
                 >
-                  {/* VISTA MÍNIMA (TÍTULO Y RECOMPENSA) */}
+                  {/* VISTA MÍNIMA */}
                   <div className="relative z-10 flex items-center justify-between w-full">
                     <div className="flex-1 min-w-0 pr-2">
                       <h4
@@ -290,7 +294,7 @@ export default function LegExpansion({
                     </div>
                   </div>
 
-                  {/* 🔍 DETALLES REVELADOS AL HACER EL PRIMER TAP */}
+                  {/* DETALLES REVELADOS */}
                   {isExpanded && (
                     <div className="mt-3 pt-2 border-t border-zinc-800/80 flex flex-col gap-2 animate-fadeIn font-mono">
                       <p className="uppercase text-[11px] text-zinc-300 leading-relaxed">
@@ -299,7 +303,6 @@ export default function LegExpansion({
                     </div>
                   )}
 
-                  {/* ETIQUETA RÁPIDA CUANDO ESTÁ SELECCIONADA PERO COLAPSADA */}
                   {!isExpanded && isSelected && (
                     <div className="mt-1 pt-1 border-t border-zinc-800/40 flex justify-between items-center font-mono text-[8px] uppercase">
                       <span className={isDemonSupported ? 'text-iron-red' : 'text-iron-volt'}>
