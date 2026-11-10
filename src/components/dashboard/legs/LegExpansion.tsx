@@ -238,7 +238,7 @@ export default function LegExpansion({
           {showTip && (
             <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-iron-volt/5 border border-iron-volt/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
-                <span className="text-iron-volt font-bold truncate">Tap to reveal, drag down or left to close</span> 
+                <span className="text-iron-volt font-bold truncate">Tap to reveal, tap again to add to slip</span> 
               </span>
             </div>
           )}
