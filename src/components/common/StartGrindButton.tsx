@@ -13,9 +13,10 @@ export default function StartGrindButton({
   text = 'Start the grind' 
 }: StartGrindButtonProps) {
   const { openSignUp } = useClerk();
-  const pathname = usePathname(); // Captura limpia de la ruta actual (ej. /legs)
+  const pathname = usePathname(); // Captura la ruta exacta actual (ej. /legs, /avatar)
 
   const handleAuthClick = () => {
+    // Forzamos la redirección exacta a la ruta actual tras completar el registro/login
     openSignUp({
       fallbackRedirectUrl: pathname,
       forceRedirectUrl: pathname,

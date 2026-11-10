@@ -1,7 +1,7 @@
 import { clerkMiddleware, createRouteMatcher, createClerkClient } from "@clerk/nextjs/server";
 import { createClient } from '@supabase/supabase-js';
 
-// 🟢 RUTAS PÚBLICAS BLINDADAS (Quitamos /home porque ya vive en /)
+// 🟢 RUTAS PÚBLICAS BLINDADAS
 const isPublicRoute = createRouteMatcher([
   '/', 
   '/legs(.*)', 
@@ -23,12 +23,12 @@ const supabase = supabaseUrl && supabaseServiceKey
 const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 export default clerkMiddleware(async (auth, request) => {
-  // 1. Proteger rutas privadas (si no es pública, redirige al root)
+  // 1. Proteger rutas privadas (si no es pública, redirige a la URL actual en lugar de la raíz fija)
   if (!isPublicRoute(request)) {
-    const fallbackUrl = new URL('/', request.url).toString();
+    const currentUrl = request.url;
     
     await auth.protect({
-      unauthenticatedUrl: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || fallbackUrl,
+      unauthenticatedUrl: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || currentUrl,
     });
   }
 
