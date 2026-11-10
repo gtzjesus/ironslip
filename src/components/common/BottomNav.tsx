@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation';
 import { Home, Ticket, ShoppingBag, User, Scroll } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
+import { useEffect, useRef } from 'react';
 
 const navItems = [
   { name: 'Slips', href: '/slips', icon: Scroll },
@@ -13,20 +14,26 @@ const navItems = [
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
+  const prevSignedIn = useRef(isSignedIn);
+
+  // 🚀 Detector global de login: si pasa de invitado a logueado, recarga limpio la app
+  useEffect(() => {
+    if (isLoaded && !prevSignedIn.current && isSignedIn) {
+      window.location.reload();
+    }
+    prevSignedIn.current = isSignedIn;
+  }, [isSignedIn, isLoaded]);
 
   const themeColor = isSignedIn ? 'text-iron-volt' : 'text-iron-red';
   const glowColor = isSignedIn ? 'bg-iron-volt/10' : 'bg-iron-red/10';
   const dotColor = isSignedIn ? 'bg-iron-volt' : 'bg-iron-red';
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // Si ya estamos en la misma ruta, no recargamos a lo tonto
     if (pathname === href) {
       e.preventDefault();
       return;
     }
-
-    // 🚀 RECARGA LIMPIA TOTAL: Mata el contexto de WebGL corrupto y arranca fresco
     e.preventDefault();
     window.location.href = href;
   };

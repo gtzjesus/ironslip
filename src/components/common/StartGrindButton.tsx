@@ -1,6 +1,7 @@
 'use client';
 
 import { useClerk } from '@clerk/nextjs';
+import { usePathname } from 'next/navigation';
 
 interface StartGrindButtonProps {
   className?: string;
@@ -12,11 +13,13 @@ export default function StartGrindButton({
   text = 'Start the grind' 
 }: StartGrindButtonProps) {
   const { openSignUp } = useClerk();
+  const pathname = usePathname(); // 🧭 Detecta la ruta actual (ej. /legs, /avatar, /)
 
   const handleAuthClick = () => {
+    // Redirige exactamente a la página donde estaba el usuario
     openSignUp({
-      fallbackRedirectUrl: '/',
-      forceRedirectUrl: '/',
+      fallbackRedirectUrl: pathname,
+      forceRedirectUrl: pathname,
     });
   };
 
