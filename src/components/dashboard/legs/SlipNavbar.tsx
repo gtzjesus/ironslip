@@ -47,7 +47,6 @@ export default function SlipNavbar({
 
   const dynamicMultiplier = totalOdds < 1 ? 1.0 : totalOdds;
 
-  // 🟢 REGLA ESTRICTA: Mínimo 3 legs requeridas para abrir el slip
   const MIN_LEGS_REQUIRED = 3;
   const isEligibleToExpand = activeSlip.length >= MIN_LEGS_REQUIRED;
   const legsNeeded = MIN_LEGS_REQUIRED - activeSlip.length;
@@ -57,7 +56,6 @@ export default function SlipNavbar({
       playSound('select');
       setIsExpanded(true);
     } else {
-      // Sonido de error o bloqueo si intenta abrirlo sin las 3 legs
       playSound('remove'); 
     }
   };
@@ -65,40 +63,25 @@ export default function SlipNavbar({
   return (
     <>
       {!isCurrentlyExpanded && (
-        <div className="fixed bottom-[62.5px] left-0 w-full z-[120] px-2 flex justify-center pointer-events-none animate-videogame-slam">
+        <div className="fixed bottom-[62.5px] left-0 w-full z-[120] px-3 flex justify-center pointer-events-none animate-videogame-slam">
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
               onClick={handleExpand}
-              className={`relative overflow-hidden p-3.5 flex items-center justify-between transition-all duration-300 bg-zinc-950 border-[1px] ${
-                isEligibleToExpand
-                  ? 'cursor-pointer active:scale-[0.98]'
-                  : 'cursor-pointer opacity-80' // Se mantiene visible pero avisa que está bloqueado
-              } ${
+              className={`group relative overflow-hidden p-4 flex items-center justify-between transition-all duration-200 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${
                 hasDemon
-                  ? 'border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.35)]'
-                  : 'border-iron-volt shadow-[0_0_15px_rgba(163,230,53,0.3)]'
+                  ? 'bg-zinc-950 !border-red-600 text-white shadow-[6px_6px_0px_0px_rgba(220,38,38,0.8)]'
+                  : 'bg-[#F1C232] text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-pointer'
               }`}
-              style={{
-                backgroundImage: `
-                  linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px)
-                `,
-                backgroundSize: '64px 64px',
-              }}
             >
-              {/* PATRÓN DE RAYAS DIAGONALES SUTILES */}
-              <div 
-                className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                style={{
-                  backgroundImage: 'repeating-linear-gradient(45deg, #fff, #fff 2px, transparent 2px, transparent 8px)'
-                }}
-              />
-
               <div className="relative z-10 flex flex-col justify-center items-start leading-none">
-                <p className={`text-[9px] font-mono uppercase tracking-[0.15em] mb-1.5 ${hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt font-bold'}`}>
+                <p className={`text-[10px] font-mono uppercase tracking-[0.15em] mb-1.5 font-black italic ${
+                  hasDemon ? 'text-red-500' : 'text-black'
+                }`}>
                   {hasDemon ? 'DEMON SLIP 😈' : 'IRON SLIP'}
                 </p>
-                <p className="text-sm font-black uppercase tracking-tight italic leading-none text-zinc-100">
+                <p className={`text-base font-black uppercase tracking-tight italic leading-none ${
+                  hasDemon ? 'text-white' : 'text-black'
+                }`}>
                   {activeSlip.length} / 5 LEGS
                 </p>
               </div>
@@ -107,19 +90,27 @@ export default function SlipNavbar({
                 <div className="flex flex-col justify-center items-end text-right leading-none">
                   {isEligibleToExpand ? (
                     <>
-                      <p className="text-[8px] font-mono uppercase tracking-widest text-zinc-400 mb-1.5">
-                        WIN UP TO <span className={hasDemon ? 'text-red-500 font-bold' : 'text-iron-volt font-bold'}>x{dynamicMultiplier.toFixed(2)}</span>
+                      <p className={`text-[9px] font-mono uppercase tracking-widest mb-1.5 font-bold italic ${
+                        hasDemon ? 'text-zinc-400' : 'text-black/80'
+                      }`}>
+                        WIN UP TO <span className={hasDemon ? 'text-red-500 font-bold' : 'text-black font-black underline decoration-2'}>x{dynamicMultiplier.toFixed(2)}</span>
                       </p>
-                      <p className="text-sm font-black uppercase tracking-tight italic leading-none text-zinc-100">
+                      <p className={`text-sm font-black uppercase tracking-tight italic leading-none ${
+                        hasDemon ? 'text-white' : 'text-black'
+                      }`}>
                         {hasDemon ? 'START DEMON SLIP' : 'LOCK IN SLIP'}
                       </p>
                     </>
                   ) : (
                     <>
-                      <p className="text-[8px] font-mono uppercase tracking-widest text-amber-500 mb-1.5 font-bold">
+                      <p className={`text-[9px] font-mono uppercase tracking-widest mb-1.5 font-bold italic ${
+                        hasDemon ? 'text-zinc-400' : 'text-black/80'
+                      }`}>
                         ADD {legsNeeded} MORE LEG{legsNeeded > 1 ? 'S' : ''}
                       </p>
-                      <p className="text-xs font-black uppercase tracking-tight italic leading-none text-zinc-400">
+                      <p className={`text-xs font-black uppercase tracking-tight italic leading-none ${
+                        hasDemon ? 'text-zinc-400' : 'text-black/70'
+                      }`}>
                         LOCKED (MIN 3)
                       </p>
                     </>
@@ -127,12 +118,10 @@ export default function SlipNavbar({
                 </div>
 
                 <div
-                  className={`p-2 transition-all duration-300 flex items-center justify-center overflow-hidden w-9 h-9 flex-shrink-0 border-[0.5px] ${
-                    isEligibleToExpand
-                      ? hasDemon
-                        ? 'bg-red-950/80 border-red-600/60 text-red-500'
-                        : 'bg-zinc-900 border-iron-volt/60 text-iron-volt'
-                      : 'bg-zinc-900 border-amber-500/50 text-amber-500'
+                  className={`p-2 transition-all duration-200 flex items-center justify-center overflow-hidden w-10 h-10 flex-shrink-0 border-2 border-black ${
+                    hasDemon
+                      ? 'bg-red-950/80 !border-red-600 text-red-500'
+                      : 'bg-black text-[#F1C232] shadow-[2px_2px_0px_0px_rgba(255,255,255,0.6)]'
                   }`}
                 >
                   {isEligibleToExpand ? (
@@ -141,7 +130,7 @@ export default function SlipNavbar({
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-0.5 leading-none">
-                      <Lock className="w-3 h-3 text-amber-500 animate-pulse" />
+                      <Lock className="w-4 h-4 text-[#F1C232] animate-pulse" />
                     </div>
                   )}
                 </div>
