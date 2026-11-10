@@ -25,9 +25,15 @@ function LegCardComponent({
   
   const isDemonActive = hasDemon && leg.variants?.some((v: any) => v.isDemonSupported);
 
+  const [isMounted, setIsMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isCanvasLoaded, setIsCanvasLoaded] = useState(false);
   const cardRef = useRef<HTMLButtonElement>(null);
+
+  // 🛡️ Asegurar que el componente montó en el cliente para evitar conflictos de WebGL y fetch en frío
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,13 +45,13 @@ function LegCardComponent({
   }, []);
 
   useEffect(() => {
-    if (isVisible) {
+    if (isMounted && isVisible) {
       const timer = setTimeout(() => {
         setIsCanvasLoaded(true);
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [isVisible]);
+  }, [isMounted, isVisible]);
 
   const isDisabled = !isSignedIn;
 
@@ -71,8 +77,8 @@ function LegCardComponent({
             : 'bg-zinc-950 border-zinc-800'
       } ${!isSignedIn ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
     >
-      {/* 🦾 BACKGROUND AVATAR */}
-      {isSignedIn && (
+      {/* 🦾 BACKGROUND AVATAR (Blindado con isMounted para evitar el error de ruta y WebGL) */}
+      {isSignedIn && isMounted && (
         <div className={`pointer-events-none z-0 transition-opacity duration-300 ${
           isCanvasLoaded ? 'opacity-45' : 'opacity-0'
         } ${
