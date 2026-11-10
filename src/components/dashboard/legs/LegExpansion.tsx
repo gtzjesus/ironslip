@@ -260,8 +260,8 @@ export default function LegExpansion({
                   className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col p-3 cursor-pointer backdrop-blur-md active:scale-98 ${
                     isSelected
                       ? isDemonSupported
-                        ? 'border-[#6E1717] bg-[#6E1717]/20 text-[#E5B2B2] shadow-[0_0_15px_rgba(110,23,23,0.3)]'
-                        : 'border-[#B89223] bg-zinc-950 text-[#B89223] shadow-[0_0_15px_rgba(184,146,35,0.2)]'
+                        ? 'border-[#6E1717] bg-[#6E1717]/25 text-[#E5B2B2] shadow-[0_0_15px_rgba(110,23,23,0.3)]'
+                        : 'border-[#B89223] bg-[#B89223]/20 text-zinc-950 shadow-[0_0_15px_rgba(184,146,35,0.25)]'
                       : isExpanded
                       ? 'border-zinc-500 bg-[#0d0b09]/95 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)]'
                       : 'bg-[#0d0b09]/85 border-zinc-800/90 text-white hover:border-zinc-700 hover:bg-[#0d0b09]/95'
@@ -275,7 +275,7 @@ export default function LegExpansion({
                           isSelected
                             ? isDemonSupported
                               ? 'text-[#E5B2B2] font-bold'
-                              : 'text-[#B89223] font-bold'
+                              : 'text-zinc-950 font-bold'
                             : 'text-white'
                         }`}
                       >
@@ -284,7 +284,7 @@ export default function LegExpansion({
                     </div>
 
                     <div className="flex items-center gap-3 flex-shrink-0 font-mono text-[12.5px]">
-                      <span className={isSelected ? 'text-[#B89223] font-bold' : 'text-zinc-400'}>
+                      <span className={isSelected ? (isDemonSupported ? 'text-[#E5B2B2] font-bold' : 'text-zinc-950 font-bold') : 'text-zinc-400'}>
                         +{v.reward || 50} 
                       </span>
                       <span className="text-[9px] text-zinc-500">
@@ -304,7 +304,7 @@ export default function LegExpansion({
 
                   {!isExpanded && isSelected && (
                     <div className="mt-1 pt-1 border-t border-zinc-800/40 flex justify-between items-center font-mono text-[8px] uppercase">
-                      <span className={isDemonSupported ? 'text-[#E5B2B2]' : 'text-[#B89223]'}>
+                      <span className={isDemonSupported ? 'text-[#E5B2B2]' : 'text-zinc-950 font-bold'}>
                         {v.target || 'TARGET'}
                       </span>
                     </div>

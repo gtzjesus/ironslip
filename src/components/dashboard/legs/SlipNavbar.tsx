@@ -69,7 +69,7 @@ export default function SlipNavbar({
               onClick={handleExpand}
               className={`group relative overflow-hidden p-4 flex items-center justify-between transition-all duration-200 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.8)] ${
                 hasDemon
-                  ? 'bg-[#6E1717] text-zinc-100 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.8)] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer'
+                  ? 'bg-[#6E1717] text-zinc-100 active:translate-x-0.5 active:translate-y-0.5 cursor-pointer'
                   : 'bg-[#B89223] text-zinc-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] cursor-pointer'
               }`}
             >
