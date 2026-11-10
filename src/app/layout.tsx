@@ -12,10 +12,6 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
-      signInFallbackRedirectUrl="/"
-      signUpFallbackRedirectUrl="/"
-      signInForceRedirectUrl="/"
-      signUpForceRedirectUrl="/"
       localization={{
         signUp: {
           start: {
@@ -100,7 +96,7 @@ export default function RootLayout({
           {children}
         </body>
       </html>
-        <BottomNav />
+      <BottomNav />
     </ClerkProvider>
   );
 }
