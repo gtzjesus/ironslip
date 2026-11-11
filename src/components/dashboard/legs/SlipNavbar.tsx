@@ -63,14 +63,14 @@ export default function SlipNavbar({
   return (
     <>
       {!isCurrentlyExpanded && (
-        <div className="fixed bottom-[62.5px] left-0 w-full z-[120] px-3 flex justify-center pointer-events-none animate-videogame-slam">
+        <div className="fixed bottom-[65px] left-0 w-full z-[120] px-3 flex justify-center pointer-events-none animate-videogame-slam">
           <div className="w-full max-w-2xl pointer-events-auto">
             <div
               onClick={handleExpand}
-              className={`group relative overflow-hidden p-4 flex items-center justify-between transition-all duration-200 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.8)] ${
+              className={`group relative overflow-hidden p-4 flex items-center justify-between transition-all duration-200 border-4 border-black ${
                 hasDemon
                   ? 'bg-[#6E1717] text-zinc-100 active:translate-x-0.5 active:translate-y-0.5 cursor-pointer'
-                  : 'bg-[#B89223] text-zinc-950 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] cursor-pointer'
+                  : 'bg-[#B89223] text-zinc-950 active:translate-x-0.5 active:translate-y-0.5 cursor-pointer'
               }`}
             >
               <div className="relative z-10 flex flex-col justify-center items-start leading-none">
@@ -120,8 +120,8 @@ export default function SlipNavbar({
                 <div
                   className={`p-2 transition-all duration-200 flex items-center justify-center overflow-hidden w-10 h-10 flex-shrink-0 border-2 border-black ${
                     hasDemon
-                      ? 'bg-black text-[#6E1717] shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]'
-                      : 'bg-black text-[#B89223] shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]'
+                      ? 'bg-black text-[#6E1717]'
+                      : 'bg-black text-[#B89223]'
                   }`}
                 >
                   {isEligibleToExpand ? (

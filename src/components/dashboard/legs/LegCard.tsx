@@ -68,7 +68,7 @@ function LegCardComponent({
       onClick={handleCardClick}
       disabled={isDisabled}
       className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col justify-between ${
-        isGridView ? 'p-2.5 h-32 mb-0' : 'p-3 mb-1'
+        isGridView ? 'p-3 h-40 mb-0' : 'p-3 mb-1'
       } ${
         isAlreadyInSlip
           ? 'border-iron-volt bg-iron-volt/[0.03] shadow-[inset_0_0_15px_rgba(163,230,53,0.08),0_0_20px_rgba(163,230,53,0.05)]'
@@ -88,7 +88,7 @@ function LegCardComponent({
         }`}>
           <div className={`${
             isGridView 
-              ? 'w-40 h-40 absolute -bottom-6 -right-2 z-10' 
+              ? 'w-44 h-44 absolute -bottom-8 -right-2 z-10' 
               : 'w-26 h-26 absolute -bottom-6 -right-0 z-10'
           }`}>
             {isVisible && (
