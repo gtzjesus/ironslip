@@ -239,9 +239,9 @@ export default function LegExpansion({
           
           {/* TIP TÁCTICO */}
           {showTip && (
-            <div className="flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-[#B89223]/5 border border-[#B89223]/20 backdrop-blur-xs text-zinc-300">
+            <div className="mb-10 flex items-center justify-between mb-2 px-2 py-1.5 font-mono text-[8.5px] uppercase tracking-widest bg-[#B89223]/5 border border-[#B89223]/20 backdrop-blur-xs text-zinc-300">
               <span className="flex items-center gap-1.5 truncate pr-2">
-                <span className="text-[#B89223] font-bold truncate">Tap to reveal, tap again to add to slip</span> 
+                <span className=" text-[#B89223] font-bold truncate">Tap to reveal, tap again to add to slip</span> 
               </span>
             </div>
           )}
@@ -257,7 +257,7 @@ export default function LegExpansion({
                 <div
                   key={i}
                   onClick={() => handleCardClick(i)}
-                  className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col p-3 cursor-pointer backdrop-blur-md active:scale-98 ${
+                  className={`relative w-full text-left border-[0.5px] overflow-hidden transition-all duration-300 flex flex-col p-6 cursor-pointer backdrop-blur-md active:scale-98 ${
                     isSelected
                       ? isDemonSupported
                         ? 'border-[#6E1717] bg-[#6E1717]/25 text-[#E5B2B2] shadow-[0_0_15px_rgba(110,23,23,0.3)]'
@@ -324,7 +324,6 @@ export default function LegExpansion({
             userBalance={userBalance}
           />
         </div>
-        <BottomNav />
       </div>
     </div>
   );
